@@ -1,0 +1,32 @@
+CVS info   : $Header:$
+
+Cactus Code Thorn  ScalarEvolve
+Thorn Author(s)     : Miguel Zilhão, Helvi Witek
+Thorn Maintainer(s) : Miguel Zilhão, Helvi Witek
+--------------------------------------------------------------------------
+
+Purpose of the thorn:
+
+evolves an Einstein + (complex) scalar system. this thorn merely takes care of
+setting the scalar field stress-energy tensor and evolving (with MoL) the scalar
+field itself. the evolution of the metric sector needs to be done
+elsewhere. conventions used here are as in http://arxiv.org/pdf/1403.2757.pdf
+and as follows:
+
+  G_{\mu \nu} = 8 \pi G T_{\mu \nu}
+
+where
+
+  16 \pi G T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
+                       - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma} 
+                                      + \mu^2 \bar \Phi \Phi ]
+
+and the phi1 and phi2 used in the code are the real and imaginary part of the
+complex field \Phi = (phi1, phi2).
+
+the 3+1 decomposition of the scalar field is done by introducing the 'conjugate
+momentum' defined as
+
+  K_\Phi = -1/2 \Lie_n \Phi
+         = -1/(2 \alpha) [ \partial_t - \Lie_\beta ] \Phi
+

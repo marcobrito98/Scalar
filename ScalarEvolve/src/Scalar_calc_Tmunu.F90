@@ -1,0 +1,193 @@
+#include "cctk.h"
+#include "cctk_Arguments.h"
+#include "cctk_Parameters.h"
+
+subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
+
+  implicit none
+  DECLARE_CCTK_ARGUMENTS
+  DECLARE_CCTK_PARAMETERS
+
+  ! Fundamental variables
+  CCTK_REAL                alph, beta(3), betad(3)
+  CCTK_REAL                gg(4,4), gu(4,4), deth
+  CCTK_REAL                lphi1, lphi2, lKphi1, lKphi2
+  CCTK_COMPLEX             lphi
+  CCTK_REAL                Tab(4,4)
+
+  ! First derivatives
+  CCTK_REAL                d1_lphi1(4), d1_lphi2(4)
+  CCTK_COMPLEX             d1_lphi(4)
+
+  ! Misc variables
+  CCTK_REAL                dx12, dy12, dz12
+  CCTK_REAL                aux
+
+  CCTK_INT                 i, j, k
+  CCTK_INT                 a, b
+
+  dx12 = 12*CCTK_DELTA_SPACE(1)
+  dy12 = 12*CCTK_DELTA_SPACE(2)
+  dz12 = 12*CCTK_DELTA_SPACE(3)
+
+
+  !$OMP PARALLEL DO COLLAPSE(3) PRIVATE(k,j,i, a,b, aux,&
+  !$OMP                                 alph,beta,betad,&
+  !$OMP                                 gg,gu,deth,&
+  !$OMP                                 lphi1,lphi2,lKphi1,lKphi2,&
+  !$OMP                                 lphi,d1_lphi,&
+  !$OMP                                 Tab, d1_lphi1, d1_lphi2)
+  do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
+     do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
+        do i = 1+cctk_nghostzones(1), cctk_lsh(1)-cctk_nghostzones(1)
+
+           !------------ Get local variables ----------
+           lphi1     = phi1(i,j,k)
+           lphi2     = phi2(i,j,k)
+           lKphi1    = Kphi1(i,j,k)
+           lKphi2    = Kphi2(i,j,k)
+
+           alph      = alp(i,j,k)
+
+           beta(1)   = betax(i,j,k)
+           beta(2)   = betay(i,j,k)
+           beta(3)   = betaz(i,j,k)
+
+           gg(1,1)   = gxx(i,j,k)
+           gg(1,2)   = gxy(i,j,k)
+           gg(1,3)   = gxz(i,j,k)
+           gg(2,2)   = gyy(i,j,k)
+           gg(2,3)   = gyz(i,j,k)
+           gg(3,3)   = gzz(i,j,k)
+           gg(2,1)   = gg(1,2)
+           gg(3,1)   = gg(1,3)
+           gg(3,2)   = gg(2,3)
+
+           ! now we compute beta_i (betad)
+           betad = 0
+           do a = 1, 3
+              do b = 1, 3
+                 betad(a) = betad(a) + gg(a,b) * beta(b)
+              end do
+           end do
+
+           ! and finish with the rest of the 4-metric gg.
+           ! we will use the 4th slot for time throughout
+           gg(1,4)   = betad(1)
+           gg(2,4)   = betad(2)
+           gg(3,4)   = betad(3)
+           gg(4,1)   = gg(1,4)
+           gg(4,2)   = gg(2,4)
+           gg(4,3)   = gg(3,4)
+
+           gg(4,4)   = -alph * alph
+           do a = 1, 3
+              gg(4,4) = gg(4,4) + beta(a) * betad(a)
+           end do
+
+           !------------ Invert metric ----------------
+
+           ! determinant of the 3-metric
+           deth    =     gg(1,1) * gg(2,2) * gg(3,3)                              &
+                   + 2 * gg(1,2) * gg(1,3) * gg(2,3)                              &
+                   -     gg(1,1) * gg(2,3) ** 2                                   &
+                   -     gg(2,2) * gg(1,3) ** 2                                   &
+                   -     gg(3,3) * gg(1,2) ** 2
+
+           gu(1,1) = (gg(2,2) * gg(3,3) - gg(2,3) ** 2     ) / deth               &
+                   - beta(1) * beta(1) / (alph * alph)
+           gu(2,2) = (gg(1,1) * gg(3,3) - gg(1,3) ** 2     ) / deth               &
+                   - beta(2) * beta(2) / (alph * alph)
+           gu(3,3) = (gg(1,1) * gg(2,2) - gg(1,2) ** 2     ) / deth               &
+                   - beta(3) * beta(3) / (alph * alph)
+           gu(1,2) = (gg(1,3) * gg(2,3) - gg(1,2) * gg(3,3)) / deth               &
+                   - beta(1) * beta(2) / (alph * alph)
+           gu(1,3) = (gg(1,2) * gg(2,3) - gg(1,3) * gg(2,2)) / deth               &
+                   - beta(1) * beta(3) / (alph * alph)
+           gu(2,3) = (gg(1,3) * gg(1,2) - gg(2,3) * gg(1,1)) / deth               &
+                   - beta(2) * beta(3) / (alph * alph)
+
+           gu(1,4) = beta(1) / (alph * alph)
+           gu(2,4) = beta(2) / (alph * alph)
+           gu(3,4) = beta(3) / (alph * alph)
+           gu(4,4) = -1. / (alph * alph)
+
+           gu(2,1) = gu(1,2)
+           gu(3,1) = gu(1,3)
+           gu(3,2) = gu(2,3)
+
+           gu(4,1) = gu(1,4)
+           gu(4,2) = gu(2,4)
+           gu(4,3) = gu(3,4)
+
+
+           !------------- Centered 1st derivatives -----------
+
+           ! d1_lphi1(3)
+           d1_lphi1(1)  = (   -phi1(i+2,j,k) + 8*phi1(i+1,j,k)                        &
+                           - 8*phi1(i-1,j,k) +   phi1(i-2,j,k) ) / dx12
+
+           d1_lphi1(2)  = (   -phi1(i,j+2,k) + 8*phi1(i,j+1,k)                        &
+                           - 8*phi1(i,j-1,k) +   phi1(i,j-2,k) ) / dy12
+
+           d1_lphi1(3)  = (   -phi1(i,j,k+2) + 8*phi1(i,j,k+1)                        &
+                           - 8*phi1(i,j,k-1) +   phi1(i,j,k-2) ) / dz12
+
+           ! d1_lphi2(3)
+           d1_lphi2(1)  = (   -phi2(i+2,j,k) + 8*phi2(i+1,j,k)                        &
+                           - 8*phi2(i-1,j,k) +   phi2(i-2,j,k) ) / dx12
+
+           d1_lphi2(2)  = (   -phi2(i,j+2,k) + 8*phi2(i,j+1,k)                        &
+                           - 8*phi2(i,j-1,k) +   phi2(i,j-2,k) ) / dy12
+
+           d1_lphi2(3)  = (   -phi2(i,j,k+2) + 8*phi2(i,j,k+1)                        &
+                           - 8*phi2(i,j,k-1) +   phi2(i,j,k-2) ) / dz12
+
+           ! time derivatives
+           d1_lphi1(4)  = -2 * alph * lKphi1
+           d1_lphi2(4)  = -2 * alph * lKphi2
+           do a = 1, 3
+              d1_lphi1(4) = d1_lphi1(4) + beta(a) * d1_lphi1(a)
+              d1_lphi2(4) = d1_lphi2(4) + beta(a) * d1_lphi2(a)
+           end do
+
+           !-------------------------------------------
+
+           ! build complex scalar field
+           lphi     = dcmplx(lphi1, lphi2)
+           d1_lphi  = dcmplx(d1_lphi1, d1_lphi2)
+
+           aux = mu * mu * real( lphi * conjg(lphi) )
+           do a = 1, 4
+              do b = 1, 4
+                 aux = aux + gu(a,b) * real( d1_lphi(a) * conjg(d1_lphi(b)) )
+              end do
+           end do
+
+           ! compute the stress-energy tensor
+           do a = 1, 4
+              do b = 1, 4
+                 Tab(a,b) = real(        d1_lphi(a)  * conjg(d1_lphi(b))     &
+                                 + conjg(d1_lphi(a)) *       d1_lphi(b) )    &
+                          - gg(a,b) * aux
+              end do
+           end do
+
+           ! and finally store it in the Tmunu variables
+           eTtt(i,j,k) = eTtt(i,j,k) + Tab(4,4)
+           eTtx(i,j,k) = eTtx(i,j,k) + Tab(4,1)
+           eTty(i,j,k) = eTty(i,j,k) + Tab(4,2)
+           eTtz(i,j,k) = eTtz(i,j,k) + Tab(4,3)
+           eTxx(i,j,k) = eTxx(i,j,k) + Tab(1,1)
+           eTxy(i,j,k) = eTxy(i,j,k) + Tab(1,2)
+           eTxz(i,j,k) = eTxz(i,j,k) + Tab(1,3)
+           eTyy(i,j,k) = eTyy(i,j,k) + Tab(2,2)
+           eTyz(i,j,k) = eTyz(i,j,k) + Tab(2,3)
+           eTzz(i,j,k) = eTzz(i,j,k) + Tab(3,3)
+
+        end do
+     end do
+  end do
+  !$OMP END PARALLEL DO
+
+end subroutine Scalar_calc_Tmunu

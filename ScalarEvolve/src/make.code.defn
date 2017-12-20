@@ -1,0 +1,13 @@
+# Main make.code.defn file for thorn ScalarEvolve
+# $Header:$
+
+# Source files in this directory
+SRCS = Scalar_RegisterVars.c     \
+       Scalar_ord4_calc_rhs.F90  \
+       Scalar_Boundaries.F90     \
+       Scalar_calc_Tmunu.F90     \
+       Scalar_InitSymBound.F90   \
+       Scalar_adm_vs_bssn.F90
+
+# Subdirectories containing source files
+SUBDIRS =

@@ -1,0 +1,17 @@
+# Interface definition for thorn ScalarBase
+# $Header:$
+
+implements: ScalarBase
+
+public:
+
+CCTK_REAL phi type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=0'
+{
+  phi1 phi2
+} "scalar fields"
+
+CCTK_REAL Kphi type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=0'
+{
+  Kphi1 Kphi2
+} "their conjugated momenta"
+
