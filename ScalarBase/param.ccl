@@ -11,11 +11,10 @@ KEYWORD evolution_method "scalar variables evolution method"
   "none" :: "scalar variables are not evolved"
 } "none"
 
-KEYWORD scalar_initdata "initial data for scalar variables"
+KEYWORD initial_scalar "initial data for scalar variables"
 {
   "none" :: "scalar variables are not initialized"
 } "none"
-
 
 
 CCTK_REAL mu "mass of the scalar fields"
