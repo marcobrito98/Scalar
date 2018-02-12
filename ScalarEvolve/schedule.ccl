@@ -12,6 +12,11 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
     OPTIONS: META
   } "Schedule symmetries"
 
+  schedule Scalar_zero_rhs at BASEGRID after Scalar_InitSymBound
+  {
+    LANG: Fortran
+  } "set all rhs functions to zero to prevent spurious nans"
+
   schedule Scalar_RegisterVars in MoL_Register
   {
     LANG: C
