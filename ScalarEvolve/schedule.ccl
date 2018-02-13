@@ -26,13 +26,13 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
   schedule Scalar_ord4_calc_rhs IN MoL_CalcRHS AS Scalar_CalcRHS
   {
     LANG: Fortran
-  } "Register RHS calculation for MoL"
+  } "MoL RHS calculation for Scalar variables"
 
   schedule Scalar_ord4_calc_rhs_bdry in MoL_CalcRHS as Scalar_CalcRHS_Bdry \
            after Scalar_CalcRHS
   {
     LANG: Fortran
-  } "Register boundary RHS calculation for MoL"
+  } "MoL boundary RHS calculation for Scalar variables"
 
 
   schedule Scalar_Boundaries in MoL_PostStep
@@ -41,7 +41,7 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
     OPTIONS: LEVEL
     SYNC: phi
     SYNC: Kphi
-  } "Register boundary enforcement in MoL"
+  } "MoL boundary enforcement for Scalar variables"
 
   schedule GROUP ApplyBCs as Scalar_ApplyBCs in MoL_PostStep after Scalar_Boundaries
   {
