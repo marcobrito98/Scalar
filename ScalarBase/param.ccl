@@ -1,8 +1,4 @@
 # Parameter definitions for thorn ScalarBase
-# $Header:$
-
-shares: IO
-USES KEYWORD  recover
 
 restricted:
 
