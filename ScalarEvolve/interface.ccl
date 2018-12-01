@@ -2,7 +2,7 @@
 # $Header:$
 
 implements: ScalarEvolve
-inherits: ADMBase Tmunubase ScalarBase Boundary
+inherits: ADMBase Tmunubase ScalarBase Boundary SphericalSurface
 
 
 CCTK_INT FUNCTION                        \
