@@ -1,5 +1,4 @@
 # Interface definition for thorn ScalarEvolve
-# $Header:$
 
 implements: ScalarEvolve
 inherits: ADMBase Tmunubase ScalarBase Boundary SphericalSurface
