@@ -1,5 +1,4 @@
 # Schedule definitions for thorn ScalarEvolve
-# $Header:$
 
 if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
 
