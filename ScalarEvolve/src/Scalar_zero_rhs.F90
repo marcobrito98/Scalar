@@ -1,5 +1,6 @@
 
 #include "cctk.h"
+#include "cctk_Arguments.h"
 
 subroutine Scalar_zero_rhs( CCTK_ARGUMENTS )
 
