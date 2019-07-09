@@ -3,7 +3,6 @@
 IMPLEMENTS: ScalarInit
 
 INHERITS: ScalarBase grid
-## TODO: CHECK if ADMBase is needed
 
 PUBLIC:
 

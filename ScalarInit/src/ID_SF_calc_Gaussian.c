@@ -70,17 +70,15 @@ ID_SF_Gauss (CCTK_ARGUMENTS)
      xp[2] = z[ind] - pos_plus[2];
 
      // coordinate radius and polar radial coordinate
-     CCTK_REAL rr, rr2, rr3;
-     rr = sqrt( xp[0] * xp[0] + xp[1] * xp[1] + xp[2] * xp[2] );
-     if( rr < eps_r ) rr = eps_r;
-     rr2 = rr  * rr;
-     rr3 = rr2 * rr;
+     CCTK_REAL rr, rr2;
+     rr2 = xp[0] * xp[0] + xp[1] * xp[1] + xp[2] * xp[2];
+     if( rr2 < eps_r2 ) rr2 = eps_r2;
+     rr  = sqrt( rr2 );
 
-     CCTK_REAL rho, rho2, rho3;
-     rho = sqrt( xp[0]*xp[0] + xp[1]*xp[1] );
-     if( rho < eps_r ) rho = eps_r;
-     rho2 = rho  * rho;
-     rho3 = rho2 * rho;
+     CCTK_REAL rho, rho2;
+     rho2 = xp[0]*xp[0] + xp[1]*xp[1];
+     if( rho2 < eps_r2 ) rho2 = eps_r2;
+     rho  = sqrt( rho2 );
 
 
      // angles

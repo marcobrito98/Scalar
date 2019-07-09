@@ -21,7 +21,7 @@ ID_SF_BS (CCTK_ARGUMENTS)
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
-  CCTK_INFO("=== Begin ID_SF_BS initial data ===");
+//  CCTK_INFO("=== Begin ID_SF_BS initial data ===");
 
   /*=== define parameters ====================================*/
   // Scalar field mass parameter
@@ -102,50 +102,43 @@ ID_SF_BS (CCTK_ARGUMENTS)
 
      // coordinate radius and polar radial coordinate
      CCTK_REAL rr, rr2;
-     rr = sqrt( xp[0] * xp[0] + xp[1] * xp[1] + xp[2] * xp[2] );
-     if( rr < eps_r ) rr = eps_r;
-     rr2 = rr  * rr;
+     rr2 = xp[0] * xp[0] + xp[1] * xp[1] + xp[2] * xp[2];
+     if( rr2 < eps_r2 ) rr2 = eps_r2;
+     rr = sqrt( rr2 );
 
      CCTK_REAL rho, rho2;
-     rho = sqrt( xp[0]*xp[0] + xp[1]*xp[1] );
-     if( rho < eps_r ) rho = eps_r;
-     rho2 = rho  * rho;
+     rho2 =  xp[0]*xp[0] + xp[1]*xp[1];
+     if( rho2 < eps_r2 ) rho2 = eps_r2;
+     rho  = sqrt( rho2 );
 
      // Boyer-Lindquist radial coordinate
-     CCTK_REAL rBL, rBL2;
+     CCTK_REAL rBL;
      rBL  = rr * ( 1.0 + 0.25 * rBLp / rr ) * ( 1.0 + 0.25 * rBLp / rr );
      if( rBL < eps_r ) rBL = eps_r;
-     rBL2 = rBL * rBL;
 
      // differences rBL - rBL_{\pm}
-     CCTK_REAL Rp, Rp2, Rm, Rm2;
+     CCTK_REAL Rp, Rm;
 
      Rp = rBL - rBLp;
-     if( abs( Rp ) < eps_Rp ) Rp = eps_Rp;
-     Rp2 = Rp * Rp;
+     if( abs( Rp ) < eps_r ) Rp = eps_r;
 
      Rm = rBL - rBLm;
-     if( abs(Rm) < eps_Rm ) Rm = eps_Rm;
-     Rm2 = Rm * Rm;
+     if( abs(Rm) < eps_r ) Rm = eps_r;
 
      // angles
-     CCTK_REAL CT, CT2, CP, CP2;
-     CCTK_REAL ST, ST2, SP, SP2;
+     CCTK_REAL CT, CT2, CP;
+     CCTK_REAL SP;
 
      CT  = xp[2] / rr;
      CT2 = CT*CT;
      CP  = xp[0] / rho;
-     CP2 = CP*CP;
 
-     ST  = rho / rr;
-     ST2 = ST*ST;
      SP  = xp[1] / rho;
-     SP2 = SP*SP;
      /*========================================================*/
 
      /*=== define coefficients, eqs (34) in Dolan '07 =========*/
      // frequency vars
-     CCTK_REAL wcrit, wR2, wR3, wR4, wI2, wI3, wI4, w2;
+     CCTK_REAL wcrit, wR2, wR3, wR4, wI2, wI3, wI4;
      wcrit = spin / ( 2*rBLp );
      wR2   = wR  * wR;
      wR3   = wR2 * wR;
@@ -153,7 +146,6 @@ ID_SF_BS (CCTK_ARGUMENTS)
      wI2   = wI  * wI;
      wI3   = wI2 * wI;
      wI4   = wI2 * wI2;
-     w2    = wR2 + wI2;
 
 
      CCTK_REAL sigmaR, sigmaI;
@@ -562,12 +554,11 @@ ID_SF_BS (CCTK_ARGUMENTS)
 
      /*=== calc momentum Kphi =================================*/
      // implement first part of Kphi
-     // ASSUME \beta^i = 0 for simplicity.
      // Kphi = -1/(2\alpha) ( \p_{t} - \Lie_{\beta} ) \phi
+     // ASSUME FOR SIMPLICITY: \alpha=1, \beta^i = 0
 
-     CCTK_REAL lapse = alp[ind];
-     psit_re = - 0.5 / lapse * ( wR * psi_im + wI * psi_re );
-     psit_im =   0.5 / lapse * ( wR * psi_re - wI * psi_im ); 
+     psit_re = - 0.5 * ( wR * psi_im + wI * psi_re );
+     psit_im =   0.5 * ( wR * psi_re - wI * psi_im );
 
      /*========================================================*/
 
@@ -588,7 +579,7 @@ ID_SF_BS (CCTK_ARGUMENTS)
 /*============================================================*/
 
 
-  CCTK_INFO("=== End ID_SF_BS initial data ===");
+//  CCTK_INFO("=== End ID_SF_BS initial data ===");
 
 }
 /* -------------------------------------------------------------------*/

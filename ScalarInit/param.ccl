@@ -100,6 +100,11 @@ CCTK_REAL eps_r "of value if r approaches zero"
   0:*   :: "any small positive value possible"
 } 1.0d-06
 
+CCTK_REAL eps_r2 "of value if r2 approaches zero"
+{
+  0:*   :: "any small positive value possible"
+} 1.0d-10
+
 ##CCTK_REAL eps_Rp "of value if (rBL-rBLp) approaches zero"
 ##{
 ##  0:*   :: "any small positive value possible"
