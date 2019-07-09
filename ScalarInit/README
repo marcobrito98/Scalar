@@ -1,0 +1,28 @@
+Cactus Code Thorn ScalarInit
+Author(s)    : Helvi Witek
+Maintainer(s): Helvi Witek, Giuseppe Ficarra
+Licence      : GPLv2+
+--------------------------------------------------------------------------
+
+1. Purpose
+===========
+The thorn ScalarInit provides initial data for a (massive), complex scalar field as outlined in Sec. IIC of Witek et al '12.
+Current choices include
+- single mode Gaussian
+  $phi=0$, $Kphi_{lm} =  Y_{lm} (\theta,\varphi) \exp\left[-\frac{(r-r_0)^2}{w^2} \right]$
+  where $Y_{lm}$ are spherical harmonics, $r_{0}$ the location of the center of the Gaussian and $w$ its width.
+- Gaussian containing a superposition of modes
+- (quasi-) boundstates for massive fields
+
+
+2. Applications
+================
+- evolution of massive scalar fields in the background of rotating black holes (see Witek et al '12)
+- study scalar perturbations in time domain in GR and beyond (see Witek et al '12; Benkel et al '16; Witek et al '18)
+
+
+3. References 
+==============
+- Witek et al, https://arxiv.org/abs/1212.0551
+- for bound-states see Sam Dolan, https://arxiv.org/abs/0705.2880
+
