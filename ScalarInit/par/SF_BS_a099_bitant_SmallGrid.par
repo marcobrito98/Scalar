@@ -151,15 +151,13 @@ KerrQuasiIsotropic::spin_plus         = 0.99
 ScalarBase::initial_scalar      = ID_SF_BS
 ScalarBase::mu                  = 0.42
 
+# Need to be the same as the black hole parameters above 
+ScalarInit::m_plus              = 1.0
+ScalarInit::pos_plus[0]         = 0.0
+ScalarInit::spin_plus           = 0.99
 ScalarInit::wR                  = 0.408806
 ScalarInit::wI                  = 1.50391d-07
 ScalarInit::n_sum               = 200
-##ScalarInit::eps_r               = 1.0d-05
-
-
-#InitBase::initial_data_setup_method   = "init_all_levels"
-#Carpet::init_fill_timelevels          = no
-#Carpet::init_3_timelevels             = yes
 
 InitBase::initial_data_setup_method   = "init_some_levels"
 Carpet::init_fill_timelevels          = yes
@@ -281,14 +279,14 @@ AHFinderDirect::max_allowable_horizon_radius         [1] = 3
 
 # Isolated Horizons
 #-------------------------------------------------------------------------------
-
-QuasiLocalMeasures::verbose                = yes
-QuasiLocalMeasures::veryverbose            = no
-QuasiLocalMeasures::interpolator           = "Lagrange polynomial interpolation"
-QuasiLocalMeasures::interpolator_options   = "order=4"
-QuasiLocalMeasures::spatial_order          = 4
-QuasiLocalMeasures::num_surfaces           = 1
-QuasiLocalMeasures::surface_index      [0] = 0
+## NOT NEEDED - black holes are not evolved
+#QuasiLocalMeasures::verbose                = yes
+#QuasiLocalMeasures::veryverbose            = no
+#QuasiLocalMeasures::interpolator           = "Lagrange polynomial interpolation"
+#QuasiLocalMeasures::interpolator_options   = "order=4"
+#QuasiLocalMeasures::spatial_order          = 4
+#QuasiLocalMeasures::num_surfaces           = 1
+#QuasiLocalMeasures::surface_index      [0] = 0
 
 
 # Check for NaNs
