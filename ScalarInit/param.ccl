@@ -11,6 +11,8 @@ EXTENDS KEYWORD initial_scalar "Which scalar field initial data"
 {
   "ID_SF_Gaussian" :: "use Gaussian initial data"
   "ID_SF_BS"       :: "bound-state initial data"
+  "ID_SF_Const"    :: "constant initial data"
+  
 }
 
 USES CCTK_REAL mu
