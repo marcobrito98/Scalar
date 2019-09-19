@@ -63,11 +63,17 @@ ID_SF_Const (CCTK_ARGUMENTS)
      /*========================================================*/
 
      /*=== define radius and angles ===========================*/
-     // positions
-     CCTK_REAL xp[3];
-     xp[0] = x[ind] - pos_plus[0]; 
+     // positions OLD with KerrQuasiIsotropic
+     /*CCTK_REAL xp[3];
+     xp[0] = x[ind] - pos_plus[0];
      xp[1] = y[ind] - pos_plus[1];
-     xp[2] = z[ind] - pos_plus[2];
+     xp[2] = z[ind] - pos_plus[2];*/
+
+     // positions NEW
+     CCTK_REAL xp[3];
+     xp[0] = x[ind];
+     xp[1] = y[ind];
+     xp[2] = z[ind];
 
      // coordinate radius and polar radial coordinate
      CCTK_REAL rr, rr2;
