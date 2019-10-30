@@ -25,6 +25,26 @@ CCTK_INT FUNCTION                        \
 REQUIRES FUNCTION Boundary_SelectGroupForBC
 
 CCTK_INT FUNCTION                         \
+    GetRefinementLevel                    \
+        (CCTK_POINTER_TO_CONST IN cctkGH)
+USES FUNCTION GetRefinementLevel
+
+CCTK_INT FUNCTION                         \
+    MultiPatch_GetMap
+        (CCTK_POINTER_TO_CONST IN cctkGH)
+USES FUNCTION MultiPatch_GetMap
+
+# Convenient way to determine boundary sizes
+CCTK_INT FUNCTION GetBoundarySizesAndTypes \
+  (CCTK_POINTER_TO_CONST IN cctkGH, \
+   CCTK_INT IN size, \
+   CCTK_INT OUT ARRAY bndsize, \
+   CCTK_INT OUT ARRAY is_ghostbnd, \
+   CCTK_INT OUT ARRAY is_symbnd, \
+   CCTK_INT OUT ARRAY is_physbnd)
+REQUIRES FUNCTION GetBoundarySizesAndTypes
+
+CCTK_INT FUNCTION                         \
     NewRad_Apply                          \
         (CCTK_POINTER_TO_CONST IN cctkGH, \
          CCTK_REAL ARRAY IN var,          \

@@ -577,3 +577,34 @@ subroutine Scalar_ord4_calc_rhs_bdry( CCTK_ARGUMENTS )
   ierr = NewRad_Apply(cctkGH, Kphi2, rhs_Kphi2, Kphi2_0, one, n_Kphi2)
 
 end subroutine Scalar_ord4_calc_rhs_bdry
+!
+!=============================================================================
+!
+subroutine Scalar_ord4_calc_rhs_bdry_sph( CCTK_ARGUMENTS )
+
+  implicit none
+  DECLARE_CCTK_ARGUMENTS
+  DECLARE_CCTK_PARAMETERS
+  DECLARE_CCTK_FUNCTIONS
+
+  CCTK_INT  i, j, k
+  CCTK_REAL odr2
+  CCTK_REAL alph, lphi, lKphi, dr_lphi, dr_lKphi
+  CCTK_REAL rr
+
+  CCTK_INT  reflevel, map
+
+  odr2 = 1 / (2*CCTK_DELTA_SPACE(3))
+
+  reflevel = GetRefinementLevel(cctkGH)
+  map      = MultiPatch_GetMap(cctkGH)
+
+  ! apply only on the coarsest level and in the spherical shell. points marked
+  ! with cctk_bbox(6) == 0 are inter-processor boundaries, so we also do not
+  ! want those
+  if (reflevel /= 0 .or. map == 0 .or. cctk_bbox(6) == 0) return
+
+  ! TODO
+
+end subroutine Scalar_ord4_calc_rhs_bdry_sph
+
