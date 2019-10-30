@@ -53,16 +53,6 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   CCTK_REAL                Rout_excision1, Rout_excision2
   CCTK_REAL                Rin_excision1, Rin_excision2
 
-  ! Mass
-  CCTK_REAL                mass, rw
-  CCTK_REAL                mass_function
-
-  ! source term
-  CCTK_REAL                source_term1,source_term2
-  CCTK_REAL                source_term_function1,source_term_function2
-  CCTK_REAL                tt
-  tt = cctk_time
-
   dx12 = 12*CCTK_DELTA_SPACE(1)
   dy12 = 12*CCTK_DELTA_SPACE(2)
   dz12 = 12*CCTK_DELTA_SPACE(3)
@@ -95,8 +85,7 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   !$OMP rhs_lphi1, rhs_lphi2, rhs_lKphi1, rhs_lKphi2,&
   !$OMP i, j, k,&
   !$OMP di, dj, dk,&
-  !$OMP a, b, c, m, rsn1_2, rsn2_2, rr, lambda, &
-  !$OMP mass, Rw)
+  !$OMP a, b, c, m, rsn1_2, rsn2_2, rr, lambda)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
   do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
   do i = 1+cctk_nghostzones(1), cctk_lsh(1)-cctk_nghostzones(1)
@@ -476,21 +465,13 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
       end do
     end do
 
-    rw = (x(i,j,k)*x(i,j,k) + y(i,j,k)*y(i,j,k) + z(i,j,k)*z(i,j,k))**0.5
-    mass = mass_function(rw)
-
-    source_term1 = source_term_function1(x(i,j,k),y(i,j,k),z(i,j,k),tt)
-    source_term2 = source_term_function2(x(i,j,k),y(i,j,k),z(i,j,k),tt)
-
     rhs_lKphi1 = rhs_lKphi1 - 0.5 * ch * tr_dalp_dphi1                         &
                  + 0.5 * alph * ( - ch * tr_cd2_phi1 + 0.5 * tr_dch_dphi1      &
-                    + mass*mass * lphi1 + 2.0 * trk * lKphi1 )                 &
-                + 0.5*alph*source_term1
+                                  + mu*mu * lphi1 + 2.0 * trk * lKphi1 )
 
     rhs_lKphi2 = rhs_lKphi2 - 0.5 * ch * tr_dalp_dphi2                         &
                  + 0.5 * alph * ( - ch * tr_cd2_phi2 + 0.5 * tr_dch_dphi2      &
-                    + mass*mass * lphi2 + 2.0 * trk * lKphi2 )                 &
-                + 0.5*alph*source_term2
+                                  + mu*mu * lphi2 + 2.0 * trk * lKphi2 )
 
     !-------------------------------------------
 
@@ -596,75 +577,3 @@ subroutine Scalar_ord4_calc_rhs_bdry( CCTK_ARGUMENTS )
   ierr = NewRad_Apply(cctkGH, Kphi2, rhs_Kphi2, Kphi2_0, one, n_Kphi2)
 
 end subroutine Scalar_ord4_calc_rhs_bdry
-
-!
-!=============================================================================
-!
-
-CCTK_REAL function mass_function(rw)
-    implicit none
-    DECLARE_CCTK_PARAMETERS
-    CCTK_REAL :: t_func
-    CCTK_REAL :: rw
-    CCTK_REAL pi
-    pi = 4.0*atan(1.0)
-
-    if (rw < Rin_massfunc) then
-        mass_function = mu
-        else
-        if (Rin_massfunc < rw .and. rw < Rout_massfunc) then
-            t_func = (cos((pi/2)*((rw - Rin_massfunc)/(Rout_massfunc &
-                    - Rin_massfunc))**p_massfunc))**q_massfunc
-            mass_function = mu*t_func + mu_out*(1. - t_func)
-        else
-            mass_function = mu_out
-        end if
-    end if
-return
-end function mass_function
-
-
-!
-!=============================================================================
-!
-
-CCTK_REAL function source_term_function1(xw,yw,zw,tw)
-    implicit none
-    DECLARE_CCTK_PARAMETERS
-    CCTK_REAL :: xw
-    CCTK_REAL :: yw
-    CCTK_REAL :: zw
-    CCTK_REAL :: tw
-    CCTK_REAL rw
-    CCTK_REAL pi
-    CCTK_REAL Delta
-
-    rw = (xw*xw + yw*yw + zw*zw)**0.5
-    pi = 4.0*atan(1.0)
-    Delta = (1/((sigma_source_term1**3)*(pi**1.5)))*exp(-(rw/sigma_source_term1)**2)
-    source_term_function1 = 4*pi*amp_source_term1*sin(omega_source_term1*tw)*Delta
-return
-end function source_term_function1
-
-
-!
-!=============================================================================
-!
-
-CCTK_REAL function source_term_function2(xw,yw,zw,tw)
-    implicit none
-    DECLARE_CCTK_PARAMETERS
-    CCTK_REAL :: xw
-    CCTK_REAL :: yw
-    CCTK_REAL :: zw
-    CCTK_REAL :: tw
-    CCTK_REAL rw
-    CCTK_REAL pi
-    CCTK_REAL Delta
-
-    rw = (xw*xw + yw*yw + zw*zw)**0.5
-    pi = 4.0*atan(1.0)
-    Delta = (1/((sigma_source_term2**3)*(pi**1.5)))*exp(-(rw/sigma_source_term2)**2)
-    source_term_function2 = 4*pi*amp_source_term2*sin(omega_source_term2*tw)*Delta
-return
-end function source_term_function2
