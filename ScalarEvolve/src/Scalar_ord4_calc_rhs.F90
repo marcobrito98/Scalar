@@ -16,7 +16,7 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   CCTK_REAL                lphi1, lphi2, lKphi1, lKphi2
 
   ! First derivatives
-  CCTK_REAL                d1_h11(3), d1_h12(3), d1_h13(3), d1_h22(3), d1_h23(3), d1_h33(3)
+  CCTK_REAL                d1_hh11(3), d1_hh12(3), d1_hh13(3), d1_hh22(3), d1_hh23(3), d1_hh33(3)
   CCTK_REAL                d1_alph(3)
   CCTK_REAL                d1_ch(3), d1_hh(3,3,3)
   CCTK_REAL                d1_lphi1(3), d1_lphi2(3), d1_lKphi1(3), d1_lKphi2(3)
@@ -146,7 +146,7 @@ end if
   !$OMP PARALLEL DO COLLAPSE(3) &
   !$OMP PRIVATE(alph, beta, ch, hh, hu, trk, dethh,&
   !$OMP lphi1, lphi2, lKphi1, lKphi2,&
-  !$OMP d1_h11, d1_h12, d1_h13, d1_h22, d1_h23, d1_h33,&
+  !$OMP d1_hh11, d1_hh12, d1_hh13, d1_hh22, d1_hh23, d1_hh33,&
   !$OMP d1_alph, d1_ch, d1_hh,&
   !$OMP d1_lphi1, d1_lphi2, d1_lKphi1, d1_lKphi2,&
   !$OMP d2_lphi1, d2_lphi2, ad1_lphi1, ad1_lphi2, ad1_lKphi1, ad1_lKphi2,&
@@ -286,48 +286,44 @@ end if
                 - 8*chi(i,j,k-1) +   chi(i,j,k-2) ) / dz12
 
     ! d1_hh(3,3,3)
-    d1_hh(1,1,1) = (   -hxx(i+2,j,k) + 8*hxx(i+1,j,k)                      &
-                    - 8*hxx(i-1,j,k) +   hxx(i-2,j,k) ) / dx12
-    d1_hh(1,2,1) = (   -hxy(i+2,j,k) + 8*hxy(i+1,j,k)                      &
-                    - 8*hxy(i-1,j,k) +   hxy(i-2,j,k) ) / dx12
-    d1_hh(1,3,1) = (   -hxz(i+2,j,k) + 8*hxz(i+1,j,k)                      &
-                    - 8*hxz(i-1,j,k) +   hxz(i-2,j,k) ) / dx12
-    d1_hh(2,2,1) = (   -hyy(i+2,j,k) + 8*hyy(i+1,j,k)                      &
-                    - 8*hyy(i-1,j,k) +   hyy(i-2,j,k) ) / dx12
-    d1_hh(2,3,1) = (   -hyz(i+2,j,k) + 8*hyz(i+1,j,k)                      &
-                    - 8*hyz(i-1,j,k) +   hyz(i-2,j,k) ) / dx12
-    d1_hh(3,3,1) = (   -hzz(i+2,j,k) + 8*hzz(i+1,j,k)                      &
-                    - 8*hzz(i-1,j,k) +   hzz(i-2,j,k) ) / dx12
+    d1_hh11(1) = (   -hxx(i+2,j,k) + 8*hxx(i+1,j,k)                      &
+                  - 8*hxx(i-1,j,k) +   hxx(i-2,j,k) ) / dx12
+    d1_hh12(1) = (   -hxy(i+2,j,k) + 8*hxy(i+1,j,k)                      &
+                  - 8*hxy(i-1,j,k) +   hxy(i-2,j,k) ) / dx12
+    d1_hh13(1) = (   -hxz(i+2,j,k) + 8*hxz(i+1,j,k)                      &
+                  - 8*hxz(i-1,j,k) +   hxz(i-2,j,k) ) / dx12
+    d1_hh22(1) = (   -hyy(i+2,j,k) + 8*hyy(i+1,j,k)                      &
+                  - 8*hyy(i-1,j,k) +   hyy(i-2,j,k) ) / dx12
+    d1_hh23(1) = (   -hyz(i+2,j,k) + 8*hyz(i+1,j,k)                      &
+                  - 8*hyz(i-1,j,k) +   hyz(i-2,j,k) ) / dx12
+    d1_hh33(1) = (   -hzz(i+2,j,k) + 8*hzz(i+1,j,k)                      &
+                  - 8*hzz(i-1,j,k) +   hzz(i-2,j,k) ) / dx12
 
-    d1_hh(1,1,2) = (   -hxx(i,j+2,k) + 8*hxx(i,j+1,k)                      &
-                    - 8*hxx(i,j-1,k) +   hxx(i,j-2,k) ) / dy12
-    d1_hh(1,2,2) = (   -hxy(i,j+2,k) + 8*hxy(i,j+1,k)                      &
-                    - 8*hxy(i,j-1,k) +   hxy(i,j-2,k) ) / dy12
-    d1_hh(1,3,2) = (   -hxz(i,j+2,k) + 8*hxz(i,j+1,k)                      &
-                    - 8*hxz(i,j-1,k) +   hxz(i,j-2,k) ) / dy12
-    d1_hh(2,2,2) = (   -hyy(i,j+2,k) + 8*hyy(i,j+1,k)                      &
-                    - 8*hyy(i,j-1,k) +   hyy(i,j-2,k) ) / dy12
-    d1_hh(2,3,2) = (   -hyz(i,j+2,k) + 8*hyz(i,j+1,k)                      &
-                    - 8*hyz(i,j-1,k) +   hyz(i,j-2,k) ) / dy12
-    d1_hh(3,3,2) = (   -hzz(i,j+2,k) + 8*hzz(i,j+1,k)                      &
-                    - 8*hzz(i,j-1,k) +   hzz(i,j-2,k) ) / dy12
+    d1_hh11(2) = (   -hxx(i,j+2,k) + 8*hxx(i,j+1,k)                      &
+                  - 8*hxx(i,j-1,k) +   hxx(i,j-2,k) ) / dy12
+    d1_hh12(2) = (   -hxy(i,j+2,k) + 8*hxy(i,j+1,k)                      &
+                  - 8*hxy(i,j-1,k) +   hxy(i,j-2,k) ) / dy12
+    d1_hh13(2) = (   -hxz(i,j+2,k) + 8*hxz(i,j+1,k)                      &
+                  - 8*hxz(i,j-1,k) +   hxz(i,j-2,k) ) / dy12
+    d1_hh22(2) = (   -hyy(i,j+2,k) + 8*hyy(i,j+1,k)                      &
+                  - 8*hyy(i,j-1,k) +   hyy(i,j-2,k) ) / dy12
+    d1_hh23(2) = (   -hyz(i,j+2,k) + 8*hyz(i,j+1,k)                      &
+                  - 8*hyz(i,j-1,k) +   hyz(i,j-2,k) ) / dy12
+    d1_hh33(2) = (   -hzz(i,j+2,k) + 8*hzz(i,j+1,k)                      &
+                  - 8*hzz(i,j-1,k) +   hzz(i,j-2,k) ) / dy12
 
-    d1_hh(1,1,3) = (   -hxx(i,j,k+2) + 8*hxx(i,j,k+1)                      &
-                    - 8*hxx(i,j,k-1) +   hxx(i,j,k-2) ) / dz12
-    d1_hh(1,2,3) = (   -hxy(i,j,k+2) + 8*hxy(i,j,k+1)                      &
-                    - 8*hxy(i,j,k-1) +   hxy(i,j,k-2) ) / dz12
-    d1_hh(1,3,3) = (   -hxz(i,j,k+2) + 8*hxz(i,j,k+1)                      &
-                    - 8*hxz(i,j,k-1) +   hxz(i,j,k-2) ) / dz12
-    d1_hh(2,2,3) = (   -hyy(i,j,k+2) + 8*hyy(i,j,k+1)                      &
-                    - 8*hyy(i,j,k-1) +   hyy(i,j,k-2) ) / dz12
-    d1_hh(2,3,3) = (   -hyz(i,j,k+2) + 8*hyz(i,j,k+1)                      &
-                    - 8*hyz(i,j,k-1) +   hyz(i,j,k-2) ) / dz12
-    d1_hh(3,3,3) = (   -hzz(i,j,k+2) + 8*hzz(i,j,k+1)                      &
-                    - 8*hzz(i,j,k-1) +   hzz(i,j,k-2) ) / dz12
-
-    d1_hh(2,1,:) = d1_hh(1,2,:)
-    d1_hh(3,1,:) = d1_hh(1,3,:)
-    d1_hh(3,2,:) = d1_hh(2,3,:)
+    d1_hh11(3) = (   -hxx(i,j,k+2) + 8*hxx(i,j,k+1)                      &
+                  - 8*hxx(i,j,k-1) +   hxx(i,j,k-2) ) / dz12
+    d1_hh12(3) = (   -hxy(i,j,k+2) + 8*hxy(i,j,k+1)                      &
+                  - 8*hxy(i,j,k-1) +   hxy(i,j,k-2) ) / dz12
+    d1_hh13(3) = (   -hxz(i,j,k+2) + 8*hxz(i,j,k+1)                      &
+                  - 8*hxz(i,j,k-1) +   hxz(i,j,k-2) ) / dz12
+    d1_hh22(3) = (   -hyy(i,j,k+2) + 8*hyy(i,j,k+1)                      &
+                  - 8*hyy(i,j,k-1) +   hyy(i,j,k-2) ) / dz12
+    d1_hh23(3) = (   -hyz(i,j,k+2) + 8*hyz(i,j,k+1)                      &
+                  - 8*hyz(i,j,k-1) +   hyz(i,j,k-2) ) / dz12
+    d1_hh33(3) = (   -hzz(i,j,k+2) + 8*hzz(i,j,k+1)                      &
+                  - 8*hzz(i,j,k-1) +   hzz(i,j,k-2) ) / dz12
 
 
     ! d1_alph(3)
@@ -381,9 +377,7 @@ end if
     d1_lKphi2(3) = (   -Kphi2(i,j,k+2) + 8*Kphi2(i,j,k+1)                          &
                     - 8*Kphi2(i,j,k-1) +   Kphi2(i,j,k-2) ) / dz12
 
-
     !--------------------------------------------------
-
 
 
 
@@ -447,6 +441,31 @@ end if
     d2_lphi2(3,1) = d2_lphi2(1,3)
     d2_lphi2(3,2) = d2_lphi2(2,3)
 
+
+    if (use_jacobian) then
+       call IST_Scalar_apply_jacobian(d1_alph, jac)
+       call IST_Scalar_apply_jacobian(d1_lKphi1, jac)
+       call IST_Scalar_apply_jacobian(d1_lKphi2, jac)
+       call IST_Scalar_apply_jacobian(d1_hh11, jac)
+       call IST_Scalar_apply_jacobian(d1_hh12, jac)
+       call IST_Scalar_apply_jacobian(d1_hh13, jac)
+       call IST_Scalar_apply_jacobian(d1_hh22, jac)
+       call IST_Scalar_apply_jacobian(d1_hh23, jac)
+       call IST_Scalar_apply_jacobian(d1_hh33, jac)
+
+       call IST_Scalar_apply_jacobian2(d1_lphi1, d2_lphi1, jac, hes)
+       call IST_Scalar_apply_jacobian2(d1_lphi2, d2_lphi2, jac, hes)
+    end if
+
+    d1_hh(1,1,:) = d1_hh11(:)
+    d1_hh(1,2,:) = d1_hh12(:)
+    d1_hh(1,3,:) = d1_hh13(:)
+    d1_hh(2,2,:) = d1_hh22(:)
+    d1_hh(2,3,:) = d1_hh23(:)
+    d1_hh(3,3,:) = d1_hh33(:)
+    d1_hh(2,1,:) = d1_hh(1,2,:)
+    d1_hh(3,1,:) = d1_hh(1,3,:)
+    d1_hh(3,2,:) = d1_hh(2,3,:)
 
     !------------ Advection derivatives --------
     if( use_advection_stencils /= 0 ) then
