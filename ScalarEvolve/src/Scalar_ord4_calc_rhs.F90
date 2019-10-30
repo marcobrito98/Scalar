@@ -11,11 +11,12 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   DECLARE_CCTK_PARAMETERS
 
   ! Fundamental variables
-  CCTK_REAL                alph, beta(3)
+  CCTK_REAL                alph, beta(3), beta_l(3)    ! beta is beta^{i} (upper index)
   CCTK_REAL                ch, hh(3,3), hu(3,3), trk, dethh
   CCTK_REAL                lphi1, lphi2, lKphi1, lKphi2
 
   ! First derivatives
+  CCTK_REAL                d1_h11(3), d1_h12(3), d1_h13(3), d1_h22(3), d1_h23(3), d1_h33(3)
   CCTK_REAL                d1_alph(3)
   CCTK_REAL                d1_ch(3), d1_hh(3,3,3)
   CCTK_REAL                d1_lphi1(3), d1_lphi2(3), d1_lKphi1(3), d1_lKphi2(3)
@@ -53,6 +54,75 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   CCTK_REAL                Rout_excision1, Rout_excision2
   CCTK_REAL                Rin_excision1, Rin_excision2
 
+  ! jacobian
+  integer                  istat
+  logical                  use_jacobian
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: lJ11, lJ12, lJ13
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: lJ21, lJ22, lJ23
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: lJ31, lJ32, lJ33
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: ldJ111, ldJ112, ldJ113, ldJ122, ldJ123, ldJ133
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: ldJ211, ldJ212, ldJ213, ldJ222, ldJ223, ldJ233
+  CCTK_REAL, dimension(cctk_ash(1),cctk_ash(2),cctk_ash(3)) :: ldJ311, ldJ312, ldJ313, ldJ322, ldJ323, ldJ333
+
+  CCTK_POINTER             lJ11_ptr, lJ12_ptr, lJ13_ptr
+  CCTK_POINTER             lJ21_ptr, lJ22_ptr, lJ23_ptr
+  CCTK_POINTER             lJ31_ptr, lJ32_ptr, lJ33_ptr
+  CCTK_POINTER             ldJ111_ptr, ldJ112_ptr, ldJ113_ptr, ldJ122_ptr, ldJ123_ptr, ldJ133_ptr
+  CCTK_POINTER             ldJ211_ptr, ldJ212_ptr, ldJ213_ptr, ldJ222_ptr, ldJ223_ptr, ldJ233_ptr
+  CCTK_POINTER             ldJ311_ptr, ldJ312_ptr, ldJ313_ptr, ldJ322_ptr, ldJ323_ptr, ldJ333_ptr
+
+  CCTK_REAL                jac(3,3), hes(3,3,3)
+
+  pointer (lJ11_ptr, lJ11), (lJ12_ptr, lJ12), (lJ13_ptr, lJ13)
+  pointer (lJ21_ptr, lJ21), (lJ22_ptr, lJ22), (lJ23_ptr, lJ23)
+  pointer (lJ31_ptr, lJ31), (lJ32_ptr, lJ32), (lJ33_ptr, lJ33)
+
+  pointer (ldJ111_ptr, ldJ111), (ldJ112_ptr, ldJ112), (ldJ113_ptr, ldJ113), (ldJ122_ptr, ldJ122), (ldJ123_ptr, ldJ123), (ldJ133_ptr, ldJ133)
+  pointer (ldJ211_ptr, ldJ211), (ldJ212_ptr, ldJ212), (ldJ213_ptr, ldJ213), (ldJ222_ptr, ldJ222), (ldJ223_ptr, ldJ223), (ldJ233_ptr, ldJ233)
+  pointer (ldJ311_ptr, ldJ311), (ldJ312_ptr, ldJ312), (ldJ313_ptr, ldJ313), (ldJ322_ptr, ldJ322), (ldJ323_ptr, ldJ323), (ldJ333_ptr, ldJ333)
+
+  ! TODO: can this be active but with a cartesian mapping choice?
+  call CCTK_IsFunctionAliased(istat, "MultiPatch_GetDomainSpecification")
+  if (istat == 0) then
+     use_jacobian = .false.
+  else
+     use_jacobian = .true.
+  end if
+
+  if (use_jacobian) then
+     call CCTK_VarDataPtr(lJ11_ptr, cctkGH, 0, "Coordinates::J11")
+     call CCTK_VarDataPtr(lJ12_ptr, cctkGH, 0, "Coordinates::J12")
+     call CCTK_VarDataPtr(lJ13_ptr, cctkGH, 0, "Coordinates::J13")
+     call CCTK_VarDataPtr(lJ21_ptr, cctkGH, 0, "Coordinates::J21")
+     call CCTK_VarDataPtr(lJ22_ptr, cctkGH, 0, "Coordinates::J22")
+     call CCTK_VarDataPtr(lJ23_ptr, cctkGH, 0, "Coordinates::J23")
+     call CCTK_VarDataPtr(lJ31_ptr, cctkGH, 0, "Coordinates::J31")
+     call CCTK_VarDataPtr(lJ32_ptr, cctkGH, 0, "Coordinates::J32")
+     call CCTK_VarDataPtr(lJ33_ptr, cctkGH, 0, "Coordinates::J33")
+
+     call CCTK_VarDataPtr(ldJ111_ptr, cctkGH, 0, "Coordinates::dJ111")
+     call CCTK_VarDataPtr(ldJ112_ptr, cctkGH, 0, "Coordinates::dJ112")
+     call CCTK_VarDataPtr(ldJ113_ptr, cctkGH, 0, "Coordinates::dJ113")
+     call CCTK_VarDataPtr(ldJ122_ptr, cctkGH, 0, "Coordinates::dJ122")
+     call CCTK_VarDataPtr(ldJ123_ptr, cctkGH, 0, "Coordinates::dJ123")
+     call CCTK_VarDataPtr(ldJ133_ptr, cctkGH, 0, "Coordinates::dJ133")
+
+     call CCTK_VarDataPtr(ldJ211_ptr, cctkGH, 0, "Coordinates::dJ211")
+     call CCTK_VarDataPtr(ldJ212_ptr, cctkGH, 0, "Coordinates::dJ212")
+     call CCTK_VarDataPtr(ldJ213_ptr, cctkGH, 0, "Coordinates::dJ213")
+     call CCTK_VarDataPtr(ldJ222_ptr, cctkGH, 0, "Coordinates::dJ222")
+     call CCTK_VarDataPtr(ldJ223_ptr, cctkGH, 0, "Coordinates::dJ223")
+     call CCTK_VarDataPtr(ldJ233_ptr, cctkGH, 0, "Coordinates::dJ233")
+
+     call CCTK_VarDataPtr(ldJ311_ptr, cctkGH, 0, "Coordinates::dJ311")
+     call CCTK_VarDataPtr(ldJ312_ptr, cctkGH, 0, "Coordinates::dJ312")
+     call CCTK_VarDataPtr(ldJ313_ptr, cctkGH, 0, "Coordinates::dJ313")
+     call CCTK_VarDataPtr(ldJ322_ptr, cctkGH, 0, "Coordinates::dJ322")
+     call CCTK_VarDataPtr(ldJ323_ptr, cctkGH, 0, "Coordinates::dJ323")
+     call CCTK_VarDataPtr(ldJ333_ptr, cctkGH, 0, "Coordinates::dJ333")
+end if
+
+
   dx12 = 12*CCTK_DELTA_SPACE(1)
   dy12 = 12*CCTK_DELTA_SPACE(2)
   dz12 = 12*CCTK_DELTA_SPACE(3)
@@ -76,6 +146,7 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   !$OMP PARALLEL DO COLLAPSE(3) &
   !$OMP PRIVATE(alph, beta, ch, hh, hu, trk, dethh,&
   !$OMP lphi1, lphi2, lKphi1, lKphi2,&
+  !$OMP d1_h11, d1_h12, d1_h13, d1_h22, d1_h23, d1_h33,&
   !$OMP d1_alph, d1_ch, d1_hh,&
   !$OMP d1_lphi1, d1_lphi2, d1_lKphi1, d1_lKphi2,&
   !$OMP d2_lphi1, d2_lphi2, ad1_lphi1, ad1_lphi2, ad1_lKphi1, ad1_lKphi2,&
@@ -85,7 +156,8 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   !$OMP rhs_lphi1, rhs_lphi2, rhs_lKphi1, rhs_lKphi2,&
   !$OMP i, j, k,&
   !$OMP di, dj, dk,&
-  !$OMP a, b, c, m, rsn1_2, rsn2_2, rr, lambda)
+  !$OMP a, b, c, m, rsn1_2, rsn2_2, rr, lambda, &
+  !$OMP jac, hes, beta_l)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
   do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
   do i = 1+cctk_nghostzones(1), cctk_lsh(1)-cctk_nghostzones(1)
@@ -121,6 +193,58 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
 
     !-------------------------------------------
 
+    ! hes(i,j,k) = jac(i,j),k
+    if (use_jacobian) then
+       jac(1,1) = lJ11(i,j,k)
+       jac(1,2) = lJ12(i,j,k)
+       jac(1,3) = lJ13(i,j,k)
+       jac(2,1) = lJ21(i,j,k)
+       jac(2,2) = lJ22(i,j,k)
+       jac(2,3) = lJ23(i,j,k)
+       jac(3,1) = lJ31(i,j,k)
+       jac(3,2) = lJ32(i,j,k)
+       jac(3,3) = lJ33(i,j,k)
+
+       hes(1,1,1) = ldJ111(i,j,k)
+       hes(1,1,2) = ldJ112(i,j,k)
+       hes(1,1,3) = ldJ113(i,j,k)
+       hes(1,2,1) = ldJ112(i,j,k)
+       hes(1,2,2) = ldJ122(i,j,k)
+       hes(1,2,3) = ldJ123(i,j,k)
+       hes(1,3,1) = ldJ113(i,j,k)
+       hes(1,3,2) = ldJ123(i,j,k)
+       hes(1,3,3) = ldJ133(i,j,k)
+
+       hes(2,1,1) = ldJ211(i,j,k)
+       hes(2,1,2) = ldJ212(i,j,k)
+       hes(2,1,3) = ldJ213(i,j,k)
+       hes(2,2,1) = ldJ212(i,j,k)
+       hes(2,2,2) = ldJ222(i,j,k)
+       hes(2,2,3) = ldJ223(i,j,k)
+       hes(2,3,1) = ldJ213(i,j,k)
+       hes(2,3,2) = ldJ223(i,j,k)
+       hes(2,3,3) = ldJ233(i,j,k)
+
+       hes(3,1,1) = ldJ311(i,j,k)
+       hes(3,1,2) = ldJ312(i,j,k)
+       hes(3,1,3) = ldJ313(i,j,k)
+       hes(3,2,1) = ldJ312(i,j,k)
+       hes(3,2,2) = ldJ322(i,j,k)
+       hes(3,2,3) = ldJ323(i,j,k)
+       hes(3,3,1) = ldJ313(i,j,k)
+       hes(3,3,2) = ldJ323(i,j,k)
+       hes(3,3,3) = ldJ333(i,j,k)
+    else
+       jac      = 0.0
+       jac(1,1) = 1.0
+       jac(2,2) = 1.0
+       jac(3,3) = 1.0
+       hes      = 0.0
+    end if
+    ! write(*,*) 'J = ', jac
+
+    !-------------------------------------------
+
 
     !------------ Invert 3-metric ----------------
     ! NOTE: deth = 1 by construction, but that is not satisfied numerically
@@ -138,6 +262,15 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
     hu(2,1) = hu(1,2)
     hu(3,1) = hu(1,3)
     hu(3,2) = hu(2,3)
+    !-------------------------------------------
+
+    !---- compute beta in local coordinates ----
+    beta_l = 0
+    do m = 1, 3
+       do a = 1, 3
+          beta_l(m) = beta_l(m) + jac(m,a) * beta(a)
+       end do
+    end do
     !-------------------------------------------
 
 
