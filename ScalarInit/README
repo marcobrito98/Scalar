@@ -14,9 +14,6 @@ Current choices include
 - Gaussian containing a superposition of modes
 - (quasi-) boundstates for massive fields
 
-NOTE: the current implementation inherits parameters from the thorn KerrQuasiIsotropic to set up the bound-state data
-TODO: change this dependency in the future so that the scalar is set up independently of the background
-
 2. Applications
 ================
 - evolution of massive scalar fields in the background of rotating black holes (see Witek et al '12)

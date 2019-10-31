@@ -147,17 +147,22 @@ KerrQuasiIsotropic::m_plus            = 1.0
 KerrQuasiIsotropic::pos_plus[0]       = 0.0
 KerrQuasiIsotropic::spin_plus         = 0.99
 
-# Scalar field initial data for a quasi-boundstate with l=m=1
-ScalarBase::initial_scalar      = ID_SF_BS
-ScalarBase::mu                  = 0.42
+# Scalar field constant initial data (if needed angular dependence can be selected below up to l=2 spherical harmonics)
+ScalarBase::initial_scalar      = ID_SF_Const
+ScalarBase::mu                  = 0.
 
 # Need to be the same as the black hole parameters above 
 ScalarInit::m_plus              = 1.0
 ScalarInit::pos_plus[0]         = 0.0
 ScalarInit::spin_plus           = 0.99
-ScalarInit::wR                  = 0.408806
-ScalarInit::wI                  = 1.50391d-07
-ScalarInit::n_sum               = 200
+
+ScalarInit::l0SF                = 0
+ScalarInit::m0SF                = 0
+ScalarInit::ampSF               = 1.0
+
+#ScalarInit::wR                  = 0.408806
+#ScalarInit::wI                  = 1.50391d-07
+#ScalarInit::n_sum               = 200
 
 InitBase::initial_data_setup_method   = "init_some_levels"
 Carpet::init_fill_timelevels          = yes
@@ -354,6 +359,7 @@ IOASCII::out0D_vars  = "
 IOASCII::output_symmetry_points = no
 IOASCII::out3D_ghosts           = no
 
+
 # 1D text output
 IOASCII::out1D_every            = 1
 IOASCII::out1D_d                = no
@@ -426,7 +432,7 @@ CarpetIOHDF5::compression_level             = 9
 # Run termination
 #-------------------------------------------------------------------------------
 
-TerminationTrigger::max_walltime                 = 12 # hours
+TerminationTrigger::max_walltime                 = 1 # hours
 TerminationTrigger::on_remaining_walltime        = 30 # minutes
 TerminationTrigger::output_remtime_every_minutes = 30
 

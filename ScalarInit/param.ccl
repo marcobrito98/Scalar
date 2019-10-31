@@ -11,17 +11,11 @@ EXTENDS KEYWORD initial_scalar "Which scalar field initial data"
 {
   "ID_SF_Gaussian" :: "use Gaussian initial data"
   "ID_SF_BS"       :: "bound-state initial data"
+  "ID_SF_Const"    :: "constant initial data"
+  
 }
 
 USES CCTK_REAL mu
-
-#=== parameters from KerrQuasiIsotropic =====
-## Needed for quasi-bound state initial data
-SHARES: KerrQuasiIsotropic
-
-USES CCTK_REAL m_plus 
-USES CCTK_REAL spin_plus 
-USES CCTK_REAL pos_plus 
 
 #=== local parameters ==========================
 RESTRICTED:
@@ -64,7 +58,23 @@ CCTK_REAL r0SF "location of Gaussian wave packet"
 
 
 #=== parameters for bound-state initial data ===
+## Black hole parameters
+CCTK_REAL m_plus "mass of the m+ puncture black hole" 
+{
+  0.0:* :: "any positive value"
+} 1.0
 
+CCTK_REAL spin_plus "spin of the Kerr BH with z being the rotation axis"
+{
+  0:1  :: "any value between 0 and 1"
+} 0.0
+
+CCTK_REAL pos_plus[3] "position of the m+ puncture"
+{
+  *:* :: "any value possible; for zero spin set pos_plus[0]=0.0001"
+} 0.0
+
+## Scalar field parameters
 CCTK_REAL wR "real part of frequency for bound state"
 {
   *:*  :: "depends on spin and mass; 0.408806 for l=m=1, a/M=0.99, mu=0.42"
