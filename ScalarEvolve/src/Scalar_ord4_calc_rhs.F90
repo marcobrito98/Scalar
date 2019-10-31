@@ -441,20 +441,79 @@ end if
     d2_lphi2(3,1) = d2_lphi2(1,3)
     d2_lphi2(3,2) = d2_lphi2(2,3)
 
+    !------------ Advection derivatives --------
+    if( use_advection_stencils /= 0 ) then
 
+      di = int( sign( one, beta_l(1) ) )
+      dj = int( sign( one, beta_l(2) ) )
+      dk = int( sign( one, beta_l(3) ) )
+
+      ! ad1_lphi1
+      d1_f(1) = di * ( -3*phi1(i-di,j,k) - 10*phi1(i,j,k) + 18*phi1(i+di,j,k)   &
+                      - 6*phi1(i+2*di,j,k)  + phi1(i+3*di,j,k)) / dx12
+      d1_f(2) = dj * ( -3*phi1(i,j-dj,k) - 10*phi1(i,j,k) + 18*phi1(i,j+dj,k)   &
+                      - 6*phi1(i,j+2*dj,k)  + phi1(i,j+3*dj,k)) / dy12
+      d1_f(3) = dk * ( -3*phi1(i,j,k-dk) - 10*phi1(i,j,k) + 18*phi1(i,j,k+dk)   &
+                      - 6*phi1(i,j,k+2*dk)  + phi1(i,j,k+3*dk)) / dz12
+      ad1_lphi1 = beta_l(1)*d1_f(1) + beta_l(2)*d1_f(2) + beta_l(3)*d1_f(3)
+
+      ! ad1_lKphi1
+      d1_f(1) = di * ( -3*Kphi1(i-di,j,k) - 10*Kphi1(i,j,k) + 18*Kphi1(i+di,j,k)   &
+                      - 6*Kphi1(i+2*di,j,k)  + Kphi1(i+3*di,j,k)) / dx12
+      d1_f(2) = dj * ( -3*Kphi1(i,j-dj,k) - 10*Kphi1(i,j,k) + 18*Kphi1(i,j+dj,k)   &
+                      - 6*Kphi1(i,j+2*dj,k)  + Kphi1(i,j+3*dj,k)) / dy12
+      d1_f(3) = dk * ( -3*Kphi1(i,j,k-dk) - 10*Kphi1(i,j,k) + 18*Kphi1(i,j,k+dk)   &
+                      - 6*Kphi1(i,j,k+2*dk)  + Kphi1(i,j,k+3*dk)) / dz12
+      ad1_lKphi1 = beta_l(1)*d1_f(1) + beta_l(2)*d1_f(2) + beta_l(3)*d1_f(3)
+
+      ! ad1_lphi2
+      d1_f(1) = di * ( -3*phi2(i-di,j,k) - 10*phi2(i,j,k) + 18*phi2(i+di,j,k)   &
+                      - 6*phi2(i+2*di,j,k)  + phi2(i+3*di,j,k)) / dx12
+      d1_f(2) = dj * ( -3*phi2(i,j-dj,k) - 10*phi2(i,j,k) + 18*phi2(i,j+dj,k)   &
+                      - 6*phi2(i,j+2*dj,k)  + phi2(i,j+3*dj,k)) / dy12
+      d1_f(3) = dk * ( -3*phi2(i,j,k-dk) - 10*phi2(i,j,k) + 18*phi2(i,j,k+dk)   &
+                      - 6*phi2(i,j,k+2*dk)  + phi2(i,j,k+3*dk)) / dz12
+      ad1_lphi2 = beta_l(1)*d1_f(1) + beta_l(2)*d1_f(2) + beta_l(3)*d1_f(3)
+
+      ! ad1_lKphi2
+      d1_f(1) = di * ( -3*Kphi2(i-di,j,k) - 10*Kphi2(i,j,k) + 18*Kphi2(i+di,j,k)   &
+                      - 6*Kphi2(i+2*di,j,k)  + Kphi2(i+3*di,j,k)) / dx12
+      d1_f(2) = dj * ( -3*Kphi2(i,j-dj,k) - 10*Kphi2(i,j,k) + 18*Kphi2(i,j+dj,k)   &
+                      - 6*Kphi2(i,j+2*dj,k)  + Kphi2(i,j+3*dj,k)) / dy12
+      d1_f(3) = dk * ( -3*Kphi2(i,j,k-dk) - 10*Kphi2(i,j,k) + 18*Kphi2(i,j,k+dk)   &
+                      - 6*Kphi2(i,j,k+2*dk)  + Kphi2(i,j,k+3*dk)) / dz12
+      ad1_lKphi2 = beta_l(1)*d1_f(1) + beta_l(2)*d1_f(2) + beta_l(3)*d1_f(3)
+
+    else
+
+      ! ad1_lphi1
+      ad1_lphi1 = beta_l(1)*d1_lphi1(1) + beta_l(2)*d1_lphi1(2) + beta_l(3)*d1_lphi1(3)
+
+      ! ad1_lKphi1
+      ad1_lKphi1 = beta_l(1)*d1_lKphi1(1) + beta_l(2)*d1_lKphi1(2) + beta_l(3)*d1_lKphi1(3)
+
+      ! ad1_lphi2
+      ad1_lphi2 = beta_l(1)*d1_lphi2(1) + beta_l(2)*d1_lphi2(2) + beta_l(3)*d1_lphi2(3)
+
+      ! ad1_lKphi2
+      ad1_lKphi2 = beta_l(1)*d1_lKphi2(1) + beta_l(2)*d1_lKphi2(2) + beta_l(3)*d1_lKphi2(3)
+
+    end if
+
+    !-------------------------------------------
     if (use_jacobian) then
-       call IST_Scalar_apply_jacobian(d1_alph, jac)
-       call IST_Scalar_apply_jacobian(d1_lKphi1, jac)
-       call IST_Scalar_apply_jacobian(d1_lKphi2, jac)
-       call IST_Scalar_apply_jacobian(d1_hh11, jac)
-       call IST_Scalar_apply_jacobian(d1_hh12, jac)
-       call IST_Scalar_apply_jacobian(d1_hh13, jac)
-       call IST_Scalar_apply_jacobian(d1_hh22, jac)
-       call IST_Scalar_apply_jacobian(d1_hh23, jac)
-       call IST_Scalar_apply_jacobian(d1_hh33, jac)
+       call Scalar_apply_jacobian(d1_alph, jac)
+       call Scalar_apply_jacobian(d1_lKphi1, jac)
+       call Scalar_apply_jacobian(d1_lKphi2, jac)
+       call Scalar_apply_jacobian(d1_hh11, jac)
+       call Scalar_apply_jacobian(d1_hh12, jac)
+       call Scalar_apply_jacobian(d1_hh13, jac)
+       call Scalar_apply_jacobian(d1_hh22, jac)
+       call Scalar_apply_jacobian(d1_hh23, jac)
+       call Scalar_apply_jacobian(d1_hh33, jac)
 
-       call IST_Scalar_apply_jacobian2(d1_lphi1, d2_lphi1, jac, hes)
-       call IST_Scalar_apply_jacobian2(d1_lphi2, d2_lphi2, jac, hes)
+       call Scalar_apply_jacobian2(d1_lphi1, d2_lphi1, jac, hes)
+       call Scalar_apply_jacobian2(d1_lphi2, d2_lphi2, jac, hes)
     end if
 
     d1_hh(1,1,:) = d1_hh11(:)
@@ -466,66 +525,6 @@ end if
     d1_hh(2,1,:) = d1_hh(1,2,:)
     d1_hh(3,1,:) = d1_hh(1,3,:)
     d1_hh(3,2,:) = d1_hh(2,3,:)
-
-    !------------ Advection derivatives --------
-    if( use_advection_stencils /= 0 ) then
-
-      di = int( sign( one, beta(1) ) )
-      dj = int( sign( one, beta(2) ) )
-      dk = int( sign( one, beta(3) ) )
-
-      ! ad1_lphi1
-      d1_f(1) = di * ( -3*phi1(i-di,j,k) - 10*phi1(i,j,k) + 18*phi1(i+di,j,k)   &
-                      - 6*phi1(i+2*di,j,k)  + phi1(i+3*di,j,k)) / dx12
-      d1_f(2) = dj * ( -3*phi1(i,j-dj,k) - 10*phi1(i,j,k) + 18*phi1(i,j+dj,k)   &
-                      - 6*phi1(i,j+2*dj,k)  + phi1(i,j+3*dj,k)) / dy12
-      d1_f(3) = dk * ( -3*phi1(i,j,k-dk) - 10*phi1(i,j,k) + 18*phi1(i,j,k+dk)   &
-                      - 6*phi1(i,j,k+2*dk)  + phi1(i,j,k+3*dk)) / dz12
-      ad1_lphi1 = beta(1)*d1_f(1) + beta(2)*d1_f(2) + beta(3)*d1_f(3)
-
-      ! ad1_lKphi1
-      d1_f(1) = di * ( -3*Kphi1(i-di,j,k) - 10*Kphi1(i,j,k) + 18*Kphi1(i+di,j,k)   &
-                      - 6*Kphi1(i+2*di,j,k)  + Kphi1(i+3*di,j,k)) / dx12
-      d1_f(2) = dj * ( -3*Kphi1(i,j-dj,k) - 10*Kphi1(i,j,k) + 18*Kphi1(i,j+dj,k)   &
-                      - 6*Kphi1(i,j+2*dj,k)  + Kphi1(i,j+3*dj,k)) / dy12
-      d1_f(3) = dk * ( -3*Kphi1(i,j,k-dk) - 10*Kphi1(i,j,k) + 18*Kphi1(i,j,k+dk)   &
-                      - 6*Kphi1(i,j,k+2*dk)  + Kphi1(i,j,k+3*dk)) / dz12
-      ad1_lKphi1 = beta(1)*d1_f(1) + beta(2)*d1_f(2) + beta(3)*d1_f(3)
-
-      ! ad1_lphi2
-      d1_f(1) = di * ( -3*phi2(i-di,j,k) - 10*phi2(i,j,k) + 18*phi2(i+di,j,k)   &
-                      - 6*phi2(i+2*di,j,k)  + phi2(i+3*di,j,k)) / dx12
-      d1_f(2) = dj * ( -3*phi2(i,j-dj,k) - 10*phi2(i,j,k) + 18*phi2(i,j+dj,k)   &
-                      - 6*phi2(i,j+2*dj,k)  + phi2(i,j+3*dj,k)) / dy12
-      d1_f(3) = dk * ( -3*phi2(i,j,k-dk) - 10*phi2(i,j,k) + 18*phi2(i,j,k+dk)   &
-                      - 6*phi2(i,j,k+2*dk)  + phi2(i,j,k+3*dk)) / dz12
-      ad1_lphi2 = beta(1)*d1_f(1) + beta(2)*d1_f(2) + beta(3)*d1_f(3)
-
-      ! ad1_lKphi2
-      d1_f(1) = di * ( -3*Kphi2(i-di,j,k) - 10*Kphi2(i,j,k) + 18*Kphi2(i+di,j,k)   &
-                      - 6*Kphi2(i+2*di,j,k)  + Kphi2(i+3*di,j,k)) / dx12
-      d1_f(2) = dj * ( -3*Kphi2(i,j-dj,k) - 10*Kphi2(i,j,k) + 18*Kphi2(i,j+dj,k)   &
-                      - 6*Kphi2(i,j+2*dj,k)  + Kphi2(i,j+3*dj,k)) / dy12
-      d1_f(3) = dk * ( -3*Kphi2(i,j,k-dk) - 10*Kphi2(i,j,k) + 18*Kphi2(i,j,k+dk)   &
-                      - 6*Kphi2(i,j,k+2*dk)  + Kphi2(i,j,k+3*dk)) / dz12
-      ad1_lKphi2 = beta(1)*d1_f(1) + beta(2)*d1_f(2) + beta(3)*d1_f(3)
-
-    else
-
-      ! ad1_lphi1
-      ad1_lphi1 = beta(1)*d1_lphi1(1) + beta(2)*d1_lphi1(2) + beta(3)*d1_lphi1(3)
-
-      ! ad1_lKphi1
-      ad1_lKphi1 = beta(1)*d1_lKphi1(1) + beta(2)*d1_lKphi1(2) + beta(3)*d1_lKphi1(3)
-
-      ! ad1_lphi2
-      ad1_lphi2 = beta(1)*d1_lphi2(1) + beta(2)*d1_lphi2(2) + beta(3)*d1_lphi2(3)
-
-      ! ad1_lKphi2
-      ad1_lKphi2 = beta(1)*d1_lKphi2(1) + beta(2)*d1_lKphi2(2) + beta(3)*d1_lKphi2(3)
-
-    end if
-
     !-------------------------------------------
 
 
@@ -759,4 +758,3 @@ subroutine Scalar_ord4_calc_rhs_bdry_sph( CCTK_ARGUMENTS )
   ! TODO
 
 end subroutine Scalar_ord4_calc_rhs_bdry_sph
-
