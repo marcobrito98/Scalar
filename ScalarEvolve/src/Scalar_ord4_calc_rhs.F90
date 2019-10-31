@@ -740,7 +740,8 @@ subroutine Scalar_ord4_calc_rhs_bdry_sph( CCTK_ARGUMENTS )
 
   CCTK_INT  i, j, k
   CCTK_REAL odr2
-  CCTK_REAL alph, lphi, lKphi, dr_lphi, dr_lKphi
+  CCTK_REAL alph, lphi1, lphi2, lKphi1, lKphi2
+  CCTK_REAL dr_lphi1, dr_lphi2, dr_lKphi1, dr_lKphi2
   CCTK_REAL rr
 
   CCTK_INT  reflevel, map
@@ -755,6 +756,35 @@ subroutine Scalar_ord4_calc_rhs_bdry_sph( CCTK_ARGUMENTS )
   ! want those
   if (reflevel /= 0 .or. map == 0 .or. cctk_bbox(6) == 0) return
 
-  ! TODO
+  do k = cctk_lsh(3)-cctk_nghostzones(3)+1, cctk_lsh(3)
+     do j = 1, cctk_lsh(2)
+        do i = 1, cctk_lsh(1)
+
+           rr       = r(i,j,k)
+
+           alph     = alp(i,j,k)
+           lphi1    = phi1(i,j,k)
+           lphi2    = phi2(i,j,k)
+           lKphi1   = Kphi1(i,j,k)
+           lKphi2   = Kphi2(i,j,k)
+
+           dr_lphi1  = (phi1(i,j,k-2) - 4*phi1(i,j,k-1) + 3*phi1(i,j,k))*odr2
+           dr_lphi2  = (phi2(i,j,k-2) - 4*phi2(i,j,k-1) + 3*phi2(i,j,k))*odr2
+           dr_lKphi1 = (Kphi1(i,j,k-2) - 4*Kphi1(i,j,k-1) + 3*Kphi1(i,j,k))*odr2
+           dr_lKphi2 = (Kphi2(i,j,k-2) - 4*Kphi2(i,j,k-1) + 3*Kphi2(i,j,k))*odr2
+
+           ! FIXME: the boundary conditions here should really be the ones
+           ! below, but more tests are needed
+           rhs_phi1(i,j,k)  = -dr_lphi1 - lphi1 / rr
+           rhs_phi2(i,j,k)  = -dr_lphi2 - lphi2 / rr
+           ! rhs_phi1(i,j,k)  = -2.0 * alph * lKphi1
+           ! rhs_phi2(i,j,k)  = -2.0 * alph * lKphi2
+
+           rhs_Kphi1(i,j,k) = -dr_lKphi1 - lKphi1 / rr + 0.25 * mu**2 * alph * lphi1
+           rhs_Kphi2(i,j,k) = -dr_lKphi2 - lKphi2 / rr + 0.25 * mu**2 * alph * lphi2
+
+        end do
+     end do
+  end do
 
 end subroutine Scalar_ord4_calc_rhs_bdry_sph
