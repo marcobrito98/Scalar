@@ -5,7 +5,7 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
   STORAGE: rhs_phi rhs_Kphi
   STORAGE: hmetric conf_fac_chi trk
 
-  schedule IST_Scalar_Init at CCTK_PARAMCHECK
+  schedule Scalar_Init at CCTK_PARAMCHECK
   {
     LANG: C
     OPTIONS: global
