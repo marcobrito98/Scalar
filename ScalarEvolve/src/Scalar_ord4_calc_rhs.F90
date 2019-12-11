@@ -504,6 +504,7 @@ end if
     if (use_jacobian) then
        call Scalar_apply_jacobian(d1_alph, jac)
        call Scalar_apply_jacobian(d1_lKphi1, jac)
+       call Scalar_apply_jacobian(d1_ch, jac)
        call Scalar_apply_jacobian(d1_lKphi2, jac)
        call Scalar_apply_jacobian(d1_hh11, jac)
        call Scalar_apply_jacobian(d1_hh12, jac)
