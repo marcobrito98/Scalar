@@ -545,16 +545,13 @@ end if
     cf2 = 0
     do a = 1, 3
       do b = 1, 3
-        do c = b, 3
+        do c = 1, 3
           do m = 1, 3
             cf2(a,b,c) = cf2(a,b,c) + hu(a,m) * cf1(m,b,c)
           end do
         end do
       end do
     end do
-    cf2(:,2,1) = cf2(:,1,2)
-    cf2(:,3,1) = cf2(:,1,3)
-    cf2(:,3,2) = cf2(:,2,3)
     !-------------------------------------------
 
 
@@ -562,20 +559,13 @@ end if
     cd2_lphi1  = d2_lphi1
     cd2_lphi2  = d2_lphi2
     do a = 1, 3
-      do b = a, 3
+      do b = 1, 3
         do m = 1, 3
           cd2_lphi1(a,b)  = cd2_lphi1(a,b) - cf2(m,a,b) * d1_lphi1(m)
           cd2_lphi2(a,b)  = cd2_lphi2(a,b) - cf2(m,a,b) * d1_lphi2(m)
         end do
       end do
     end do
-    cd2_lphi1(2,1) = cd2_lphi1(1,2)
-    cd2_lphi1(3,1) = cd2_lphi1(1,3)
-    cd2_lphi1(3,2) = cd2_lphi1(2,3)
-    cd2_lphi2(2,1) = cd2_lphi2(1,2)
-    cd2_lphi2(3,1) = cd2_lphi2(1,3)
-    cd2_lphi2(3,2) = cd2_lphi2(2,3)
-
     !-------------------------------------------
 
     !------------ Advection and Twist terms ----
