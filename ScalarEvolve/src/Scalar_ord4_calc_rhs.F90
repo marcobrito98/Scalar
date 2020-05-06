@@ -594,9 +594,9 @@ end if
     !------------ Source terms -----------------
 
     ! rhs_lphi1, rhs_lphi2 
-    rhs_lphi1 = rhs_lphi1 - 2.0 * alph * lKphi1
+    rhs_lphi1 = rhs_lphi1 - 2.0d0 * alph * lKphi1
 
-    rhs_lphi2 = rhs_lphi2 - 2.0 * alph * lKphi2
+    rhs_lphi2 = rhs_lphi2 - 2.0d0 * alph * lKphi2
 
 
     ! rhs_lKphi1, rhs_lKphi2
@@ -617,13 +617,13 @@ end if
       end do
     end do
 
-    rhs_lKphi1 = rhs_lKphi1 - 0.5 * ch * tr_dalp_dphi1                         &
-                 + 0.5 * alph * ( - ch * tr_cd2_phi1 + 0.5 * tr_dch_dphi1      &
-                                  + mu*mu * lphi1 + 2.0 * trk * lKphi1 )
+    rhs_lKphi1 = rhs_lKphi1 - 0.5d0 * ch * tr_dalp_dphi1                           &
+                 + 0.5d0 * alph * ( - ch * tr_cd2_phi1 + 0.5d0 * tr_dch_dphi1      &
+                                    + mu*mu * lphi1 + 2 * trk * lKphi1 )
 
-    rhs_lKphi2 = rhs_lKphi2 - 0.5 * ch * tr_dalp_dphi2                         &
-                 + 0.5 * alph * ( - ch * tr_cd2_phi2 + 0.5 * tr_dch_dphi2      &
-                                  + mu*mu * lphi2 + 2.0 * trk * lKphi2 )
+    rhs_lKphi2 = rhs_lKphi2 - 0.5d0 * ch * tr_dalp_dphi2                           &
+                 + 0.5d0 * alph * ( - ch * tr_cd2_phi2 + 0.5d0 * tr_dch_dphi2      &
+                                    + mu*mu * lphi2 + 2 * trk * lKphi2 )
 
     !-------------------------------------------
 
@@ -665,18 +665,18 @@ end if
        else if(rsn1_2 < Rin_excision1 * Rin_excision1 .or.      &
                rsn2_2 < Rin_excision2 * Rin_excision2) then
           ! excision zone
-          rhs_phi1(i,j,k)  = 0.0
-          rhs_phi2(i,j,k)  = 0.0
-          rhs_Kphi1(i,j,k) = 0.0
-          rhs_Kphi2(i,j,k) = 0.0
+          rhs_phi1(i,j,k)  = 0.0d0
+          rhs_phi2(i,j,k)  = 0.0d0
+          rhs_Kphi1(i,j,k) = 0.0d0
+          rhs_Kphi2(i,j,k) = 0.0d0
        else
           ! buffer zone
           if (rsn1_2 < rsn2_2) then
              rr = sqrt(rsn1_2)
-             lambda = 0.5 * (1 + tanh( 1./(Rin_excision1 - rr) - 1./(rr - Rout_excision1) ) )
+             lambda = 0.50d0 * (1 + tanh( 1.0d0/(Rin_excision1 - rr) - 1.0d0/(rr - Rout_excision1) ) )
           else
              rr = sqrt(rsn2_2)
-             lambda = 0.5 * (1 + tanh( 1./(Rin_excision2 - rr) - 1./(rr - Rout_excision2) ) )
+             lambda = 0.50d0 * (1 + tanh( 1.0d0/(Rin_excision2 - rr) - 1.0d0/(rr - Rout_excision2) ) )
           end if
           rhs_phi1(i,j,k)  = lambda * rhs_lphi1
           rhs_phi2(i,j,k)  = lambda * rhs_lphi2
@@ -778,11 +778,11 @@ subroutine Scalar_ord4_calc_rhs_bdry_sph( CCTK_ARGUMENTS )
            ! below, but more tests are needed
            rhs_phi1(i,j,k)  = -dr_lphi1 - lphi1 / rr
            rhs_phi2(i,j,k)  = -dr_lphi2 - lphi2 / rr
-           ! rhs_phi1(i,j,k)  = -2.0 * alph * lKphi1
-           ! rhs_phi2(i,j,k)  = -2.0 * alph * lKphi2
+           ! rhs_phi1(i,j,k)  = -2.0d0 * alph * lKphi1
+           ! rhs_phi2(i,j,k)  = -2.0d0 * alph * lKphi2
 
-           rhs_Kphi1(i,j,k) = -dr_lKphi1 - lKphi1 / rr + 0.25 * mu**2 * alph * lphi1
-           rhs_Kphi2(i,j,k) = -dr_lKphi2 - lKphi2 / rr + 0.25 * mu**2 * alph * lphi2
+           rhs_Kphi1(i,j,k) = -dr_lKphi1 - lKphi1 / rr + 0.25d0 * mu**2 * alph * lphi1
+           rhs_Kphi2(i,j,k) = -dr_lKphi2 - lKphi2 / rr + 0.25d0 * mu**2 * alph * lphi2
 
         end do
      end do

@@ -108,14 +108,14 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
               jac(3,2) = lJ32(i,j,k)
               jac(3,3) = lJ33(i,j,k)
            else
-              jac      = 0.0
-              jac(1,1) = 1.0
-              jac(2,2) = 1.0
-              jac(3,3) = 1.0
+              jac      = 0.0d0
+              jac(1,1) = 1.0d0
+              jac(2,2) = 1.0d0
+              jac(3,3) = 1.0d0
            end if
 
            ! now we compute beta_i (betad)
-           betad = 0
+           betad = 0.0d0
            do a = 1, 3
               do b = 1, 3
                  betad(a) = betad(a) + gg(a,b) * beta(b)
@@ -161,7 +161,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
            gu(1,4) = beta(1) / (alph * alph)
            gu(2,4) = beta(2) / (alph * alph)
            gu(3,4) = beta(3) / (alph * alph)
-           gu(4,4) = -1. / (alph * alph)
+           gu(4,4) = -1.0d0 / (alph * alph)
 
            gu(2,1) = gu(1,2)
            gu(3,1) = gu(1,3)
