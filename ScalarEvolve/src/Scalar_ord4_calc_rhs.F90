@@ -135,11 +135,6 @@ end if
   dxdz144 = 144*CCTK_DELTA_SPACE(1)*CCTK_DELTA_SPACE(3)
   dydz144 = 144*CCTK_DELTA_SPACE(2)*CCTK_DELTA_SPACE(3)
 
-  rhs_phi1   = 0
-  rhs_phi2   = 0
-  rhs_Kphi1  = 0
-  rhs_Kphi2  = 0
-
   ! convert ADM variables to BSSN-like ones
   call Scalar_adm2bssn(CCTK_PASS_FTOF)
 
