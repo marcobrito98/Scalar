@@ -13,14 +13,6 @@ void Scalar_Init(CCTK_ARGUMENTS)
     return;
   }
 
-  if (CCTK_Equals(coordinate_system, "Cartesian") && z_is_radial) {
-    CCTK_ERROR("Set z_is_radial to no with Cartesian grid.");
-  } else if ((CCTK_Equals(coordinate_system, "Thornburg04") ||
-              CCTK_Equals(coordinate_system, "Thornburg04nc")) &&
-             !z_is_radial) {
-    CCTK_ERROR("Set z_is_radial to yes with this coordinate_system choice");
-  }
-
   if (CCTK_Equals(outer_bound, "reflecting") && !z_is_radial)
     CCTK_ERROR("this outer_bound only runs with Llama.");
 

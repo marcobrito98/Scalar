@@ -1,8 +1,5 @@
 # Parameter definitions for thorn ScalarEvolve
 
-shares: Coordinates
-USES keyword coordinate_system
-
 shares: ScalarBase
 USES CCTK_REAL mu
 USES CCTK_REAL phi1_0
