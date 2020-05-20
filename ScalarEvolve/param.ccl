@@ -1,5 +1,8 @@
 # Parameter definitions for thorn ScalarEvolve
 
+shares: Coordinates
+USES keyword coordinate_system
+
 shares: ScalarBase
 USES CCTK_REAL mu
 USES CCTK_REAL phi1_0
@@ -72,3 +75,14 @@ CCTK_REAL excision_surface_rout_factor[2] "Rout factor of excision surface"
 {
   0:* :: ""
 } 0.6
+
+
+KEYWORD outer_bound "outer boundary condition"
+{
+  "radiative"     :: "Sommerfeld BC"
+  "reflecting"    :: "reflecting BC"
+} "radiative"
+
+BOOLEAN z_is_radial "use with multipatch"
+{
+} "no"

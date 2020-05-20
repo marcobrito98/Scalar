@@ -1,0 +1,133 @@
+# Parameter definitions for thorn ScalarInit
+#============================================
+
+#=== parameters from ADMBase ================
+##SHARES: ADMBase
+#USES KEYWORD metric_type
+#=== parameters from ScalarBase =============
+SHARES: ScalarBase
+
+EXTENDS KEYWORD initial_scalar "Which scalar field initial data"
+{
+  "ID_SF_Gaussian" :: "use Gaussian initial data"
+  "ID_SF_BS"       :: "bound-state initial data"
+  "ID_SF_Const"    :: "constant initial data"
+  
+}
+
+USES CCTK_REAL mu
+
+#=== local parameters ==========================
+RESTRICTED:
+
+#=== parameters for Gaussian initial data ======
+KEYWORD scalar_GaussProfile "Which mode composition for the Gaussian?"
+{
+  "single_mode"       :: "single mode initial data with (l0,m0)"
+  "superpose_ID010"   :: "superpose Y00, Y10 as initial data"
+  "superpose_ID011"   :: "superpose Y00, Y11 as initial data"
+  "superpose_ID01011" :: "superpose Y00, Y10, Y11 as initial data"
+  "superpose_ID012"   :: "superpose Y10 + Y11 + Y20 + Y22 as initial data"
+} "single_mode"
+
+
+CCTK_INT l0SF "angular quantum number"
+{
+ 0:2    :: "for now we've implemented the spherical harmonics only up to l=2"
+} 1
+
+CCTK_INT m0SF "azimuthal quantum number"
+{
+ -2:2   :: "for now we've implemented the spherical harmonics only up to l=2"
+} 1
+
+CCTK_REAL ampSF "amplitude of Gaussian wave packet"
+{
+  *:*   :: "any value possible"
+} 1.0
+
+CCTK_REAL widthSF "width of Gaussian wave packet"
+{
+  0:*   :: "any positive value possible"
+} 2.0
+
+CCTK_REAL r0SF "location of Gaussian wave packet"
+{
+  0:*   :: "any positive value possible"
+} 10.0
+
+
+#=== parameters for bound-state initial data ===
+## Black hole parameters
+CCTK_REAL m_plus "mass of the m+ puncture black hole" 
+{
+  0.0:* :: "any positive value"
+} 1.0
+
+CCTK_REAL spin_plus "spin of the Kerr BH with z being the rotation axis"
+{
+  0:1  :: "any value between 0 and 1"
+} 0.0
+
+CCTK_REAL pos_plus[3] "position of the m+ puncture"
+{
+  *:* :: "any value possible; for zero spin set pos_plus[0]=0.0001"
+} 0.0
+
+## Scalar field parameters
+CCTK_REAL wR "real part of frequency for bound state"
+{
+  *:*  :: "depends on spin and mass; 0.408806 for l=m=1, a/M=0.99, mu=0.42"
+} 0.0
+
+CCTK_REAL wI "im part of frequency for bound state"
+{
+  *:*  :: "depends on spin and mass; 1.50391*10^{-7} for l=m=1, a/M=0.99, mu=0.42"
+} 0.0
+
+CCTK_REAL A0  "zeroth element in Sum, Eq.33 of Dolan '07"
+{
+  0:*  :: "..."
+} 1.0
+
+CCTK_REAL Ap0  "zeroth element in Sum for spheroidal harmonics"
+{
+  0:*  :: "..."
+} 1.0
+
+CCTK_INT n_sum "numbers of elements in Sum, Eq.33 Dolan '07"
+{
+  1:*  :: "..."
+} 200
+
+
+#===============================================
+#=== auxiliary paraameters =====================
+#===============================================
+
+CCTK_REAL eps_r "of value if r approaches zero"
+{
+  0:*   :: "any small positive value possible"
+} 1.0d-06
+
+CCTK_REAL eps_r2 "of value if r2 approaches zero"
+{
+  0:*   :: "any small positive value possible"
+} 1.0d-10
+
+##CCTK_REAL eps_Rp "of value if (rBL-rBLp) approaches zero"
+##{
+##  0:*   :: "any small positive value possible"
+##} 1.0d-04
+##
+##CCTK_REAL eps_Rm "of value if (rBL-rBLm) approaches zero"
+##{
+##  0:*   :: "any small positive value possible"
+##} 1.0d-04
+
+
+BOOLEAN schedule_in_ADMBase_InitialData "Schedule in (instead of after) ADMBase_InitialData"
+{
+} "no"
+
+

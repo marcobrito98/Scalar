@@ -1,0 +1,74 @@
+# Schedule definitions for thorn ScalarInit
+
+## Schedule Gaussian initial data
+if ( CCTK_Equals(initial_scalar, "ID_SF_Gaussian" ))
+{
+
+  if (schedule_in_ADMBase_InitialData)
+  {
+      SCHEDULE GROUP ID_SF_Gauss_Group IN ADMBase_InitialData
+      {
+      } "Initial data group -- Gaussian"
+  }
+  else
+  {
+      SCHEDULE GROUP ID_SF_Gauss_Group AT Initial AFTER ADMBase_InitialData BEFORE ADMBase_PostInitial AFTER HydroBase_Initial before SetTmunu before HydroBase_Prim2ConInitial
+      {
+      } "Initial data group -- Gaussian"
+  }
+
+  SCHEDULE ID_SF_Gauss IN ID_SF_Gauss_Group
+  {
+    LANG: C
+  } "Create Gaussian scalar field initial data"
+
+}
+
+## Schedule quasi-bound state initial data
+else if ( CCTK_Equals(initial_scalar, "ID_SF_BS" ))
+{
+
+  if (schedule_in_ADMBase_InitialData)
+  {
+      SCHEDULE GROUP ID_SF_BS_Group IN ADMBase_InitialData
+      {
+      } "Initial data group -- bound state"
+  }
+  else
+  {
+      SCHEDULE GROUP ID_SF_BS_Group AT Initial AFTER ADMBase_InitialData BEFORE ADMBase_PostInitial AFTER HydroBase_Initial BEFORE SetTmunu BEFORE HydroBase_Prim2ConInitial
+      {
+      } "Initial data group -- bound state"
+  }
+
+  SCHEDULE ID_SF_BS IN ID_SF_BS_Group
+  {
+    LANG: C
+  } "Create bound-state scalar field initial data"
+
+}
+
+## Schedule quasi-bound state initial data
+else if ( CCTK_Equals(initial_scalar, "ID_SF_Const" ))
+{
+
+  if (schedule_in_ADMBase_InitialData)
+  {
+      SCHEDULE GROUP ID_SF_Const_Group IN ADMBase_InitialData
+      {
+      } "Initial data group -- constant"
+  }
+  else
+  {
+      SCHEDULE GROUP ID_SF_Const_Group AT Initial AFTER ADMBase_InitialData BEFORE ADMBase_PostInitial AFTER HydroBase_Initial BEFORE SetTmunu BEFORE HydroBase_Prim2ConInitial
+      {
+      } "Initial data group -- constant"
+  }
+
+  SCHEDULE ID_SF_Const IN ID_SF_Const_Group
+  {
+    LANG: C
+  } "Create constant scalar field initial data"
+
+}
+

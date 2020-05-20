@@ -7,7 +7,9 @@ SRCS = Scalar_RegisterVars.c     \
        Scalar_calc_Tmunu.F90     \
        Scalar_InitSymBound.F90   \
        Scalar_adm_vs_bssn.F90    \
-       Scalar_zero_rhs.F90
+       Scalar_zero_rhs.F90       \
+       Scalar_init.c             \
+       Scalar_utils.F90
 
 # Subdirectories containing source files
 SUBDIRS =

@@ -5,6 +5,12 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
   STORAGE: rhs_phi rhs_Kphi
   STORAGE: hmetric conf_fac_chi trk
 
+  schedule Scalar_Init at CCTK_PARAMCHECK
+  {
+    LANG: C
+    OPTIONS: global
+  } "Initialise flags and boundary condition"
+
   schedule Scalar_InitSymBound at BASEGRID
   {
     LANG: Fortran
@@ -27,12 +33,20 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
     LANG: Fortran
   } "MoL RHS calculation for Scalar variables"
 
-  schedule Scalar_ord4_calc_rhs_bdry in MoL_CalcRHS as Scalar_CalcRHS_Bdry \
-           after Scalar_CalcRHS
-  {
-    LANG: Fortran
-  } "MoL boundary RHS calculation for Scalar variables"
+  if (!z_is_radial) {
+    schedule Scalar_ord4_calc_rhs_bdry in MoL_CalcRHS as Scalar_CalcRHS_Bdry \
+             after Scalar_CalcRHS
+    {
+      LANG: Fortran
+    } "MoL boundary RHS calculation for Scalar variables"
+  }
 
+  if (z_is_radial) {
+    schedule Scalar_ord4_calc_rhs_bdry_sph in MoL_RHSBoundaries as Scalar_CalcRHS_Bdry_Sph
+    {
+      LANG: Fortran
+    } "MoL boundary RHS calculation for Scalar variables for the multipatch system"
+  }
 
   schedule Scalar_Boundaries in MoL_PostStep
   {
