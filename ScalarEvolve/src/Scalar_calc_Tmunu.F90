@@ -215,7 +215,14 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
            lphi     = dcmplx(lphi1, lphi2)
            d1_lphi  = dcmplx(d1_lphi1, d1_lphi2)
 
-           aux = mu * mu * real( lphi * conjg(lphi) )
+           ! aux = mu * mu * real( lphi * conjg(lphi) )
+           aux = mu * mu * real( lphi * conjg(lphi) )                                 &
+                 - 4 * mu * mu * invsigma0 * invsigma0                                &
+                 * real( lphi * conjg(lphi) ) * real( lphi * conjg(lphi) )            &
+                 + 4 * mu * mu * invsigma0 * invsigma0 * invsigma0 * invsigma0        &
+                 * real( lphi * conjg(lphi) ) * real( lphi * conjg(lphi) )            &
+                 * real( lphi * conjg(lphi) )
+
            do a = 1, 4
               do b = 1, 4
                  aux = aux + gu(a,b) * real( d1_lphi(a) * conjg(d1_lphi(b)) )
