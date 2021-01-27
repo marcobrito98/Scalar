@@ -12,7 +12,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   CCTK_REAL                alph, beta(3), betad(3)
   CCTK_REAL                gg(4,4), gu(4,4), deth
   CCTK_REAL                lphi1, lphi2, lKphi1, lKphi2
-  CCTK_COMPLEX             lphi
+  CCTK_COMPLEX             lphi, absphi2
   CCTK_REAL                Tab(4,4)
 
   ! First derivatives
@@ -69,7 +69,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   !$OMP                                 alph,beta,betad,&
   !$OMP                                 gg,gu,deth,&
   !$OMP                                 lphi1,lphi2,lKphi1,lKphi2,&
-  !$OMP                                 lphi,d1_lphi,&
+  !$OMP                                 lphi,absphi2,d1_lphi,&
   !$OMP                                 Tab, d1_lphi1, d1_lphi2, jac)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
      do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
@@ -214,12 +214,10 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
            ! build complex scalar field
            lphi     = dcmplx(lphi1, lphi2)
            d1_lphi  = dcmplx(d1_lphi1, d1_lphi2)
+           absphi2  = real( lphi * conjg(lphi) )
 
-           ! aux = mu * mu * real( lphi * conjg(lphi) )
-           aux = mu * mu * ( real( lphi * conjg(lphi) )                                    &
-                 - 4 * V_lambda * real( lphi * conjg(lphi) ) * real( lphi * conjg(lphi) )  &
-                 + 4 * V_lambda * V_lambda * real( lphi * conjg(lphi) )                    &
-                 * real( lphi * conjg(lphi) ) * real( lphi * conjg(lphi) ) )               
+           aux = mu * mu * absphi2                                            &
+                * (1 - 2 * V_lambda * absphi2) * (1 - 2 * V_lambda * absphi2)
 
            do a = 1, 4
               do b = 1, 4

@@ -12,9 +12,11 @@ KEYWORD initial_scalar "initial data for scalar variables"
   "none" :: "scalar variables are not initialized"
 } "none"
 
-CCTK_REAL V_lambda "inverse square of sigma_0, constant that determines compactness of star"
+# considering a potential of the form
+# V = mu^2 phi^2 (1 - 2 lambda phi^2)^2
+CCTK_REAL V_lambda "interaction term in the potential"
 {
-  0:*           :: "any non-negative number"
+  *:*           :: ""
 } 0
 
 CCTK_REAL mu "mass of the scalar fields"
