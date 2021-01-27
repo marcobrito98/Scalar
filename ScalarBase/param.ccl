@@ -12,7 +12,7 @@ KEYWORD initial_scalar "initial data for scalar variables"
   "none" :: "scalar variables are not initialized"
 } "none"
 
-CCTK_REAL invsigma0 "inverse of sigma_0, constant that determines compactness of star"
+CCTK_REAL V_lambda "inverse square of sigma_0, constant that determines compactness of star"
 {
   0:*           :: "any non-negative number"
 } 0

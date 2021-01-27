@@ -604,18 +604,16 @@ end if
 
     rhs_lKphi1 = rhs_lKphi1 - 0.5d0 * ch * tr_dalp_dphi1                                                      &
                  + 0.5d0 * alph * ( - ch * tr_cd2_phi1 + 0.5d0 * tr_dch_dphi1                                 &
-                                    + mu*mu * lphi1 - 5*mu*mu*invsigma0*invsigma0                             &
-                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * lphi1                                   &
-                                    + 5*mu*mu*invsigma0*invsigma0*invsigma0*invsigma0                         &
-                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) * lphi1   &
+                                    + mu*mu * lphi1 * ( 1 - 8*V_lambda*( lphi1*lphi1 + lphi2*lphi2 )          &
+                                    + 12*V_lambda*V_lambda                                                    &
+                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) )         &
                                     + 2 * trk * lKphi1 )
 
     rhs_lKphi2 = rhs_lKphi2 - 0.5d0 * ch * tr_dalp_dphi2                                                      &
                  + 0.5d0 * alph * ( - ch * tr_cd2_phi2 + 0.5d0 * tr_dch_dphi2                                 &
-                                    + mu*mu * lphi2- 5*mu*mu*invsigma0*invsigma0                              &
-                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * lphi2                                   &
-                                    + 5*mu*mu*invsigma0*invsigma0*invsigma0*invsigma0                         &
-                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) * lphi2   &
+                                    + mu*mu * lphi2 * ( 1 - 8*V_lambda*( lphi1*lphi1 + lphi2*lphi2 )          &
+                                    + 12*V_lambda*V_lambda                                                    &
+                                    * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) )         &
                                     + 2 * trk * lKphi2 )
 
     !-------------------------------------------
