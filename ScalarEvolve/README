@@ -1,5 +1,3 @@
-CVS info   : $Header:$
-
 Cactus Code Thorn  ScalarEvolve
 Thorn Author(s)     : Miguel Zilhão, Helvi Witek
 Thorn Maintainer(s) : Miguel Zilhão, Helvi Witek
@@ -17,9 +15,9 @@ and as follows:
 
 where
 
-  16 \pi G T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
-                       - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma} 
-                                      + \mu^2 \bar \Phi \Phi ]
+  T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
+                - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma}
+                               + \mu^2 \bar \Phi \Phi ]
 
 and the phi1 and phi2 used in the code are the real and imaginary part of the
 complex field \Phi = (phi1, phi2).
@@ -29,4 +27,3 @@ momentum' defined as
 
   K_\Phi = -1/2 \Lie_n \Phi
          = -1/(2 \alpha) [ \partial_t - \Lie_\beta ] \Phi
-
