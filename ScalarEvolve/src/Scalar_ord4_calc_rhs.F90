@@ -15,6 +15,9 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   CCTK_REAL                ch, hh(3,3), hu(3,3), trk, dethh
   CCTK_REAL                lphi1, lphi2, lKphi1, lKphi2
 
+  ! External forcing real and imaginary part variables
+  CCTK_REAL                ext_force1, ext_force2
+
   ! First derivatives
   CCTK_REAL                d1_hh11(3), d1_hh12(3), d1_hh13(3), d1_hh22(3), d1_hh23(3), d1_hh33(3)
   CCTK_REAL                d1_alph(3)
@@ -140,7 +143,7 @@ end if
 
   !$OMP PARALLEL DO COLLAPSE(3) &
   !$OMP PRIVATE(alph, beta, ch, hh, hu, trk, dethh,&
-  !$OMP lphi1, lphi2, lKphi1, lKphi2,&
+  !$OMP lphi1, lphi2, lKphi1, lKphi2, ext_force1, ext_force2,&
   !$OMP d1_hh11, d1_hh12, d1_hh13, d1_hh22, d1_hh23, d1_hh33,&
   !$OMP d1_alph, d1_ch, d1_hh,&
   !$OMP d1_lphi1, d1_lphi2, d1_lKphi1, d1_lKphi2,&
@@ -576,6 +579,16 @@ end if
     !-------------------------------------------
 
 
+    !------------ Assign rhs forcing terms from grid function--------------
+
+    ext_force1 = 0.0
+    ext_force2 = 0.0
+
+    if ( forcing_switch == 1 ) then
+        ext_force1 = Fext1(i,j,k)
+        ext_force2 = Fext2(i,j,k)
+    end if
+
     !------------ Source terms -----------------
 
     ! rhs_lphi1, rhs_lphi2 
@@ -607,14 +620,16 @@ end if
                                     + mu*mu * lphi1 * ( 1 - 8*V_lambda*( lphi1*lphi1 + lphi2*lphi2 )          &
                                     + 12*V_lambda*V_lambda                                                    &
                                     * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) )         &
-                                    + 2 * trk * lKphi1 )
+                                    + 2 * trk * lKphi1 )                                                      &
+                 + 0.5d0 * ext_force1 * lphi1
 
     rhs_lKphi2 = rhs_lKphi2 - 0.5d0 * ch * tr_dalp_dphi2                                                      &
                  + 0.5d0 * alph * ( - ch * tr_cd2_phi2 + 0.5d0 * tr_dch_dphi2                                 &
                                     + mu*mu * lphi2 * ( 1 - 8*V_lambda*( lphi1*lphi1 + lphi2*lphi2 )          &
                                     + 12*V_lambda*V_lambda                                                    &
                                     * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) )         &
-                                    + 2 * trk * lKphi2 )
+                                    + 2 * trk * lKphi2 )                                                      &
+                 + 0.5d0 * ext_force2 * lphi2
 
     !-------------------------------------------
 

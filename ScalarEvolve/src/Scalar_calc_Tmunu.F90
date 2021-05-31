@@ -15,6 +15,10 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   CCTK_COMPLEX             lphi, absphi2
   CCTK_REAL                Tab(4,4)
 
+  ! Fluxes variables
+  CCTK_REAL                rhoSF, jrSF, jiSF(3), SrrSF, SijSF(3,3)
+  CCTK_REAL                xx(3), rr
+
   ! First derivatives
   CCTK_REAL                d1_lphi1(4), d1_lphi2(4)
   CCTK_COMPLEX             d1_lphi(4)
@@ -24,7 +28,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   CCTK_REAL                aux
 
   CCTK_INT                 i, j, k
-  CCTK_INT                 a, b
+  CCTK_INT                 a, b, c
 
   ! jacobian
   integer                  istat
@@ -70,6 +74,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   !$OMP                                 gg,gu,deth,&
   !$OMP                                 lphi1,lphi2,lKphi1,lKphi2,&
   !$OMP                                 lphi,absphi2,d1_lphi,&
+  !$OMP                                 rhoSF, jrSF, jiSF, SrrSF, SijSF,&
   !$OMP                                 Tab, d1_lphi1, d1_lphi2, jac)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
      do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
@@ -245,6 +250,69 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
            eTyy(i,j,k) = eTyy(i,j,k) + Tab(2,2)
            eTyz(i,j,k) = eTyz(i,j,k) + Tab(2,3)
            eTzz(i,j,k) = eTzz(i,j,k) + Tab(3,3)
+
+           if ( ( compute_fluxes == 1 ) .and. ( use_jacobian .eqv. .false. ) ) then
+                !--- local coordinates to define local radial coordinate --
+                xx(1) = x(i,j,k)
+                xx(2) = y(i,j,k)
+                xx(3) = z(i,j,k)
+
+                rr = sqrt( xx(1)**2 + xx(2)**2 + xx(3)**2 )
+                if( rr < eps_r ) rr = eps_r
+                !----------------------------------------------------------
+
+                !--- Eulerian energy density ------------------------------
+                rhoSF = 0
+                rhoSF = Tab(4,4) / ( alph * alph )
+
+                !--- Eulerian energy-momentum flux ------------------------
+                ! jrSF
+                ! calculate jiSF(3) in Cartesian coordinates
+
+                jiSF = 0
+                do a = 1, 3
+                    do b = 1, 3
+                        do c = 1, 3
+                            jiSF(a) = jiSF(a) + gg(a,b) * gu(b,c) * Tab(c,4)
+                        end do
+                    end do
+                end do
+                !jiSF =  - jiSF
+                jiSF =  - jiSF / alph
+
+                !--- Trasformation to radial spherical coordinate ---------
+                jrSF = 0
+                do a = 1, 3
+                    jrSF = jrSF + jiSF(a) * xx(a) / rr
+                end do
+                !----------------------------------------------------------
+                !--- Spatial stress tensor --------------------------------
+                ! SrrSF
+                ! calculate SijSF(3,3) in Cartesian coordinates
+
+                !SijSF = 0
+                !do a = 1, 3
+                !  do b = 1, 3
+                !    SijSF(a,b) = SijSF(a,b) + Tab(a,b)
+                !  end do
+                !end do
+
+                !--- Trasformation to radial spherical coordinate ---------
+                SrrSF = 0
+                do a = 1, 3
+                  do b = 1, 3
+                    SrrSF = SrrSF + Tab(a,b) * xx(a) / rr * xx(b) / rr
+                  end do
+                end do
+                !----------------------------------------------------------
+
+                !------------ Write to grid functions ---------------------
+                rhoSF_gf(i,j,k)    = rhoSF
+                jrSF_gf(i,j,k)     = jrSF
+                SrrSF_gf(i,j,k)    = SrrSF
+                !----------------------------------------------------------
+
+           end if
 
         end do
      end do

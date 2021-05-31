@@ -66,3 +66,44 @@ CCTK_REAL Kphi2_0 "asymptotic value for Kphi2"
 {
   *:*           :: ""
 } 0
+
+### parameters for external forcing configuration
+
+BOOLEAN forcing_switch  "add external forcing to the rhs of Klein-Gordon"
+{
+} "no"
+
+CCTK_REAL ampEF  "amplitude of external forcing"
+{
+  *:*  :: "Any value possible"
+} 1.0
+
+CCTK_REAL rEF  "peak position of external forcing"
+{
+  0:*  :: "Any positive value"
+} 10.0
+
+CCTK_REAL widthEF  "width of external forcing"
+{
+  0:*  :: "Any positive value"
+} 10.0
+
+CCTK_REAl omegaEF  "oscillation frequency of external forcing"
+{
+  0:*  :: "Any positive value"
+} 0.0
+
+CCTK_INT lEF  ""
+{
+  0:2 :: "for now we've implemented l = 0,1,2"
+} 0
+
+CCTK_INT mEF  ""
+{
+  0:2 :: "for now we've implemented m = 0,1,2"
+} 0
+
+CCTK_REAL eps_r "of value if rr approaches zero in densities computation"
+{
+  0:*   :: "any small positive value possible"
+} 1.0d-06

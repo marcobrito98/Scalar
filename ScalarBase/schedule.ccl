@@ -8,3 +8,14 @@ schedule ScalarBase_symmetries at CCTK_WRAGH
   LANG: Fortran
   OPTIONS: Global
 } "Register symmetries of the grid functions"
+
+if (forcing_switch)
+{
+    SCHEDULE Scalar_rhs_force IN MoL_Step BEFORE MoL_CalcRHS
+    {
+        LANG: Fortran
+        OPTIONS: Local
+    } "writes external force grid function"
+
+    STORAGE: Fext[3]
+}

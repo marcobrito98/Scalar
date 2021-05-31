@@ -30,6 +30,12 @@ KEYWORD scalar_GaussProfile "Which mode composition for the Gaussian?"
   "superpose_ID012"   :: "superpose Y10 + Y11 + Y20 + Y22 as initial data"
 } "single_mode"
 
+KEYWORD scalar_Initialize "Which component (field/momentum) should be initialized to zero? (only works for gaussian profile)"
+{
+  "zero_momentum" :: "initialize scalar field momentum to zero"
+  "zero_field"    :: "initialize scalar field to zero"
+} "zero_field"
+
 
 CCTK_INT l0SF "angular quantum number"
 {
