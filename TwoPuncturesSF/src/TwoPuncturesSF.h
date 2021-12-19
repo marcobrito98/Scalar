@@ -84,6 +84,10 @@ void Newton (CCTK_POINTER_TO_CONST cctkGH,
              int nvar, int n1, int n2, int n3, derivs v,
 	           CCTK_REAL tol, int itmax);
 
+/* Routines in  "ScalarSource.c"*/
+void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phi2, CCTK_REAL *dphi2);
+CCTK_REAL LinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi);
+CCTK_REAL NonLinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi);
 
 /* 
  27: -1.325691774825335e-03

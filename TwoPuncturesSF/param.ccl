@@ -28,6 +28,24 @@ SHARES: IO
 USES STRING out_dir
 
 
+
+
+SHARES: ScalarBase
+
+USES CCTK_REAL mu
+USES KEYWORD initial_scalar
+
+
+SHARES: ScalarInit
+
+USES KEYWORD scalar_GaussProfile
+USES CCTK_INT l0SF
+USES CCTK_INT m0SF
+USES CCTK_REAL ampSF
+USES CCTK_REAL widthSF
+USES CCTK_REAL r0SF
+
+
 RESTRICTED:
 
 BOOLEAN verbose "Print screen output while solving"

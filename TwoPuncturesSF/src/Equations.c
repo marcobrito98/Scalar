@@ -149,6 +149,7 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi7;
+  CCTK_REAL sourceSF;
 
   r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
   r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
@@ -159,9 +160,14 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
   psi4 = psi2 * psi2;
   psi7 = psi * psi2 * psi4;
 
+  if (switch_on_backreaction)
+      sourceSF = NonLinSrcSF(x, y, z, psi);
+  else
+      sourceSF = 0.;
+
   values[0] =
     U.d11[0] + U.d22[0] + U.d33[0] + 0.125 * BY_KKofxyzSF (x, y, z) / psi7 +
-    2.0 * Pi / psi2/psi * rho_adm;
+    + sourceSF;
 }
 
 /*-----------------------------------------------------------*/
@@ -174,6 +180,7 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi8;
+  CCTK_REAL sourceSF;
 
   r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
   r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
@@ -184,8 +191,14 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   psi4 = psi2 * psi2;
   psi8 = psi4 * psi4;
 
+  if (switch_on_backreaction)
+      sourceSF = LinSrcSF(x, y, z, psi);
+  else
+      sourceSF = 0.;
+
   values[0] = dU.d11[0] + dU.d22[0] + dU.d33[0]
-    - 0.875 * BY_KKofxyzSF (x, y, z) / psi8 * dU.d0[0];
+    - 0.875 * BY_KKofxyzSF (x, y, z) / psi8 * dU.d0[0]
+    + sourceSF * dU.d0[0];
 }
 
 /*-----------------------------------------------------------*/
