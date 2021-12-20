@@ -195,7 +195,7 @@ void TwoPuncturesSF(CCTK_ARGUMENTS);
 void
 TwoPuncturesSF (CCTK_ARGUMENTS)
 {
-  DECLARE_CCTK_ARGUMENTS_TwoPuncturesSF;
+  DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
   * mp = par_m_plus;
@@ -653,6 +653,23 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
           SWAP (kxx[ind], kzz[ind]);
           SWAP (kxy[ind], kyz[ind]);
         } /* if swap_xz */
+
+
+        rho_SF[ind] = 0;
+        if (1 || switch_on_backreaction)
+        {
+          CCTK_REAL sourceSF, phisq, dphisq;
+          sourceSF = LinSrcSF(xx, yy, zz, psi1);
+          SF_Gaussian(xx, yy, zz, &phisq, &dphisq);
+
+          phi1[ind] = sqrt(phisq);
+          phi2[ind] = 0;
+
+          CCTK_REAL term1, term2;
+          term1 = exp( 2 * log(mu) + log(phisq) + 5 * log(psi1));
+          term2 = dphisq * psi1;
+          rho_SF[ind] = term1 + term2;
+        }
 
       } /* for i */
     }   /* for j */

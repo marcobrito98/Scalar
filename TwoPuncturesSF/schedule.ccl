@@ -5,7 +5,7 @@ if (CCTK_Equals(initial_data, "twopuncturesSF"))
   STORAGE: energy, angular_momentum, puncture_adm_mass, bare_mass
 
   if (keep_u_around) {
-    STORAGE: puncture_u
+    STORAGE: puncture_u, rho_SF
   }
 
   SCHEDULE TwoPunctures_ParamCheckSF AT PARAMCHECK
@@ -29,13 +29,14 @@ if (CCTK_Equals(initial_data, "twopuncturesSF"))
   SCHEDULE TwoPuncturesSF IN TwoPunctures_GroupSF
   {
     LANG: C
-    STORAGE: puncture_u
+    STORAGE: puncture_u, rho_SF
     READS: Grid::coordinates(Everywhere)
     WRITES: TwopuncturesSF::mp(Everywhere), TwopuncturesSF::mm(Everywhere),
             TwopuncturesSF::mp_adm(Everywhere), TwopuncturesSF::mm_adm(Everywhere),
             TwopuncturesSF::E(Everywhere), TwopuncturesSF::J1(Everywhere),
             TwopuncturesSF::J2(Everywhere), TwopuncturesSF::J3(Everywhere),
-            TwopuncturesSF::puncture_u(Everywhere)
+            TwopuncturesSF::puncture_u(Everywhere),
+            TwopuncturesSF::rho_SF(Everywhere)
     WRITES: StaticConformal::conformal_state(Everywhere),
             StaticConformal::confac_2derivs(Everywhere),
             StaticConformal::confac_1derivs(Everywhere),

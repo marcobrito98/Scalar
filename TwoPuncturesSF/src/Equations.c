@@ -180,6 +180,7 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi8;
+  CCTK_REAL dpsidr, dpsi1, dpsi2, dpsi3;
   CCTK_REAL sourceSF;
 
   r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);

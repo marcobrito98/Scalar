@@ -510,7 +510,6 @@ NewtonSF (CCTK_POINTER_TO_CONST const cctkGH,
   dmax = 1;
   while (dmax > tol && it < itmax)
   {
-    CCTK_VInfo (CCTK_THORNSTRING, "Attempting to find bare masses. %d", it);
     if (it == 0)
     {
       F_of_vSF (cctkGH, nvar, n1, n2, n3, v, F, u);

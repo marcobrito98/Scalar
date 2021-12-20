@@ -10,7 +10,7 @@
 #include "TwoPuncturesSF.h"
 
 
-void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phi2, CCTK_REAL *dphi2)
+void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phisq, CCTK_REAL *dphisq)
 {
   DECLARE_CCTK_PARAMETERS
 
@@ -57,9 +57,9 @@ void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phi2, CCTK_RE
 
   /*=== calc scalar field phi =================================*/
 
-  *phi2 = pow( ampSF * psit_re, 2) * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) ); 
+  *phisq = pow( ampSF * psit_re, 2) * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) ); 
 
-  *dphi2 = pow( ampSF * psit_re * 2.0 * ( rr - r0SF ) / ( widthSF*widthSF ), 2)
+  *dphisq = pow( ampSF * psit_re * 2.0 * ( rr - r0SF ) / ( widthSF*widthSF ), 2)
       * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) );
 
 }
@@ -68,15 +68,16 @@ CCTK_REAL NonLinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL psi2, psi4, psi5;
-  CCTK_REAL phi2, dphi2, term1, term2;
+  CCTK_REAL phisq, dphisq, term1, term2;
 
   psi2 = psi * psi;
   psi4 = psi2 * psi2;
   psi5 = psi * psi4;
 
-  SF_Gaussian(x, y, z, &phi2, &dphi2);
-  term1 = mu * mu * phi2 * psi5;
-  term2 = dphi2 * psi;
+  SF_Gaussian(x, y, z, &phisq, &dphisq);
+
+  term1 = exp( 2 * log(mu) + log(phisq) + 5 * log(psi));
+  term2 = dphisq * psi;
 
   return Pi * (term1 + term2);
 }
@@ -85,14 +86,14 @@ CCTK_REAL LinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL psi2, psi4;
-  CCTK_REAL phi2, dphi2, term1, term2;
+  CCTK_REAL phisq, dphisq, term1, term2;
 
   psi2 = psi * psi;
   psi4 = psi2 * psi2;
 
-  SF_Gaussian(x, y, z, &phi2, &dphi2);
-  term1 = 5 * mu * mu * phi2 * psi4;
-  term2 = dphi2;
+  SF_Gaussian(x, y, z, &phisq, &dphisq);
+  term1 = 5 * exp( 2 * log(mu) + log(phisq) + 5 * log(psi));
+  term2 = dphisq;
 
   return Pi * (term1 + term2);
 }
