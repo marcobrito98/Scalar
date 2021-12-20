@@ -75,7 +75,7 @@ CCTK_REAL NonLinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
   psi5 = psi * psi4;
 
   SF_Gaussian(x, y, z, &phi2, &dphi2);
-  term1 = mu * mu * psi5;
+  term1 = mu * mu * phi2 * psi5;
   term2 = dphi2 * psi;
 
   return Pi * (term1 + term2);
@@ -91,7 +91,7 @@ CCTK_REAL LinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
   psi4 = psi2 * psi2;
 
   SF_Gaussian(x, y, z, &phi2, &dphi2);
-  term1 = 5 * mu * mu * psi4;
+  term1 = 5 * mu * mu * phi2 * psi4;
   term2 = dphi2;
 
   return Pi * (term1 + term2);
