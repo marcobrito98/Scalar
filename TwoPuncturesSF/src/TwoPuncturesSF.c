@@ -45,7 +45,7 @@ void set_initial_guessSF(CCTK_POINTER_TO_CONST cctkGH,
   s_x    =calloc(n1*n2*n3, sizeof(CCTK_REAL));
   s_y    =calloc(n1*n2*n3, sizeof(CCTK_REAL));
   s_z    =calloc(n1*n2*n3, sizeof(CCTK_REAL));
-  allocate_derivs (&U, nvar);
+  allocate_derivsSF (&U, nvar);
   for (ivar = 0; ivar < nvar; ivar++)
     for (i = 0; i < n1; i++)
       for (j = 0; j < n2; j++)
@@ -160,7 +160,7 @@ void set_initial_guessSF(CCTK_POINTER_TO_CONST cctkGH,
         R = 2*(1.0*j/n2);
         if (X*X+R*R > 1.0)
         {
-          C_To_c (nvar, X, R, &(s_x[indx]), &r, U);
+          C_To_cSF (nvar, X, R, &(s_x[indx]), &r, U);
           rx3_To_xyzSF (nvar, s_x[i3D], r, phi, &(s_y[indx]), &(s_z[indx]), U);
           *U.d0  = s_x[indx]*s_x[indx];
           *U.d1  = 2*s_x[indx];
@@ -186,7 +186,7 @@ void set_initial_guessSF(CCTK_POINTER_TO_CONST cctkGH,
   free(s_z);
   free(s_y);
   free(s_x);
-  free_derivs (&U, nvar);
+  free_derivsSF (&U, nvar);
   /*exit(0);*/
 }
 
@@ -221,9 +221,9 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
     CCTK_REAL up, um;
     /* Solve only when called for the first time */
     F = dvectorSF (0, ntotal - 1);
-    allocate_derivs (&u, ntotal);
-    allocate_derivs (&v, ntotal);
-    allocate_derivs (&cf_v, ntotal);
+    allocate_derivsSF (&u, ntotal);
+    allocate_derivsSF (&v, ntotal);
+    allocate_derivsSF (&cf_v, ntotal);
 
     if (use_sources) {
       CCTK_INFO ("Solving puncture equation for BH-NS/NS-NS system");
@@ -284,7 +284,7 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
                     (double)*mp, (double)*mm);
         NewtonSF (cctkGH, nvar, n1, n2, n3, v, Newton_tol, 1);
 
-        F_of_v (cctkGH, nvar, n1, n2, n3, v, F, u);
+        F_of_vSF (cctkGH, nvar, n1, n2, n3, v, F, u);
 
         up = PunctIntPolAtArbitPositionSF(0, nvar, n1, n2, n3, v, par_b, 0., 0.);
         um = PunctIntPolAtArbitPositionSF(0, nvar, n1, n2, n3, v,-par_b, 0., 0.);
@@ -321,8 +321,8 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
     }
 
     NewtonSF (cctkGH, nvar, n1, n2, n3, v, Newton_tol, Newton_maxit);
-    F_of_v (cctkGH, nvar, n1, n2, n3, v, F, u);
-    SpecCoef(n1, n2, n3, 0, v.d0, cf_v.d0);
+    F_of_vSF (cctkGH, nvar, n1, n2, n3, v, F, u);
+    SpecCoefSF(n1, n2, n3, 0, v.d0, cf_v.d0);
 
     CCTK_VInfo (CCTK_THORNSTRING,
 		  "The two puncture masses are mp=%.17g and mm=%.17g",
@@ -466,7 +466,7 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
             (0, nvar, n1, n2, n3, v, xx, yy, zz);
           break;
         case GSM_evaluation:
-          U = PunctIntPolAtArbitPositionFast(0, nvar, n1, n2, n3, cf_v, xx, yy, zz);
+          U = PunctIntPolAtArbitPositionFastSF(0, nvar, n1, n2, n3, cf_v, xx, yy, zz);
           break;
         default:
           assert (0);
@@ -497,7 +497,7 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
         CCTK_REAL static_psi = 1;
         
         CCTK_REAL Aij[3][3];
-        BY_Aijofxyz (xx, yy, zz, Aij);
+        BY_AijofxyzSF (xx, yy, zz, Aij);
 
         CCTK_REAL old_alp=1.0;
         if (multiply_old_lapse)
@@ -655,20 +655,24 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
         } /* if swap_xz */
 
 
-        rho_SF[ind] = 0;
-        if (1 || switch_on_backreaction)
+        rho_SF1[ind] = 0;
+        rho_SF2[ind] = 0;
+        if (switch_on_backreaction)
         {
           CCTK_REAL sourceSF, phisq, dphisq;
-          sourceSF = LinSrcSF(xx, yy, zz, psi1);
+          sourceSF = LinSrcSF(xx, yy, zz, psi1); // Not used 
           SF_Gaussian(xx, yy, zz, &phisq, &dphisq);
 
+          // Set scalar field profile for use in ScalarBase
           phi1[ind] = sqrt(phisq);
           phi2[ind] = 0;
 
+          // Output the energy density to the grid function rho_SF from TwoPuncturesSF
           CCTK_REAL term1, term2;
-          term1 = exp( 2 * log(mu) + log(phisq) + 5 * log(psi1));
+          term1 = mu * mu * phisq * pow( psi1, 5);
           term2 = dphisq * psi1;
-          rho_SF[ind] = term1 + term2;
+          rho_SF1[ind] = term1;
+          rho_SF2[ind] = term2;
         }
 
       } /* for i */
@@ -688,9 +692,9 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
   if (0) {
     /* Keep the result around for the next time */
     free_dvectorSF (F, 0, ntotal - 1);
-    free_derivs (&u, ntotal);
-    free_derivs (&v, ntotal);
-    free_derivs (&cf_v, ntotal);
+    free_derivsSF (&u, ntotal);
+    free_derivsSF (&v, ntotal);
+    free_derivsSF (&cf_v, ntotal);
   }
 }
 

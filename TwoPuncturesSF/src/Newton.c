@@ -272,7 +272,7 @@ TestRelaxSF (CCTK_POINTER_TO_CONST cctkGH,
 
   F = dvectorSF (0, ntotal - 1);
   res = dvectorSF (0, ntotal - 1);
-  allocate_derivs (&u, ntotal);
+  allocate_derivsSF (&u, ntotal);
 
   JFD = dmatrixSF (0, ntotal - 1, 0, maxcol - 1);
   cols = imatrixSF (0, ntotal - 1, 0, maxcol - 1);
@@ -304,7 +304,7 @@ TestRelaxSF (CCTK_POINTER_TO_CONST cctkGH,
 
   free_dvectorSF (F, 0, ntotal - 1);
   free_dvectorSF (res, 0, ntotal - 1);
-  free_derivs (&u, ntotal);
+  free_derivsSF (&u, ntotal);
 
   free_dmatrixSF (JFD, 0, ntotal - 1, 0, maxcol - 1);
   free_imatrixSF (cols, 0, ntotal - 1, 0, maxcol - 1);
@@ -331,23 +331,23 @@ bicgstabSF (CCTK_POINTER_TO_CONST const cctkGH,
   derivs u, ph, sh;
 
   F = dvectorSF (0, ntotal - 1);
-  allocate_derivs (&u, ntotal);
+  allocate_derivsSF (&u, ntotal);
 
   JFD = dmatrixSF (0, ntotal - 1, 0, maxcol - 1);
   cols = imatrixSF (0, ntotal - 1, 0, maxcol - 1);
   ncols = ivectorSF (0, ntotal - 1);
 
   F_of_vSF (cctkGH, nvar, n1, n2, n3, v, F, u);
-  SetMatrix_JFD (nvar, n1, n2, n3, u, ncols, cols, JFD);
+  SetMatrix_JFDSF (nvar, n1, n2, n3, u, ncols, cols, JFD);
 
   /* temporary storage */
   r = dvectorSF (0, ntotal - 1);
   p = dvectorSF (0, ntotal - 1);
-  allocate_derivs (&ph, ntotal);
+  allocate_derivsSF (&ph, ntotal);
 /*      ph  = dvectorSF(0, ntotal-1);*/
   rt = dvectorSF (0, ntotal - 1);
   s = dvectorSF (0, ntotal - 1);
-  allocate_derivs (&sh, ntotal);
+  allocate_derivsSF (&sh, ntotal);
 /*      sh  = dvectorSF(0, ntotal-1);*/
   t = dvectorSF (0, ntotal - 1);
   vv = dvectorSF (0, ntotal - 1);
@@ -459,16 +459,16 @@ bicgstabSF (CCTK_POINTER_TO_CONST const cctkGH,
   free_dvectorSF (r, 0, ntotal - 1);
   free_dvectorSF (p, 0, ntotal - 1);
 /*      free_dvectorSF(ph,  0, ntotal-1);*/
-  free_derivs (&ph, ntotal);
+  free_derivsSF (&ph, ntotal);
   free_dvectorSF (rt, 0, ntotal - 1);
   free_dvectorSF (s, 0, ntotal - 1);
 /*      free_dvectorSF(sh,  0, ntotal-1);*/
-  free_derivs (&sh, ntotal);
+  free_derivsSF (&sh, ntotal);
   free_dvectorSF (t, 0, ntotal - 1);
   free_dvectorSF (vv, 0, ntotal - 1);
 
   free_dvectorSF (F, 0, ntotal - 1);
-  free_derivs (&u, ntotal);
+  free_derivsSF (&u, ntotal);
 
   free_dmatrixSF (JFD, 0, ntotal - 1, 0, maxcol - 1);
   free_imatrixSF (cols, 0, ntotal - 1, 0, maxcol - 1);
@@ -502,8 +502,8 @@ NewtonSF (CCTK_POINTER_TO_CONST const cctkGH,
   derivs u, dv;
 
   F = dvectorSF (0, ntotal - 1);
-  allocate_derivs (&dv, ntotal);
-  allocate_derivs (&u, ntotal);
+  allocate_derivsSF (&dv, ntotal);
+  allocate_derivsSF (&u, ntotal);
 
 /*         TestRelax(nvar, n1, n2, n3, v, dv.d0); */
   it = 0;
@@ -548,8 +548,8 @@ NewtonSF (CCTK_POINTER_TO_CONST const cctkGH,
   fflush(stdout);
 
   free_dvectorSF (F, 0, ntotal - 1);
-  free_derivs (&dv, ntotal);
-  free_derivs (&u, ntotal);
+  free_derivsSF (&dv, ntotal);
+  free_derivsSF (&u, ntotal);
 }
 
 /* -------------------------------------------------------------------*/

@@ -204,7 +204,7 @@ F_of_vSF (CCTK_POINTER_TO_CONST cctkGH,
   CCTK_REAL *sources;
 
   values = dvectorSF (0, nvar - 1);
-  allocate_derivs (&U, nvar);
+  allocate_derivsSF (&U, nvar);
 
   sources=calloc(n1*n2*n3, sizeof(CCTK_REAL));
   if (use_sources)
@@ -262,7 +262,7 @@ F_of_vSF (CCTK_POINTER_TO_CONST cctkGH,
         for (k = 0; k < n3; k++)
           sources[IndexSF(0,i,j,k,1,n1,n2,n3)]=0.0;
 
-  Derivatives_AB3 (nvar, n1, n2, n3, v);
+  Derivatives_AB3SF (nvar, n1, n2, n3, v);
   CCTK_REAL psi, psi2, psi4, psi7, r_plus, r_minus;
   FILE *debugfile = NULL;
   if (do_residuum_debug_output && CCTK_MyProc(cctkGH) == 0)
@@ -362,7 +362,7 @@ F_of_vSF (CCTK_POINTER_TO_CONST cctkGH,
   }
   free(sources);
   free_dvectorSF (values, 0, nvar - 1);
-  free_derivs (&U, nvar);
+  free_derivsSF (&U, nvar);
 }
 
 /* --------------------------------------------------------------------------*/
@@ -378,14 +378,14 @@ J_times_dvSF (int nvar, int n1, int n2, int n3, derivs dv,
   CCTK_REAL al, be, A, B, X, R, x, r, phi, y, z, Am1, *values;
   derivs dU, U;
 
-  Derivatives_AB3 (nvar, n1, n2, n3, dv);
+  Derivatives_AB3SF (nvar, n1, n2, n3, dv);
 
 #pragma omp parallel for private (values,dU,U,i,j,k,al,A,be,B,phi,X,R,x,r,y,z,Am1,ivar,indx) schedule(dynamic)
   for (i = 0; i < n1; i++)
   {
     values = dvectorSF (0, nvar - 1);
-    allocate_derivs (&dU, nvar);
-    allocate_derivs (&U, nvar);
+    allocate_derivsSF (&dU, nvar);
+    allocate_derivsSF (&U, nvar);
     for (j = 0; j < n2; j++)
     {
       for (k = 0; k < n3; k++)
@@ -440,8 +440,8 @@ J_times_dvSF (int nvar, int n1, int n2, int n3, derivs dv,
       }
     }
     free_dvectorSF (values, 0, nvar - 1);
-    free_derivs (&dU, nvar);
-    free_derivs (&U, nvar);
+    free_derivsSF (&dU, nvar);
+    free_derivsSF (&U, nvar);
   }
 }
 
@@ -462,8 +462,8 @@ JFD_times_dvSF (int i, int j, int k, int nvar, int n1, int n2,
     ha, ga, ga2, hb, gb, gb2, hp, gp, gp2, gagb, gagp, gbgp;
   derivs dU, U;
 
-  allocate_derivs (&dU, nvar);
-  allocate_derivs (&U, nvar);
+  allocate_derivsSF (&dU, nvar);
+  allocate_derivsSF (&U, nvar);
 
   if (k < 0)
     k = k + n3;
@@ -583,8 +583,8 @@ JFD_times_dvSF (int i, int j, int k, int nvar, int n1, int n2,
   for (ivar = 0; ivar < nvar; ivar++)
     values[ivar] *= FAC;
 
-  free_derivs (&dU, nvar);
-  free_derivs (&U, nvar);
+  free_derivsSF (&dU, nvar);
+  free_derivsSF (&U, nvar);
 }
 
 /* --------------------------------------------------------------------------*/
@@ -600,7 +600,7 @@ SetMatrix_JFDSF (int nvar, int n1, int n2, int n3, derivs u,
   derivs dv;
 
   values = dvectorSF (0, nvar - 1);
-  allocate_derivs (&dv, ntotal);
+  allocate_derivsSF (&dv, ntotal);
 
   N1 = n1 - 1;
   N2 = n2 - 1;
@@ -674,7 +674,7 @@ SetMatrix_JFDSF (int nvar, int n1, int n2, int n3, derivs u,
       }
     }
   }
-  free_derivs (&dv, ntotal);
+  free_derivsSF (&dv, ntotal);
   free_dvectorSF (values, 0, nvar - 1);
 }
 
@@ -774,7 +774,7 @@ PunctTaylorExpandAtArbitPositionSF (int ivar, int nvar, int n1,
     result, Ui;
   int i, j, k;
   derivs vv;
-  allocate_derivs (&vv, 1);
+  allocate_derivsSF (&vv, 1);
 
   xs = x / par_b;
   ys = y / par_b;
@@ -809,9 +809,9 @@ PunctTaylorExpandAtArbitPositionSF (int ivar, int nvar, int n1,
   b = be - Pi * (j + 0.5) / n2;
   c = phi - 2 * Pi * k / n3;
 
-  calculate_derivs (i, j, k, ivar, nvar, n1, n2, n3, v, vv);
-  result = interpol (a, b, c, vv);
-  free_derivs (&vv, 1);
+  calculate_derivsSF (i, j, k, ivar, nvar, n1, n2, n3, v, vv);
+  result = interpolSF (a, b, c, vv);
+  free_derivsSF (&vv, 1);
 
   Ui = (A - 1) * result;
 

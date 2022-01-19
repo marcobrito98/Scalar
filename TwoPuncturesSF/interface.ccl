@@ -5,7 +5,6 @@ IMPLEMENTS: TwoPuncturesSF
 INHERITS: ADMBase StaticConformal ScalarBase grid
 
 REAL puncture_u TYPE=gf tags='prolongation="none"'
-REAL rho_SF TYPE=gf tags='prolongation="none"'
 
 CCTK_INT FUNCTION Set_Rho_ADM(              \
     CCTK_POINTER_TO_CONST IN  cctkGH,       \
@@ -64,3 +63,8 @@ CCTK_REAL puncture_adm_mass TYPE=scalar
 {
   mp_adm mm_adm
 } "ADM masses of the punctures (measured at the other spatial infinities)"
+
+CCTK_REAL rho_SF TYPE=gf
+{
+  rho_SF1 rho_SF2
+} "Kinetic and mass terms in the scalar field energy density"
