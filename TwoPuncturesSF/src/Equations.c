@@ -150,12 +150,13 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi7;
   CCTK_REAL sourceSF;
+  CCTK_REAL psiBL;
 
   r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
   r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
 
-  psi =
-    1. + 0.5 * par_m_plus / r_plus + 0.5 * par_m_minus / r_minus + U.d0[0];
+  psiBL = 1. + 0.5 * par_m_plus / r_plus + 0.5 * par_m_minus / r_minus;
+  psi = psiBL * ( 1. + U.d0[0] );
   psi2 = psi * psi;
   psi4 = psi2 * psi2;
   psi7 = psi * psi2 * psi4;
@@ -181,12 +182,13 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi8;
   CCTK_REAL sourceSF;
+  CCTK_REAL psiBL;
 
   r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
   r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
 
-  psi =
-    1. + 0.5 * par_m_plus / r_plus + 0.5 * par_m_minus / r_minus + U.d0[0];
+  psiBL = 1. + 0.5 * par_m_plus / r_plus + 0.5 * par_m_minus / r_minus;
+  psi = psiBL * ( 1. + U.d0[0] );
   psi2 = psi * psi;
   psi4 = psi2 * psi2;
   psi8 = psi4 * psi4;
@@ -197,8 +199,13 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
       sourceSF = 0.;
 
   values[0] = dU.d11[0] + dU.d22[0] + dU.d33[0]
+//     - par_m_plus / psiBL * pow(r_plus, -3)
+//         * ( dU.d1[0] * (x + par_b) + dU.d2[0] * y + dU.d3[0] * z )
+//     - par_m_minus / psiBL * pow(r_minus, -3)
+//         * ( dU.d1[0] * (x - par_b) + dU.d2[0] * y + dU.d3[0] * z )
     - 0.875 * BY_KKofxyzSF (x, y, z) / psi8 * dU.d0[0]
     + sourceSF * dU.d0[0];
+//  CCTK_VInfo (CCTK_THORNSTRING, "psi = %g, psiBL = %g, dU.d1[0] = %g, dU.d2[0] = %g, dU.d3[0] = %g, values[0] = %g", psi, psiBL, dU.d1[0], dU.d2[0], dU.d3[0], values[0]);
 }
 
 /*-----------------------------------------------------------*/

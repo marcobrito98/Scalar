@@ -330,25 +330,19 @@ F_of_vSF (CCTK_POINTER_TO_CONST cctkGH,
         {
           r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
           r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
-          psi = 1.+
+          psi = (1.+
                 0.5 * par_m_plus  / r_plus +
-                0.5 * par_m_minus / r_minus +
-                U.d0[0];
+                0.5 * par_m_minus / r_minus) * (1. +
+                U.d0[0]);
           psi2 = psi * psi;
           psi4 = psi2 * psi2;
           psi7 = psi * psi2 * psi4;
           fprintf(debugfile,
                   "%.16g %.16g %.16g %.16g %.16g %.16g %.16g %.16g\n",
              (double)x, (double)y, (double)A, (double)B,
-             (double)(U.d11[0] +
-                      U.d22[0] +
-                      U.d33[0] +
-/*                      0.125 * BY_KKofxyz (x, y, z) / psi7 +*/
-                      (2.0 * Pi / psi2/psi * sources[indx]) * FAC),
-             (double)((U.d11[0] +
-                       U.d22[0] +
-                       U.d33[0])*FAC),
-             (double)(-(2.0 * Pi / psi2/psi * sources[indx]) * FAC),
+             (double)U.d0[0],
+             (double)psi,
+             (double)values[ivar],
              (double)sources[indx]
              /*(double)F[indx]*/
              );

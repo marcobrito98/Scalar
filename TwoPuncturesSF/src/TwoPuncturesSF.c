@@ -477,22 +477,22 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
             r_plus = TP_Tiny;
         if (r_minus < TP_Tiny)
             r_minus = TP_Tiny;
-        CCTK_REAL psi1 = 1
+        CCTK_REAL psi1 = (1
           + 0.5 * *mp / r_plus
-          + 0.5 * *mm / r_minus + U;
+          + 0.5 * *mm / r_minus) * (1. + U);
 #define EXTEND(M,r) \
           ( M * (3./8 * pow(r, 4) / pow(TP_Extend_Radius, 5) - \
                  5./4 * pow(r, 2) / pow(TP_Extend_Radius, 3) + \
                  15./8 / TP_Extend_Radius))
         if (r_plus < TP_Extend_Radius) {
-          psi1 = 1
+          psi1 = (1
              + 0.5 * EXTEND(*mp,r_plus)
-             + 0.5 * *mm / r_minus + U;
+             + 0.5 * *mm / r_minus) * (1. + U);
         }
         if (r_minus < TP_Extend_Radius) {
-          psi1 = 1
+          psi1 = (1
              + 0.5 * EXTEND(*mm,r_minus)
-             + 0.5 * *mp / r_plus + U;
+             + 0.5 * *mp / r_plus) * (1. + U);
         }
         CCTK_REAL static_psi = 1;
         
