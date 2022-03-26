@@ -213,3 +213,7 @@ BOOLEAN solve_momentum_constraint "Solve for momentum constraint?"
 {
 } "no"
 
+REAL npsi "exponent to conformally rescale energy density as Phi=psi^n*Phibar"
+{
+  (*:-2.5) :: ""
+} -3.0

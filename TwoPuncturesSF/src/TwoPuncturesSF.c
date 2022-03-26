@@ -477,22 +477,22 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
             r_plus = TP_Tiny;
         if (r_minus < TP_Tiny)
             r_minus = TP_Tiny;
-        CCTK_REAL psi1 = (1
+        CCTK_REAL psi1 = 1
           + 0.5 * *mp / r_plus
-          + 0.5 * *mm / r_minus) * (1. + U);
+          + 0.5 * *mm / r_minus + U;
 #define EXTEND(M,r) \
           ( M * (3./8 * pow(r, 4) / pow(TP_Extend_Radius, 5) - \
                  5./4 * pow(r, 2) / pow(TP_Extend_Radius, 3) + \
                  15./8 / TP_Extend_Radius))
         if (r_plus < TP_Extend_Radius) {
-          psi1 = (1
+          psi1 = 1
              + 0.5 * EXTEND(*mp,r_plus)
-             + 0.5 * *mm / r_minus) * (1. + U);
+             + 0.5 * *mm / r_minus + U;
         }
         if (r_minus < TP_Extend_Radius) {
-          psi1 = (1
+          psi1 = 1
              + 0.5 * EXTEND(*mm,r_minus)
-             + 0.5 * *mp / r_plus) * (1. + U);
+             + 0.5 * *mp / r_plus + U;
         }
         CCTK_REAL static_psi = 1;
         
@@ -654,25 +654,42 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
           SWAP (kxy[ind], kyz[ind]);
         } /* if swap_xz */
 
-
-        rho_SF1[ind] = 0;
-        rho_SF2[ind] = 0;
+        phi1[ind]     = 0;
+        phi2[ind]     = 0;
+        Kphi1[ind]    = 0;
+        Kphi2[ind]    = 0;
         if (switch_on_backreaction)
         {
-          CCTK_REAL sourceSF, phisq, dphisq;
-          sourceSF = LinSrcSF(xx, yy, zz, psi1); // Not used 
-          SF_Gaussian(xx, yy, zz, &phisq, &dphisq);
+          double rr  = sqrt(pow(xx, 2) + pow(yy, 2) + pow(zz, 2));
+          double rho = sqrt( xx*xx + yy*yy );
 
-          // Set scalar field profile for use in ScalarBase
-          phi1[ind] = sqrt(phisq);
-          phi2[ind] = 0;
+          CCTK_REAL Phibar1, dPhibar1[3];
+          CCTK_REAL Phibar2, dPhibar2[3];
 
-          // Output the energy density to the grid function rho_SF from TwoPuncturesSF
-          CCTK_REAL term1, term2;
-          term1 = mu * mu * phisq * pow( psi1, 5);
-          term2 = dphisq * psi1;
-          rho_SF1[ind] = term1;
-          rho_SF2[ind] = term2;
+          if (l0SF == 0) if (l0SF == 0) {
+              Phibar1   = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
+              Phibar2   = 0; 
+          }
+          if (l0SF == 1) if (m0SF == 1) {
+              double sthe, dsthe[3];
+              double sphi, dsphi[3];
+              double cphi, dcphi[3];
+              if (rho == 0) {
+                  sthe  = 0;
+                  sphi  = 0;
+                  cphi  = 0;
+              } else {
+                  sthe  = rho / rr;
+                  sphi  = yy / rho;
+                  cphi  = xx / rho;
+              }
+              Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
+              Phibar2   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * sphi; 
+          }
+          phi1[ind]     = pow(psi1, npsi) * Phibar1;
+          phi2[ind]     = pow(psi1, npsi) * Phibar2;
+          Kphi1[ind]    = 0;
+          Kphi2[ind]    = 0;
         }
 
       } /* for i */

@@ -24,9 +24,9 @@ void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phisq, CCTK_R
   /*=== define radius and angles ===========================*/
   // positions
   CCTK_REAL xp[3];
-  xp[0] = x - par_b; 
-  xp[1] = y;
-  xp[2] = z;
+  xp[0] = x + center_offset[0]; 
+  xp[1] = y + center_offset[1];
+  xp[2] = z + center_offset[2];
 
   // coordinate radius and polar radial coordinate
   CCTK_REAL rr, rr2;
@@ -47,17 +47,22 @@ void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phisq, CCTK_R
     psit_im = 0.0;
     }
     /*-----------------------------------------------------*/
-    else
-    CCTK_WARN (0, "invalid multipole for scalar field initial data");
+    /*
+        else
+        CCTK_WARN (0, "invalid multipole for scalar field initial data");
+    */
   }
   /*--------------------------------------------------------*/
-  else
-  CCTK_WARN (0, "invalid scalar field initial data");
+  /*
+      else
+      CCTK_WARN (0, "invalid scalar field initial data");
+  */
   /*========================================================*/
 
   /*=== calc scalar field phi =================================*/
 
-  *phisq = pow( ampSF * psit_re, 2) * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) ); 
+  *phisq = pow( ampSF * psit_re, 2)
+      * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) ); 
 
   *dphisq = pow( ampSF * psit_re * 2.0 * ( rr - r0SF ) / ( widthSF*widthSF ), 2)
       * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) );
