@@ -69,14 +69,14 @@ CoordBase::domainsize                = "minmax"
 
 # make sure all (xmax - xmin)/dx are integers!
 CoordBase::xmin                      =    0.00
-CoordBase::ymin                      = -252.00
+CoordBase::ymin                      = -128.00
 CoordBase::zmin                      =    0.00
-CoordBase::xmax                      = +252.00
-CoordBase::ymax                      = +252.00
-CoordBase::zmax                      = +252.00
-CoordBase::dx                        =    1.20
-CoordBase::dy                        =    1.20
-CoordBase::dz                        =    1.20
+CoordBase::xmax                      = +128.00
+CoordBase::ymax                      = +128.00
+CoordBase::zmax                      = +128.00
+CoordBase::dx                        =    1.00
+CoordBase::dy                        =    1.00
+CoordBase::dz                        =    1.00
 driver::ghost_size                   = 3
 
 CoordBase::boundary_size_x_lower     = 3
@@ -115,7 +115,7 @@ CarpetRegrid2::radius_1[2]              = 16.0
 CarpetRegrid2::radius_1[3]              =  4.0
 CarpetRegrid2::radius_1[4]              =  2.0
 CarpetRegrid2::radius_1[5]              =  1.0
-CarpetRegrid2::radius_1[6]              =  0.75
+CarpetRegrid2::radius_1[6]              =  0.6
 CarpetRegrid2::movement_threshold_1     =  0.16
 
 CarpetRegrid2::num_levels_2             =  7
@@ -192,8 +192,8 @@ TwoPuncturesSF::par_S_minus[2]          = 0.0
 TwoPuncturesSF::TP_epsilon              = 1.0e-6
 TwoPuncturesSF::TP_Tiny                 = 1.e-10
 
-TwoPuncturesSF::npoints_A               = 40
-TwoPuncturesSF::npoints_B               = 40
+TwoPuncturesSF::npoints_A               = 60
+TwoPuncturesSF::npoints_B               = 60
 TwoPuncturesSF::npoints_phi             = 24
 TwoPuncturesSF::grid_setup_method       = "evaluation"
 
@@ -211,7 +211,7 @@ ScalarInit::scalar_GaussProfile = single_mode
 ScalarInit::l0SF                = 1
 ScalarInit::m0SF                = 1
 ScalarInit::ampSF               = 0.01
-ScalarInit::r0SF                = 6.0
+ScalarInit::r0SF                = 3.0
 ScalarInit::widthSF             = 1.0
 
 Carpet::init_fill_timelevels            = yes
@@ -237,22 +237,20 @@ LeanBSSNMoL::use_advection_stencils       = yes
 LeanBSSNMoL::calculate_constraints        = yes
 #LeanBSSNMoL::couple_Tab                   = 0.      ## need this if asking for output of     T_ab and not backreaction
 
-ADMBase::lapse_prolongation_type        = "none"
-ADMBase::shift_prolongation_type        = "none"
-ADMBase::metric_prolongation_type       = "none"
+#ADMBase::lapse_prolongation_type        = "none"
+#ADMBase::shift_prolongation_type        = "none"
+#ADMBase::metric_prolongation_type       = "none"
 
 ScalarBase::evolution_method        = "ScalarEvolve"
 ScalarEvolve::chi_floor                 = 1.0d-06
 
-TmunuBase::stress_energy_storage        = no       ## backreaction turned on needed for T_ab output
-TmunuBase::stress_energy_at_RHS         = no       ## backreaction turned on needed for T_ab output
-#TmunuBase::stress_energy_storage        = yes       ## needed for output
-#TmunuBase::stress_energy_at_RHS         = yes       ## backreaction turned on but switched off by couple_Tab
+TmunuBase::stress_energy_storage        = yes       ## needed for output
+TmunuBase::stress_energy_at_RHS         = yes       ## backreaction turned on but switched off by couple_Tab
 # 
 # Spatial finite differencing
 #------------------------------------------------------------------------------
 
-Dissipation::epsdis = 0.2
+Dissipation::epsdis = 0.15
 Dissipation::order  = 5
 Dissipation::vars   = "
 ADMBase::lapse
@@ -490,18 +488,19 @@ QuasiLocalMeasures::qlm_scalars{out_every = 1024}
 IOASCII::out1D_every                    = 64
 IOASCII::out1D_d                        = no
 IOASCII::out1D_x                        = yes
-IOASCII::out1D_y                        = yes
+IOASCII::out1D_y                        = no 
 IOASCII::out1D_z                        = yes
 IOASCII::out1D_vars                     = "
-#ADMBase::lapse
-#ADMBase::metric
+ADMBase::lapse
+ADMBase::metric
 #ADMBase::curv
 LeanBSSNMoL::ham
 #LeanBSSNMoL::mom
+LeanBSSNMoL::conf_fac
 ScalarBase::phi
 ScalarBase::Kphi
 TwoPuncturesSF::puncture_u
-#TmunuBase::stress_energy_scalar
+TmunuBase::stress_energy_scalar
 #TmunuBase::stress_energy_vector
 #TmunuBase::stress_energy_tensor
 "
@@ -529,14 +528,15 @@ TwoPuncturesSF::puncture_u
 ## Checkpointing and recovery
 #################################################################################
 #
-CarpetIOHDF5::checkpoint                    = no
-IO::checkpoint_ID                           = no
+CarpetIOHDF5::checkpoint                    = yes
+IO::checkpoint_ID                           = yes
 IO::recover                                 = "autoprobe"
 IO::checkpoint_keep                         = 1
 IO::out_proc_every                          = 2
-IO::checkpoint_on_terminate                 = no
-IO::checkpoint_every_walltime_hours         = 10
+IO::checkpoint_on_terminate                 = yes
+IO::checkpoint_every_walltime_hours         = 12
 IO::checkpoint_dir                          = "checkpoints_$parfile"
+IO::recover                                 = "autoprobe"
 IO::recover_dir                             = "checkpoints_$parfile"
 IO::abort_on_io_errors                      = yes
 CarpetIOHDF5::open_one_input_file_at_a_time = yes
@@ -555,5 +555,5 @@ TerminationTrigger::termination_file             = "terminate.txt"
 TerminationTrigger::create_termination_file      = yes
 
 Cactus::terminate                               = time
-Cactus::cctk_final_time                         = 30 
+Cactus::cctk_final_time                         = 300
 

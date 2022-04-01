@@ -175,11 +175,14 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
               - 0.5 * par_m_minus / pow(r_minus, 3) * z
               + U.d3[0];
 
-  double rr;
+  double rr, rr2;
   double Phibar1, dPhibar1[3];
   double Phibar2, dPhibar2[3];
 
-  rr = sqrt( x*x + y*y + z*z);
+  rr2 = x*x + y*y + z*z;
+  if( rr2 < TP_Tiny )
+      rr2 = TP_Tiny;
+  rr  = sqrt( rr2 );
 
   if (l0SF == 0) if (m0SF == 0) {
       Phibar1       = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
@@ -193,24 +196,28 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
       dPhibar2[2]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * z / rr;
   }
   if (l0SF == 1) if (m0SF == 1) {
-      double rho;
+      double rho, rho2;
       double sthe, dsthe[3];
       double sphi, dsphi[3];
       double cphi, dcphi[3];
 
-      rho       = sqrt( x*x + y*y );
-      sthe      = rho / rr;
-      sphi      = y / rho;
-      cphi      = x / rho;
+      rho2 = x*x + y*y;
+      if( rho2 < TP_Tiny )
+          rho2 = TP_Tiny;
+      rho  = sqrt( rho2 );
+
+      sthe  = rho / rr;
+      sphi  = y / rho;
+      cphi  = x / rho;
 
       dsthe[0]  = x / rho / rr - x * rho / pow(rr, 3);
       dsthe[1]  = y / rho / rr - y * rho / pow(rr, 3);
       dsthe[2]  = 0 / rho / rr - z * rho / pow(rr, 3);
-      dsphi[0]  = 0 / rho - 1 * y / pow(rho, 3);
-      dsphi[1]  = 1 / rho - 1 * y / pow(rho, 3);
+      dsphi[0]  = 0 / rho - x * y / pow(rho, 3);
+      dsphi[1]  = 1 / rho - y * y / pow(rho, 3);
       dsphi[2]  = 0 / rho - 0 * y / pow(rho, 3);
-      dcphi[0]  = 1 / rho - 1 * x / pow(rho, 3);
-      dcphi[1]  = 0 / rho - 1 * x / pow(rho, 3);
+      dcphi[0]  = 1 / rho - x * x / pow(rho, 3);
+      dcphi[1]  = 0 / rho - y * x / pow(rho, 3);
       dcphi[2]  = 0 / rho - 0 * x / pow(rho, 3);
 
       Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
@@ -285,11 +292,14 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
               - 0.5 * par_m_minus / pow(r_minus, 3) * z
               + U.d3[0];
 
-  double rr;
+  double rr, rr2;
   double Phibar1, dPhibar1[3];
   double Phibar2, dPhibar2[3];
 
-  rr = sqrt( x*x + y*y + z*z);
+  rr2 = x*x + y*y + z*z;
+  if( rr2 < TP_Tiny )
+      rr2 = TP_Tiny;
+  rr  = sqrt( rr2 );
 
   if (l0SF == 0) if (m0SF == 0) {
       Phibar1       = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
@@ -304,31 +314,29 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   }
 
   if (l0SF == 1) if (m0SF == 1) {
-      double rho;
+      double rho, rho2;
       double sthe, dsthe[3];
       double sphi, dsphi[3];
       double cphi, dcphi[3];
 
-      rho = sqrt( x*x + y*y );
-      if (rho == 0) {
-          sthe  = 0;
-          sphi  = 0;
-          cphi  = 0;
-      } else {
-          sthe  = rho / rr;
-          sphi  = y / rho;
-          cphi  = x / rho;
-      }
+      rho2 = x*x + y*y;
+      if( rho2 < TP_Tiny )
+          rho2 = TP_Tiny;
+      rho  = sqrt( rho2 );
+
+      sthe  = rho / rr;
+      sphi  = y / rho;
+      cphi  = x / rho;
 
       dsthe[0]  = x / rho / rr - x * rho / pow(rr, 3);
       dsthe[1]  = y / rho / rr - y * rho / pow(rr, 3);
       dsthe[2]  = 0 / rho / rr - z * rho / pow(rr, 3);
-      dsphi[0]  = 0 / rho - 1 * y / pow(rho, 3);
-      dsphi[1]  = 1 / rho - 1 * y / pow(rho, 3);
-      dsphi[2]  = 0 / rho - 0 * y / pow(rho, 3);
-      dcphi[0]  = 1 / rho - 1 * x / pow(rho, 3);
-      dcphi[1]  = 0 / rho - 1 * x / pow(rho, 3);
-      dcphi[2]  = 0 / rho - 0 * x / pow(rho, 3);
+      dsphi[0]  = 0 / rho - x * y / pow(rho, 3);
+      dsphi[1]  = 1 / rho - y * y / pow(rho, 3);
+      dsphi[2]  = 0;
+      dcphi[0]  = 1 / rho - x * x / pow(rho, 3);
+      dcphi[1]  = 0 / rho - y * x / pow(rho, 3);
+      dcphi[2]  = 0;
 
       Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
       Phibar2   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * sphi; 
