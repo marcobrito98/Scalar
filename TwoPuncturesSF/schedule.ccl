@@ -41,6 +41,7 @@ if (CCTK_Equals(initial_data, "twopuncturesSF"))
             StaticConformal::confac_1derivs(Everywhere),
             StaticConformal::confac(Everywhere)
     WRITES: AdmBase::alp(Everywhere), AdmBase::metric(Everywhere), AdmBase::curv(Everywhere)
+    WRITES: ScalarBase::phi(Everywhere), ScalarBase::Kphi(Everywhere)
     # SYNC: ADMBase::metric ADMBase::curv ADMBase::lapse
   } "Create puncture black hole initial data"
 

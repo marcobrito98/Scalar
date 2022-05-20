@@ -9,97 +9,87 @@
 #include "TP_utilities.h"
 #include "TwoPuncturesSF.h"
 
+void conf_flat_analytic_SF_source_term(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *Phi1, CCTK_REAL *Phi2, CCTK_REAL dPhi1[3], CCTK_REAL dPhi2[3]) {
 
-void SF_Gaussian(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phisq, CCTK_REAL *dphisq)
-{
-  DECLARE_CCTK_PARAMETERS
+    DECLARE_CCTK_PARAMETERS;
+    CCTK_REAL rr, rr2;
+    CCTK_REAL rho, rho2;
 
-  /*=== initialize local functions as zero =================*/
-  // scalar field momentum
-  CCTK_REAL psit_re, psit_im;
-  psit_re = 0.0;
-  psit_im = 0.0;
-  /*========================================================*/
+    rr2 = x*x + y*y + z*z;
+    if( rr2 < TP_Tiny )
+        rr2 = TP_Tiny;
+    rr  = sqrt( rr2 );
 
-  /*=== define radius and angles ===========================*/
-  // positions
-  CCTK_REAL xp[3];
-  xp[0] = x + center_offset[0]; 
-  xp[1] = y + center_offset[1];
-  xp[2] = z + center_offset[2];
-
-  // coordinate radius and polar radial coordinate
-  CCTK_REAL rr, rr2;
-  rr2 = xp[0] * xp[0] + xp[1] * xp[1] + xp[2] * xp[2];
-  if( rr2 < TP_Tiny ) rr2 = TP_Tiny;
-  rr  = sqrt( rr2 );
-
-  /*========================================================*/
+    rho2 = x*x + y*y;
+    if( rho2 < TP_Tiny )
+        rho2 = TP_Tiny;
+    rho  = sqrt( rho2 );
 
 
-  if( CCTK_Equals(scalar_GaussProfile, "single_mode"))
-  // single mode data
-  {
-    if( l0SF == 0 )
-    // l0SF = m0SF = 0
-    {
-    psit_re = 1.0 / sqrt( 4.0*Pi );
-    psit_im = 0.0;
+    CCTK_INT monopole_statement, dipole_statement;
+    monopole_statement = ( CCTK_EQUALS(initial_scalar, "ID_SF_Gaussian") && CCTK_EQUALS(scalar_GaussProfile, "single_mode") && l0SF == 0 && m0SF == 0 );
+    dipole_statement   = ( CCTK_EQUALS(initial_scalar, "ID_SF_Gaussian") && CCTK_EQUALS(scalar_GaussProfile, "single_mode") && l0SF == 1 && m0SF == 1 );
+       
+    if (monopole_statement) {
+        *Phi1      = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
+        *Phi2      = 0; 
+
+        dPhi1[0]   = *Phi1 * (-2) * (rr - r0SF)/widthSF/widthSF * x / rr;
+        dPhi1[1]   = *Phi1 * (-2) * (rr - r0SF)/widthSF/widthSF * y / rr;
+        dPhi1[2]   = *Phi1 * (-2) * (rr - r0SF)/widthSF/widthSF * z / rr;
+        dPhi2[0]   = *Phi2 * (-2) * (rr - r0SF)/widthSF/widthSF * x / rr;
+        dPhi2[1]   = *Phi2 * (-2) * (rr - r0SF)/widthSF/widthSF * y / rr;
+        dPhi2[2]   = *Phi2 * (-2) * (rr - r0SF)/widthSF/widthSF * z / rr;
+    } else if (dipole_statement) {
+
+        CCTK_REAL Phi = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) );
+        CCTK_REAL dPhi[3];
+        CCTK_REAL sthe, dsthe[3];
+        CCTK_REAL sphi, dsphi[3];
+        CCTK_REAL cphi, dcphi[3];
+
+        sthe  = rho * pow(rr, -1.);
+        sphi  = y * pow(rho, -1.);
+        cphi  = x * pow(rho, -1.);
+
+        dPhi[0]     = Phi * (-2.) * (rr - r0SF)/widthSF/widthSF * x / rr;
+        dPhi[1]     = Phi * (-2.) * (rr - r0SF)/widthSF/widthSF * y / rr;
+        dPhi[2]     = Phi * (-2.) * (rr - r0SF)/widthSF/widthSF * z / rr;
+        dsthe[0]    =   x * z * z * pow(rho, -1.) * pow(rr, -3.);
+        dsthe[1]    =   y * z * z * pow(rho, -1.) * pow(rr, -3.);
+        dsthe[2]    = - z * rho * pow(rr, -3.);
+        dsphi[0]    = - x * y * pow(rho, -3.);
+        dsphi[1]    =   x * x * pow(rho, -3.);
+        dsphi[2]    = 0;
+        dcphi[0]    =   y * y * pow(rho, -3.);
+        dcphi[1]    = - y * x * pow(rho, -3.);
+        dcphi[2]    = 0;
+
+        *Phi1       = Phi * sthe * cphi; 
+        *Phi2       = Phi * sthe * sphi; 
+
+        dPhi1[0]    =  dPhi[0] * sthe * cphi
+                     + Phi * dsthe[0] * cphi
+                     + Phi * sthe * dcphi[0];
+        dPhi1[1]    =  dPhi[1] * sthe * cphi
+                     + Phi * dsthe[1] * cphi
+                     + Phi * sthe * dcphi[1];
+        dPhi1[2]    =  dPhi[2] * sthe * cphi
+                     + Phi * dsthe[2] * cphi
+                     + Phi * sthe * dcphi[2];
+
+        dPhi2[0]    =  dPhi[0] * sthe * sphi
+                     + Phi * dsthe[0] * sphi
+                     + Phi * sthe * dsphi[0];
+        dPhi2[1]    =  dPhi[1] * sthe * sphi
+                     + Phi * dsthe[1] * sphi
+                     + Phi * sthe * dsphi[1];
+        dPhi2[2]    =  dPhi[2] * sthe * sphi
+                     + Phi * dsthe[2] * sphi
+                     + Phi * sthe * dsphi[2];
+    } else {
+        CCTK_WARN(0, "Invalid choice for scalar field initial profile");
     }
-    /*-----------------------------------------------------*/
-    /*
-        else
-        CCTK_WARN (0, "invalid multipole for scalar field initial data");
-    */
-  }
-  /*--------------------------------------------------------*/
-  /*
-      else
-      CCTK_WARN (0, "invalid scalar field initial data");
-  */
-  /*========================================================*/
-
-  /*=== calc scalar field phi =================================*/
-
-  *phisq = pow( ampSF * psit_re, 2)
-      * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) ); 
-
-  *dphisq = pow( ampSF * psit_re * 2.0 * ( rr - r0SF ) / ( widthSF*widthSF ), 2)
-      * exp( - 2.0 * ( rr - r0SF )*( rr - r0SF ) / ( widthSF*widthSF ) );
-
-}
-
-CCTK_REAL NonLinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
-{
-  DECLARE_CCTK_PARAMETERS;
-  CCTK_REAL psi2, psi4, psi5;
-  CCTK_REAL phisq, dphisq, term1, term2;
-
-  psi2 = psi * psi;
-  psi4 = psi2 * psi2;
-  psi5 = psi * psi4;
-
-  SF_Gaussian(x, y, z, &phisq, &dphisq);
-  term1 = mu * mu * phisq * psi5;
-  term2 = dphisq * psi;
-
-  return Pi * (term1 + term2);
-}
-
-CCTK_REAL LinSrcSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL psi)
-{
-  DECLARE_CCTK_PARAMETERS;
-  CCTK_REAL psi2, psi4;
-  CCTK_REAL phisq, dphisq, term1, term2;
-
-  psi2 = psi * psi;
-  psi4 = psi2 * psi2;
-
-  SF_Gaussian(x, y, z, &phisq, &dphisq);
-  term1 = 5 * mu * mu * phisq * psi4;
-  term2 = 1 * dphisq;
-
-  return Pi * (term1 + term2);
 }
 
 /*-----------------------------------------------------------*/

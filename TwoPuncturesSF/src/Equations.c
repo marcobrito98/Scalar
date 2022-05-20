@@ -142,6 +142,7 @@ double dot(CCTK_REAL u[3], CCTK_REAL v[3]) {
     return  u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
 }
 
+
 /*-----------------------------------------------------------*/
 /********           Nonlinear Equations                ***********/
 /*-----------------------------------------------------------*/
@@ -153,7 +154,6 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi7;
-  CCTK_REAL sourceSF;
 
   r_plus    = sqrt( (x - par_b)*(x - par_b) + y*y + z*z );
   r_minus   = sqrt( (x + par_b)*(x + par_b) + y*y + z*z );
@@ -175,90 +175,32 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
               - 0.5 * par_m_minus / pow(r_minus, 3) * z
               + U.d3[0];
 
-  double rr, rr2;
-  double Phibar1, dPhibar1[3];
-  double Phibar2, dPhibar2[3];
+  CCTK_REAL Phi1, dPhi1[3];
+  CCTK_REAL Phi2, dPhi2[3];
 
-  rr2 = x*x + y*y + z*z;
-  if( rr2 < TP_Tiny )
-      rr2 = TP_Tiny;
-  rr  = sqrt( rr2 );
-
-  if (l0SF == 0) if (m0SF == 0) {
-      Phibar1       = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
-      Phibar2       = 0; 
-
-      dPhibar1[0]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * x / rr;
-      dPhibar1[1]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * y / rr;
-      dPhibar1[2]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * z / rr;
-      dPhibar2[0]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * x / rr;
-      dPhibar2[1]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * y / rr;
-      dPhibar2[2]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * z / rr;
-  }
-  if (l0SF == 1) if (m0SF == 1) {
-      double rho, rho2;
-      double sthe, dsthe[3];
-      double sphi, dsphi[3];
-      double cphi, dcphi[3];
-
-      rho2 = x*x + y*y;
-      if( rho2 < TP_Tiny )
-          rho2 = TP_Tiny;
-      rho  = sqrt( rho2 );
-
-      sthe  = rho / rr;
-      sphi  = y / rho;
-      cphi  = x / rho;
-
-      dsthe[0]  = x / rho / rr - x * rho / pow(rr, 3);
-      dsthe[1]  = y / rho / rr - y * rho / pow(rr, 3);
-      dsthe[2]  = 0 / rho / rr - z * rho / pow(rr, 3);
-      dsphi[0]  = 0 / rho - x * y / pow(rho, 3);
-      dsphi[1]  = 1 / rho - y * y / pow(rho, 3);
-      dsphi[2]  = 0 / rho - 0 * y / pow(rho, 3);
-      dcphi[0]  = 1 / rho - x * x / pow(rho, 3);
-      dcphi[1]  = 0 / rho - y * x / pow(rho, 3);
-      dcphi[2]  = 0 / rho - 0 * x / pow(rho, 3);
-
-      Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
-      Phibar2   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * sphi; 
-
-      dPhibar1[0] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * x / rr
-          + Phibar1 / sthe * dsthe[0]
-          + Phibar1 / cphi * dcphi[0];
-      dPhibar1[1] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * y / rr
-          + Phibar1 / sthe * dsthe[1]
-          + Phibar1 / cphi * dcphi[1];
-      dPhibar1[2] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * z / rr
-          + Phibar1 / sthe * dsthe[2]
-          + Phibar1 / cphi * dcphi[2];
-
-      dPhibar2[0] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * x / rr
-          + Phibar2 / sthe * dsthe[0]
-          + Phibar2 / sphi * dsphi[0];
-      dPhibar2[1] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * y / rr
-          + Phibar2 / sthe * dsthe[1]
-          + Phibar2 / sphi * dsphi[1];
-      dPhibar2[2] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * z / rr
-          + Phibar2 / sthe * dsthe[2]
-          + Phibar2 / sphi * dsphi[2];
+  if (switch_on_backreaction) {
+      conf_flat_analytic_SF_source_term(x, y, z, &Phi1, &Phi2, dPhi1, dPhi2);
+  } else {
+      Phi1 = Phi2 = 0;
+      for (int i=0; i<3; i++) dPhi1[i] = dPhi2[i] = 0;
   }
 
   values[0] =
     U.d11[0] + U.d22[0] + U.d33[0]
     + 0.125 * BY_KKofxyzSF (x, y, z) / psi7
-    + Pi * pow(psi, 2*npsi+5) * mu * mu
-        * ( Phibar1*Phibar1 + Phibar2*Phibar2 )
-    + Pi * pow(psi, 2*npsi+1)
-        * ( dot(dPhibar1, dPhibar1) + dot(dPhibar2, dPhibar2) )
-    + Pi * pow(psi, 2*npsi+0) * npsi
-        * (   Phibar1 * dot(dPhibar1, dpsi)
-            + Phibar2 * dot(dPhibar2, dpsi) )
-    + Pi * pow(psi, 2*npsi-1) * npsi * npsi
+    + Pi * pow(psi, 2*delta+5) * mu * mu
+        * ( Phi1*Phi1 + Phi2*Phi2 )
+    + Pi * pow(psi, 2*delta+1)
+        * ( dot(dPhi1, dPhi1) + dot(dPhi2, dPhi2) )
+    + Pi * pow(psi, 2*delta+0) * delta
+        * (   Phi1 * dot(dPhi1, dpsi)
+            + Phi2 * dot(dPhi2, dpsi) )
+    + Pi * pow(psi, 2*delta-1) * delta * delta
         * dot(dpsi, dpsi)
-        * ( Phibar1*Phibar1 + Phibar2*Phibar2 )
+        * ( Phi1*Phi1 + Phi2*Phi2 )
     ;
 }
+
 
 /*-----------------------------------------------------------*/
 /********               Linear Equations                ***********/
@@ -270,7 +212,6 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 {
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi8;
-  CCTK_REAL sourceSF;
 
   r_plus    = sqrt( (x - par_b)*(x - par_b) + y*y + z*z);
   r_minus   = sqrt( (x + par_b)*(x + par_b) + y*y + z*z);
@@ -292,95 +233,35 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
               - 0.5 * par_m_minus / pow(r_minus, 3) * z
               + U.d3[0];
 
-  double rr, rr2;
-  double Phibar1, dPhibar1[3];
-  double Phibar2, dPhibar2[3];
+  CCTK_REAL Phi1, dPhi1[3];
+  CCTK_REAL Phi2, dPhi2[3];
 
-  rr2 = x*x + y*y + z*z;
-  if( rr2 < TP_Tiny )
-      rr2 = TP_Tiny;
-  rr  = sqrt( rr2 );
-
-  if (l0SF == 0) if (m0SF == 0) {
-      Phibar1       = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
-      Phibar2       = 0; 
-
-      dPhibar1[0]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * x / rr;
-      dPhibar1[1]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * y / rr;
-      dPhibar1[2]   = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * z / rr;
-      dPhibar2[0]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * x / rr;
-      dPhibar2[1]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * y / rr;
-      dPhibar2[2]   = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * z / rr;
-  }
-
-  if (l0SF == 1) if (m0SF == 1) {
-      double rho, rho2;
-      double sthe, dsthe[3];
-      double sphi, dsphi[3];
-      double cphi, dcphi[3];
-
-      rho2 = x*x + y*y;
-      if( rho2 < TP_Tiny )
-          rho2 = TP_Tiny;
-      rho  = sqrt( rho2 );
-
-      sthe  = rho / rr;
-      sphi  = y / rho;
-      cphi  = x / rho;
-
-      dsthe[0]  = x / rho / rr - x * rho / pow(rr, 3);
-      dsthe[1]  = y / rho / rr - y * rho / pow(rr, 3);
-      dsthe[2]  = 0 / rho / rr - z * rho / pow(rr, 3);
-      dsphi[0]  = 0 / rho - x * y / pow(rho, 3);
-      dsphi[1]  = 1 / rho - y * y / pow(rho, 3);
-      dsphi[2]  = 0;
-      dcphi[0]  = 1 / rho - x * x / pow(rho, 3);
-      dcphi[1]  = 0 / rho - y * x / pow(rho, 3);
-      dcphi[2]  = 0;
-
-      Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
-      Phibar2   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * sphi; 
-
-      dPhibar1[0] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * x / rr
-          + Phibar1 / sthe * dsthe[0]
-          + Phibar1 / cphi * dcphi[0];
-      dPhibar1[1] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * y / rr
-          + Phibar1 / sthe * dsthe[1]
-          + Phibar1 / cphi * dcphi[1];
-      dPhibar1[2] = -2 * Phibar1 * (rr - r0SF) / pow(widthSF, 2) * z / rr
-          + Phibar1 / sthe * dsthe[2]
-          + Phibar1 / cphi * dcphi[2];
-
-      dPhibar2[0] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * x / rr
-          + Phibar2 / sthe * dsthe[0]
-          + Phibar2 / sphi * dsphi[0];
-      dPhibar2[1] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * y / rr
-          + Phibar2 / sthe * dsthe[1]
-          + Phibar2 / sphi * dsphi[1];
-      dPhibar2[2] = -2 * Phibar2 * (rr - r0SF) / pow(widthSF, 2) * z / rr
-          + Phibar2 / sthe * dsthe[2]
-          + Phibar2 / sphi * dsphi[2];
+  if (switch_on_backreaction) {
+      conf_flat_analytic_SF_source_term(x, y, z, &Phi1, &Phi2, dPhi1, dPhi2);
+  } else {
+      Phi1 = Phi2 = 0;
+      for (int i=0; i<3; i++) dPhi1[i] = dPhi2[i] = 0;
   }
 
   values[0] = dU.d11[0] + dU.d22[0] + dU.d33[0]
     - 0.875 * BY_KKofxyzSF (x, y, z) / psi8 * dU.d0[0]
-    + Pi * pow(psi, 2*npsi+4) * (2*npsi+5) * dU.d0[0] * mu * mu
-        * ( Phibar1*Phibar1 + Phibar2*Phibar2 )
-    + Pi * pow(psi, 2*npsi+0) * (2*npsi+1) * dU.d0[0]
-        * ( dot(dPhibar1, dPhibar1) + dot(dPhibar2, dPhibar2) )
-    + Pi * pow(psi, 2*npsi-1) * (2*npsi+0) * dU.d0[0] * npsi
-        * (   Phibar1 * dot(dPhibar1, dpsi)
-            + Phibar2 * dot(dPhibar2, dpsi) )
-    + Pi * pow(psi, 2*npsi-2) * (2*npsi-1) * dU.d0[0] * npsi * npsi
-        * ( Phibar1*Phibar1 + Phibar2*Phibar2 )
+    + Pi * pow(psi, 2*delta+4) * (2*delta+5) * dU.d0[0] * mu * mu
+        * ( Phi1*Phi1 + Phi2*Phi2 )
+    + Pi * pow(psi, 2*delta+0) * (2*delta+1) * dU.d0[0]
+        * ( dot(dPhi1, dPhi1) + dot(dPhi2, dPhi2) )
+    + Pi * pow(psi, 2*delta-1) * (2*delta+0) * dU.d0[0] * delta
+        * (   Phi1 * dot(dPhi1, dpsi)
+            + Phi2 * dot(dPhi2, dpsi) )
+    + Pi * pow(psi, 2*delta-2) * (2*delta-1) * dU.d0[0] * delta * delta
+        * ( Phi1*Phi1 + Phi2*Phi2 )
         * dot(dpsi, dpsi)
 
-    + Pi * pow(psi, 2*npsi+0) * 2 * npsi
-        * (   dU.d1[0] * ( Phibar1 * dPhibar1[0] + Phibar2 * dPhibar2[0] )
-            + dU.d2[0] * ( Phibar1 * dPhibar1[1] + Phibar2 * dPhibar2[1] )
-            + dU.d3[0] * ( Phibar1 * dPhibar1[2] + Phibar2 * dPhibar2[2] )  )
-    + Pi * pow(psi, 2*npsi-1) * 2 * npsi * npsi
-        * ( Phibar1*Phibar1 + Phibar2*Phibar2 )
+    + Pi * pow(psi, 2*delta+0) * 2 * delta
+        * (   dU.d1[0] * ( Phi1 * dPhi1[0] + Phi2 * dPhi2[0] )
+            + dU.d2[0] * ( Phi1 * dPhi1[1] + Phi2 * dPhi2[1] )
+            + dU.d3[0] * ( Phi1 * dPhi1[2] + Phi2 * dPhi2[2] )  )
+    + Pi * pow(psi, 2*delta-1) * 2 * delta * delta
+        * ( Phi1*Phi1 + Phi2*Phi2 )
         * (   dU.d1[0] * dpsi[0]
             + dU.d2[0] * dpsi[1]
             + dU.d3[0] * dpsi[2] )

@@ -654,43 +654,18 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
           SWAP (kxy[ind], kyz[ind]);
         } /* if swap_xz */
 
-        phi1[ind]     = 0;
-        phi2[ind]     = 0;
-        Kphi1[ind]    = 0;
-        Kphi2[ind]    = 0;
-        if (switch_on_backreaction)
-        {
-          double rr  = sqrt(pow(xx, 2) + pow(yy, 2) + pow(zz, 2));
-          double rho = sqrt( xx*xx + yy*yy );
+        phi1[ind]   = 0;
+        phi2[ind]   = 0;
+        Kphi1[ind]  = 0;
+        Kphi2[ind]  = 0;
 
-          CCTK_REAL Phibar1, dPhibar1[3];
-          CCTK_REAL Phibar2, dPhibar2[3];
+        CCTK_REAL Phi1, dPhi1[3];
+        CCTK_REAL Phi2, dPhi2[3];
 
-          if (l0SF == 0) if (l0SF == 0) {
-              Phibar1   = sqrt(0.25/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ); 
-              Phibar2   = 0; 
-          }
-          if (l0SF == 1) if (m0SF == 1) {
-              double sthe, dsthe[3];
-              double sphi, dsphi[3];
-              double cphi, dcphi[3];
-              if (rho == 0) {
-                  sthe  = 0;
-                  sphi  = 0;
-                  cphi  = 0;
-              } else {
-                  sthe  = rho / rr;
-                  sphi  = yy / rho;
-                  cphi  = xx / rho;
-              }
-              Phibar1   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * cphi; 
-              Phibar2   = -sqrt(0.375/Pi) * ampSF * exp( -pow((rr - r0SF)/widthSF, 2) ) * sthe * sphi; 
-          }
-          phi1[ind]     = pow(psi1, npsi) * Phibar1;
-          phi2[ind]     = pow(psi1, npsi) * Phibar2;
-          Kphi1[ind]    = 0;
-          Kphi2[ind]    = 0;
-        }
+        conf_flat_analytic_SF_source_term(x, y, z, &Phi1, &Phi2, dPhi1, dPhi2);
+
+        phi1[ind]   = pow(psi1, delta) * Phi1;
+        phi2[ind]   = pow(psi1, delta) * Phi2;
 
       } /* for i */
     }   /* for j */

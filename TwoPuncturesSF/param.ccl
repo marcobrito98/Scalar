@@ -33,17 +33,52 @@ USES STRING out_dir
 SHARES: ScalarBase
 
 USES CCTK_REAL mu
-USES KEYWORD initial_scalar
+
+EXTENDS KEYWORD initial_scalar "Which scalar field initial data"
+{
+  "ID_SF_Gaussian" :: "use Gaussian initial data"
+  "ID_SF_BS"       :: "bound-state initial data"
+  "ID_SF_Const"    :: "constant initial data"
+  
+}
 
 
-SHARES: ScalarInit
 
-USES KEYWORD scalar_GaussProfile
-USES CCTK_INT l0SF
-USES CCTK_INT m0SF
-USES CCTK_REAL ampSF
-USES CCTK_REAL widthSF
-USES CCTK_REAL r0SF
+#=== parameters for Gaussian initial data ======
+KEYWORD scalar_GaussProfile "Which mode composition for the Gaussian?"
+{
+  "single_mode"       :: "single mode initial data with (l0,m0)"
+  "superpose_ID010"   :: "superpose Y00, Y10 as initial data"
+  "superpose_ID011"   :: "superpose Y00, Y11 as initial data"
+  "superpose_ID01011" :: "superpose Y00, Y10, Y11 as initial data"
+  "superpose_ID012"   :: "superpose Y10 + Y11 + Y20 + Y22 as initial data"
+} "single_mode"
+
+
+CCTK_INT l0SF "angular quantum number"
+{
+ 0:2    :: "for now we've implemented the spherical harmonics only up to l=2"
+} 1
+
+CCTK_INT m0SF "azimuthal quantum number"
+{
+ -2:2   :: "for now we've implemented the spherical harmonics only up to l=2"
+} 1
+
+CCTK_REAL ampSF "amplitude of Gaussian wave packet"
+{
+  *:*   :: "any value possible"
+} 1.0
+
+CCTK_REAL widthSF "width of Gaussian wave packet"
+{
+  0:*   :: "any positive value possible"
+} 2.0
+
+CCTK_REAL r0SF "location of Gaussian wave packet"
+{
+  0:*   :: "any positive value possible"
+} 10.0
 
 
 RESTRICTED:
@@ -213,7 +248,7 @@ BOOLEAN solve_momentum_constraint "Solve for momentum constraint?"
 {
 } "no"
 
-REAL npsi "exponent to conformally rescale energy density as Phi=psi^n*Phibar"
+REAL delta "exponent to conformally rescale energy density as Phi=psi^n*Phibar"
 {
   (*:-2.5) :: ""
 } -3.0
