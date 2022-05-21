@@ -654,18 +654,20 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
           SWAP (kxy[ind], kyz[ind]);
         } /* if swap_xz */
 
+        /* Scalar field grid functions from ScalarBase */
         phi1[ind]   = 0;
         phi2[ind]   = 0;
         Kphi1[ind]  = 0;
         Kphi2[ind]  = 0;
 
-        CCTK_REAL Phi1, dPhi1[3];
-        CCTK_REAL Phi2, dPhi2[3];
+        CCTK_REAL Phi_re, dPhi_re[3];
+        CCTK_REAL Phi_im, dPhi_im[3];
 
-        conf_flat_analytic_SF_source_term(x, y, z, &Phi1, &Phi2, dPhi1, dPhi2);
+        if (switch_on_backreaction)
+            conf_flat_analytic_SF_source_term(xx, yy, zz, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
 
-        phi1[ind]   = pow(psi1, delta) * Phi1;
-        phi2[ind]   = pow(psi1, delta) * Phi2;
+        phi1[ind]   = pow(psi1, delta) * Phi_re;
+        phi2[ind]   = pow(psi1, delta) * Phi_im;
 
       } /* for i */
     }   /* for j */
