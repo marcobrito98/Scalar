@@ -194,21 +194,21 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
 
         /* Scalar field mass term */
         + Pi * pow(psi, 2*delta+5) * mu * mu
-        * ( Phi_re*Phi_re + Phi_im*Phi_im )
+            * ( Phi_re*Phi_re + Phi_im*Phi_im )
 
         /* Scalar field derivative term */
         + Pi * pow(psi, 2*delta+1)
-        * ( dot(dPhi_re, dPhi_re) + dot(dPhi_im, dPhi_im) )
+            * ( dot(dPhi_re, dPhi_re) + dot(dPhi_im, dPhi_im) )
 
         /* Mixed term between scalar field derivative and psi derivative */
         + Pi * pow(psi, 2*delta+0) * delta
-        * (   Phi_re * dot(dPhi_re, dpsi)
-        + Phi_im * dot(dPhi_im, dpsi) )
+            * 2*( Phi_re * dot(dPhi_re, dpsi)
+                + Phi_im * dot(dPhi_im, dpsi) )
 
         /* psi derivative term */
         + Pi * pow(psi, 2*delta-1) * delta * delta
-        * dot(dpsi, dpsi)
-        * ( Phi_re*Phi_re + Phi_im*Phi_im )
+            * dot(dpsi, dpsi)
+            * ( Phi_re*Phi_re + Phi_im*Phi_im )
     ;
 }
 
@@ -271,10 +271,10 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 
         /* Linearized mixed terms between scalar field derivative and psi derivative */
         + Pi * pow(psi, 2*delta-1) * (2*delta+0) * dU.d0[0] * delta
-            * (   Phi_re * dot(dPhi_re, dpsi)
+            * 2*( Phi_re * dot(dPhi_re, dpsi)
                 + Phi_im * dot(dPhi_im, dpsi) )
         + Pi * pow(psi, 2*delta+0) * 2 * delta
-            * (   dU.d1[0] * ( Phi_re * dPhi_re[0] + Phi_im * dPhi_im[0] )
+            * 2*( dU.d1[0] * ( Phi_re * dPhi_re[0] + Phi_im * dPhi_im[0] )
                 + dU.d2[0] * ( Phi_re * dPhi_re[1] + Phi_im * dPhi_im[1] )
                 + dU.d3[0] * ( Phi_re * dPhi_re[2] + Phi_im * dPhi_im[2] )  )
 
