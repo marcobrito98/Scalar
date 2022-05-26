@@ -1,0 +1,53 @@
+# Schedule definitions for thorn TwoPunctures_BBHSF
+
+if (CCTK_Equals(initial_data, "twopunctures_BBHSF"))
+{
+  STORAGE: energy, angular_momentum, puncture_adm_mass, bare_mass
+
+  if (keep_u_around) {
+    STORAGE: puncture_u
+  }
+
+  SCHEDULE BBHSF_TwoPunctures_ParamCheck AT PARAMCHECK
+  {
+    LANG: C
+  } "Check parameters and thorn needs"
+
+  if (schedule_in_ADMBase_InitialData)
+  {
+      SCHEDULE GROUP TwoPunctures_BBHSF_Group IN ADMBase_InitialData
+      {
+      } "TwoPunctures initial data group"
+  }
+  else
+  {
+      SCHEDULE GROUP TwoPunctures_BBHSF_Group AT Initial AFTER ADMBase_InitialData BEFORE ADMBase_PostInitial AFTER HydroBase_Initial before SetTmunu before HydroBase_Prim2ConInitial
+      {
+      } "TwoPunctures initial data group"
+  }
+
+  SCHEDULE TwoPunctures_BBHSF IN TwoPunctures_BBHSF_Group
+  {
+    LANG: C
+    STORAGE: puncture_u
+    READS: Grid::coordinates(Everywhere)
+    WRITES: Twopunctures_BBHSF::mp(Everywhere), Twopunctures_BBHSF::mm(Everywhere),
+            Twopunctures_BBHSF::mp_adm(Everywhere), Twopunctures_BBHSF::mm_adm(Everywhere),
+            Twopunctures_BBHSF::E(Everywhere), Twopunctures_BBHSF::J1(Everywhere),
+            Twopunctures_BBHSF::J2(Everywhere), Twopunctures_BBHSF::J3(Everywhere),
+            Twopunctures_BBHSF::puncture_u(Everywhere)
+    WRITES: StaticConformal::conformal_state(Everywhere),
+            StaticConformal::confac_2derivs(Everywhere),
+            StaticConformal::confac_1derivs(Everywhere),
+            StaticConformal::confac(Everywhere)
+    WRITES: AdmBase::alp(Everywhere), AdmBase::metric(Everywhere), AdmBase::curv(Everywhere),
+            ScalarBase::phi(Everywhere), ScalarBase::Kphi(Everywhere)
+    # SYNC: ADMBase::metric ADMBase::curv ADMBase::lapse
+  } "Create puncture black hole initial data"
+
+  SCHEDULE BBHSF_TwoPunctures_Metadata IN TwoPunctures_BBHSF_Group after TwoPunctures_BBHSF
+  {
+    LANG: C
+    OPTIONS: global
+  } "Output TwoPunctures metadata"
+}

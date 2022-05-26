@@ -1,0 +1,17 @@
+Cactus Code Thorn TwoPunctures_BBHSF
+Author(s)    : Giuseppe Ficarra, Cheng-Hsin Cheng
+Maintainer(s): Giuseppe Ficarra, Cheng-Hsin Cheng
+Licence      : LGPLv2+
+--------------------------------------------------------------------------
+
+1. Purpose
+
+Create initial data for two puncture black holes coupled to a scalar field,
+using a single domain spectral method. The method is described in arXiv:gr-qc/0404056.
+
+This thorn is an extension of the original TwoPunctures code to include scalar field related source terms
+when solving for the Hamiltonian constraint only. The latter can be done by choosing \Kphi = 0
+at the initial time, therefore the momentum constraint reduces to the one in vacuum. 
+We include the additional terms in the Hamiltonian constraint by
+conformally rescale the scalar field as \Phi = \psi^\delta \bar\Phi,
+where \psi is the conformal factor and \delta is an exponent that can be chosen at runtime.
