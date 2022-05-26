@@ -470,7 +470,7 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
 	/*========================================================*/
         
 	/*=== call to function that fills in the phi (recall we choose Kphi = 0) ===*/
-	CCTK_REAL phi_re, phi_im;
+        CCTK_REAL phi_re, phi_im;
         SF_Initialize(x[ind], y[ind], z[ind], &phi_re, &phi_im);	
 
 	/*==========================================================================*/
@@ -629,11 +629,11 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
         kyz[ind] = Aij[1][2] / pow(psi1, 2);
         kzz[ind] = Aij[2][2] / pow(psi1, 2);
 
-	//physical scalar field reconstruction and zero momentum
-	phi1[ind]  = phi_re * pow(psi1, delta);
+        //physical scalar field reconstruction and zero momentum
+        phi1[ind]  = phi_re * pow(psi1, delta);
         phi2[ind]  = phi_im * pow(psi1, delta);
-	Kphi1[ind] = 0.0;
-	Kphi2[ind] = 0.0;
+        Kphi1[ind] = 0.0;
+        Kphi2[ind] = 0.0;
 
         if (antisymmetric_lapse || averaged_lapse) {
           alp[ind] =

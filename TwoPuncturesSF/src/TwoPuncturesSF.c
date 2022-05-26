@@ -664,7 +664,7 @@ TwoPuncturesSF (CCTK_ARGUMENTS)
         CCTK_REAL Phi_im, dPhi_im[3];
 
         if (switch_on_backreaction)
-            SF_source_term(x, y, z, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
+            SF_source_term(x[ind], y[ind], z[ind], &Phi_re, &Phi_im, dPhi_re, dPhi_im);
 
         phi1[ind]   = pow(psi1, delta) * Phi_re;
         phi2[ind]   = pow(psi1, delta) * Phi_im;

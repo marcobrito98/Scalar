@@ -138,7 +138,7 @@ BY_AijofxyzSF (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL Aij[3][3])
   }
 }
 
-CCTK_REAL dot(CCTK_REAL u[3], CCTK_REAL v[3]) {
+CCTK_REAL doot(CCTK_REAL u[3], CCTK_REAL v[3]) {
     return  u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
 }
 
@@ -198,16 +198,16 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
 
         /* Scalar field derivative term */
         + Pi * pow(psi, 2*delta+1)
-            * ( dot(dPhi_re, dPhi_re) + dot(dPhi_im, dPhi_im) )
+            * ( doot(dPhi_re, dPhi_re) + doot(dPhi_im, dPhi_im) )
 
         /* Mixed term between scalar field derivative and psi derivative */
         + Pi * pow(psi, 2*delta+0) * delta
-            * 2*( Phi_re * dot(dPhi_re, dpsi)
-                + Phi_im * dot(dPhi_im, dpsi) )
+            * 2*( Phi_re * doot(dPhi_re, dpsi)
+                + Phi_im * doot(dPhi_im, dpsi) )
 
         /* psi derivative term */
         + Pi * pow(psi, 2*delta-1) * delta * delta
-            * dot(dpsi, dpsi)
+            * doot(dpsi, dpsi)
             * ( Phi_re*Phi_re + Phi_im*Phi_im )
     ;
 }
@@ -267,12 +267,12 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 
         /* Linearized scalar field derivative term */
         + Pi * pow(psi, 2*delta+0) * (2*delta+1) * dU.d0[0]
-            * ( dot(dPhi_re, dPhi_re) + dot(dPhi_im, dPhi_im) )
+            * ( doot(dPhi_re, dPhi_re) + doot(dPhi_im, dPhi_im) )
 
         /* Linearized mixed terms between scalar field derivative and psi derivative */
         + Pi * pow(psi, 2*delta-1) * (2*delta+0) * dU.d0[0] * delta
-            * 2*( Phi_re * dot(dPhi_re, dpsi)
-                + Phi_im * dot(dPhi_im, dpsi) )
+            * 2*( Phi_re * doot(dPhi_re, dpsi)
+                + Phi_im * doot(dPhi_im, dpsi) )
         + Pi * pow(psi, 2*delta+0) * 2 * delta
             * 2*( dU.d1[0] * ( Phi_re * dPhi_re[0] + Phi_im * dPhi_im[0] )
                 + dU.d2[0] * ( Phi_re * dPhi_re[1] + Phi_im * dPhi_im[1] )
@@ -281,7 +281,7 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
         /* Linearized psi derivative terms */
         + Pi * pow(psi, 2*delta-2) * (2*delta-1) * dU.d0[0] * delta * delta
             * ( Phi_re*Phi_re + Phi_im*Phi_im )
-            * dot(dpsi, dpsi)
+            * doot(dpsi, dpsi)
         + Pi * pow(psi, 2*delta-1) * 2 * delta * delta
             * ( Phi_re*Phi_re + Phi_im*Phi_im )
             * (   dU.d1[0] * dpsi[0]

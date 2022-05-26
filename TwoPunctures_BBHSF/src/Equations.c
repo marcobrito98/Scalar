@@ -127,13 +127,13 @@ BBHSF_BY_Aijofxyz (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL Aij[3][3])
     {				/* Bowen-York-Curvature :*/
       Aij[i][j] =
         + 1.5 * (par_P_plus[i] * n_plus[j] + par_P_plus[j] * n_plus[i]
-		 + np_Pp * n_plus[i] * n_plus[j]) / r2_plus
-	+ 1.5 * (par_P_minus[i] * n_minus[j] + par_P_minus[j] * n_minus[i]
-		 + nm_Pm * n_minus[i] * n_minus[j]) / r2_minus
-	- 3.0 * (np_Sp[i] * n_plus[j] + np_Sp[j] * n_plus[i]) / r3_plus
-	- 3.0 * (nm_Sm[i] * n_minus[j] + nm_Sm[j] * n_minus[i]) / r3_minus;
-      if (i == j)
-	Aij[i][j] -= +1.5 * (np_Pp / r2_plus + nm_Pm / r2_minus);
+		  + np_Pp * n_plus[i] * n_plus[j]) / r2_plus
+	    + 1.5 * (par_P_minus[i] * n_minus[j] + par_P_minus[j] * n_minus[i]
+          + nm_Pm * n_minus[i] * n_minus[j]) / r2_minus
+	    - 3.0 * (np_Sp[i] * n_plus[j] + np_Sp[j] * n_plus[i]) / r3_plus
+	    - 3.0 * (nm_Sm[i] * n_minus[j] + nm_Sm[j] * n_minus[i]) / r3_minus;
+          if (i == j)
+	    Aij[i][j] -= +1.5 * (np_Pp / r2_plus + nm_Pm / r2_minus);
     }
   }
 }
@@ -141,6 +141,11 @@ BBHSF_BY_Aijofxyz (CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL Aij[3][3])
 /*-----------------------------------------------------------*/
 /********           Nonlinear Equations                ***********/
 /*-----------------------------------------------------------*/
+
+CCTK_REAL dot(CCTK_REAL u[3], CCTK_REAL v[3]) {
+  return  u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
+}
+
 void
 BBHSF_NonLinEquations (CCTK_REAL rho_adm,
      CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
@@ -150,7 +155,7 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
   DECLARE_CCTK_PARAMETERS;
   CCTK_REAL r_plus, r_minus, psi, psi2, psi4, psi7;
 
-  r_plus = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
+  r_plus  = sqrt ((x - par_b) * (x - par_b) + y * y + z * z);
   r_minus = sqrt ((x + par_b) * (x + par_b) + y * y + z * z);
 
 #define EXTEND(M,r) \
@@ -164,14 +169,14 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
   if( r_plus < TP_Tiny ) r_plus = TP_Tiny;
   ir_plus = 1.0/r_plus;
   if (abs(r_plus) < TP_Extend_Radius) {
- 	 ir_plus = EXTEND(par_m_plus, r_plus);
+ 	ir_plus = EXTEND(par_m_plus, r_plus);
   }
 
   r_minus = pow (pow (r_minus, 4) + pow (TP_epsilon, 4), 0.25);
   if( r_minus < TP_Tiny ) r_minus = TP_Tiny;
   ir_minus = 1.0/r_minus;
   if (abs(r_minus) < TP_Extend_Radius) {
-         ir_minus = EXTEND(par_m_minus, r_minus);
+    ir_minus = EXTEND(par_m_minus, r_minus);
   }
 
   psi =
@@ -187,9 +192,12 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
   irplus3  = ir_plus * ir_plus * ir_plus;
   irminus3 = ir_minus * ir_minus * ir_minus;
 
-  DpsiBLdx[0] = - 0.5 * par_m_plus * ( x - par_b ) * irplus3 - 0.5 * par_m_minus * ( x + par_b ) * irminus3;
-  DpsiBLdx[1] = - 0.5 * par_m_plus * y * irplus3 - 0.5 * par_m_minus * y * irminus3;
-  DpsiBLdx[2] = - 0.5 * par_m_plus * z * irplus3 - 0.5 * par_m_minus * z * irminus3;
+  DpsiBLdx[0] = - 0.5 * par_m_plus  * ( x - par_b ) * irplus3
+                - 0.5 * par_m_minus * ( x + par_b ) * irminus3;
+  DpsiBLdx[1] = - 0.5 * par_m_plus  * y * irplus3
+                - 0.5 * par_m_minus * y * irminus3;
+  DpsiBLdx[2] = - 0.5 * par_m_plus  * z * irplus3
+                - 0.5 * par_m_minus * z * irminus3;
 
   //SF field and source contribution
   CCTK_REAL phi_re, phi_im, sourceSF1, sourceSF2;
@@ -204,8 +212,8 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
 
   //when backreaction we use these functions to fill in the scalar field itself and its contributions to H
   if (switch_on_backreaction){
-        SF_Initialize(x, y, z, &phi_re, &phi_im);
-        conf_flat_analytic_SF_source_term (x, y, z, phi_re, phi_im, &sourceSF1, &sourceSF2, &Dphi_re_dx, &Dphi_im_dx);
+    SF_Initialize(x, y, z, &phi_re, &phi_im);
+    conf_flat_analytic_SF_source_term (x, y, z, phi_re, phi_im, &sourceSF1, &sourceSF2, &Dphi_re_dx, &Dphi_im_dx);
   }
 
   CCTK_REAL term1, term2, term3, term4, term5, term6;
@@ -224,22 +232,19 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
 
   //mixed psi and field derivatives term
   term5 = 2 * Pi * delta * pow( psi, ( 2*delta ) ) * ( 
-		  phi_re * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_re_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_re_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_re_dx[2] ) 
-		  + phi_im * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_im_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_im_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_im_dx[2] ) 
-		  );
+      phi_re * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_re_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_re_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_re_dx[2] ) 
+    + phi_im * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_im_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_im_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_im_dx[2] ) 
+  );
 
   //psi derivatives term
   term6 = Pi * delta * delta * ( phi_re*phi_re + phi_im*phi_im ) * pow( psi, ( 2*delta - 1) ) * (
-		  ( U.d1[0] + DpsiBLdx[0] ) * ( U.d1[0] + DpsiBLdx[0] ) + ( U.d2[0] + DpsiBLdx[1] ) * ( U.d2[0] + DpsiBLdx[1] ) + ( U.d3[0] + DpsiBLdx[2] ) * ( U.d3[0] + DpsiBLdx[2] )
-		  );
+      ( U.d1[0] + DpsiBLdx[0] ) * ( U.d1[0] + DpsiBLdx[0] )
+    + ( U.d2[0] + DpsiBLdx[1] ) * ( U.d2[0] + DpsiBLdx[1] )
+    + ( U.d3[0] + DpsiBLdx[2] ) * ( U.d3[0] + DpsiBLdx[2] )
+  );
 
   //Hamiltonian constraint equation
   values[0] = term1 + term2 + term3 + term4 + term5 + term6;
-  //values[0] = term1 + term2 + term3 + term4;
-
-  /*values[0] =
-    U.d11[0] + U.d22[0] + U.d33[0] + 0.125 * BY_KKofxyz (x, y, z) / psi7 +
-    2.0 * Pi / psi2/psi * rho_adm;*/
 
 }
 
@@ -268,14 +273,14 @@ BBHSF_LinEquations (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   if( r_plus < TP_Tiny ) r_plus = TP_Tiny;
   ir_plus = 1.0/r_plus;
   if (abs(r_plus) < TP_Extend_Radius) {
-         ir_plus = EXTEND(par_m_plus, r_plus);
+    ir_plus = EXTEND(par_m_plus, r_plus);
   }
 
   r_minus = pow (pow (r_minus, 4) + pow (TP_epsilon, 4), 0.25);
   if( r_minus < TP_Tiny ) r_minus = TP_Tiny;
   ir_minus = 1.0/r_minus;
   if (abs(r_minus) < TP_Extend_Radius) {
-         ir_minus = EXTEND(par_m_minus, r_minus);
+    ir_minus = EXTEND(par_m_minus, r_minus);
   }
 
   psi =
@@ -308,8 +313,8 @@ BBHSF_LinEquations (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 
   //when backreaction we use these functions to fill in the scalar field itself and its contributions to H
   if (switch_on_backreaction){
-        SF_Initialize(x, y, z, &phi_re, &phi_im);
-        conf_flat_analytic_SF_source_term (x, y, z, phi_re, phi_im, &sourceSF1, &sourceSF2, &Dphi_re_dx, &Dphi_im_dx);
+    SF_Initialize(x, y, z, &phi_re, &phi_im);
+    conf_flat_analytic_SF_source_term (x, y, z, phi_re, phi_im, &sourceSF1, &sourceSF2, &Dphi_re_dx, &Dphi_im_dx);
   }
 
   CCTK_REAL term1, term2, term3, term4, term5, term6;
@@ -328,37 +333,30 @@ BBHSF_LinEquations (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 
   //mixed psi and field derivatives linearized term
   term5 = 2 * Pi * delta * (
-                  phi_re * (
-		  ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_re_dx[0]  + 
-		  ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_re_dx[1]  +
-		  ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_re_dx[2] 
-		  )
-		   +
-		  phi_im * (
-                  ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_im_dx[0]  +
-                  ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_im_dx[1]  +
-                  ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_im_dx[2] 
-		  )
-);
+    phi_re * (
+      ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_re_dx[0]  + 
+      ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_re_dx[1]  +
+      ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_re_dx[2] 
+    )
+    +
+    phi_im * (
+      ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_im_dx[0]  +
+      ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_im_dx[1]  +
+      ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_im_dx[2] 
+    )
+  );
 
   //psi derivatives linearized term
   term6 = Pi * delta * delta * ( phi_re*phi_re + phi_im*phi_im ) * pow( psi, ( 2*delta - 1 )) * (
-		   ( U.d1[0] + DpsiBLdx[0] ) * dU.d1[0] + ( U.d2[0] + DpsiBLdx[1] ) * dU.d2[0] + ( U.d3[0] + DpsiBLdx[2] ) * dU.d3[0]
-		   + 
-		   ( dU.d1[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d1[0] + DpsiBLdx[0] ) ) * ( U.d1[0] + DpsiBLdx[0] ) 
-		   +
-		   ( dU.d2[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d2[0] + DpsiBLdx[1] ) ) * ( U.d2[0] + DpsiBLdx[1] )
-		   +
-		   ( dU.d3[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d3[0] + DpsiBLdx[2] ) ) * ( U.d3[0] + DpsiBLdx[2] )
+      ( 2 * dU.d1[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d1[0] + DpsiBLdx[0] ) ) * ( U.d1[0] + DpsiBLdx[0] ) 
+    + ( 2 * dU.d2[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d2[0] + DpsiBLdx[1] ) ) * ( U.d2[0] + DpsiBLdx[1] )
+    + ( 2 * dU.d3[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d3[0] + DpsiBLdx[2] ) ) * ( U.d3[0] + DpsiBLdx[2] )
 
-);
+  );
 
   //linearized Hamiltonian constraint equation
   values[0] = term1 + term2 + term3 + term4 + term5 + term6;
-  //values[0] = term1 + term2 + term3 + term4;
 
-  /*values[0] = dU.d11[0] + dU.d22[0] + dU.d33[0]
-    - 0.875 * BY_KKofxyz (x, y, z) / psi8 * dU.d0[0];*/
 }
 
 /*-----------------------------------------------------------*/
