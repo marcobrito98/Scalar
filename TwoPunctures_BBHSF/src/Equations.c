@@ -199,6 +199,11 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
   DpsiBLdx[2] = - 0.5 * par_m_plus  * z * irplus3
                 - 0.5 * par_m_minus * z * irminus3;
 
+  CCTK_REAL Dpsidx[3];
+  Dpsidx[0] = DpsiBLdx[0] + U.d1[0];
+  Dpsidx[1] = DpsiBLdx[1] + U.d2[0];
+  Dpsidx[2] = DpsiBLdx[2] + U.d3[0];
+
   //SF field and source contribution
   CCTK_REAL phi_re, phi_im, sourceSF1, sourceSF2;
   CCTK_REAL Dphi_re_dx[3], Dphi_im_dx[3];
@@ -225,23 +230,22 @@ BBHSF_NonLinEquations (CCTK_REAL rho_adm,
   term2 = 0.125 * BBHSF_BY_KKofxyz (x, y, z) / psi7;
 
   //scalar field spatial derivatives
-  term3 = Pi * sourceSF1 * pow( psi, ( 1 + 2*delta ) );
+  term3 = Pi * sourceSF1 * pow(psi, 2*delta+1);
 
   //scalar field mass term
-  term4 = Pi * sourceSF2 * pow( psi, ( 5 + 2*delta ) );
+  term4 = Pi * sourceSF2 * pow(psi, 2*delta+5);
 
   //mixed psi and field derivatives term
-  term5 = 2 * Pi * delta * pow( psi, ( 2*delta ) ) * ( 
-      phi_re * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_re_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_re_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_re_dx[2] ) 
-    + phi_im * ( ( U.d1[0] + DpsiBLdx[0] ) * Dphi_im_dx[0] + ( U.d2[0] + DpsiBLdx[1] ) * Dphi_im_dx[1] + ( U.d3[0] + DpsiBLdx[2] ) * Dphi_im_dx[2] ) 
-  );
+  term5 = 2 * Pi * delta * pow(psi, 2*delta)
+    * ( 
+          phi_re * dot(Dpsidx, Dphi_re_dx)
+        + phi_im * dot(Dpsidx, Dphi_im_dx)
+    );
 
   //psi derivatives term
-  term6 = Pi * delta * delta * ( phi_re*phi_re + phi_im*phi_im ) * pow( psi, ( 2*delta - 1) ) * (
-      ( U.d1[0] + DpsiBLdx[0] ) * ( U.d1[0] + DpsiBLdx[0] )
-    + ( U.d2[0] + DpsiBLdx[1] ) * ( U.d2[0] + DpsiBLdx[1] )
-    + ( U.d3[0] + DpsiBLdx[2] ) * ( U.d3[0] + DpsiBLdx[2] )
-  );
+  term6 = Pi * delta*delta * pow(psi, 2*delta-1)
+    * ( phi_re*phi_re + phi_im*phi_im )
+    * dot(Dpsidx, Dpsidx);
 
   //Hamiltonian constraint equation
   values[0] = term1 + term2 + term3 + term4 + term5 + term6;
@@ -296,9 +300,17 @@ BBHSF_LinEquations (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   irplus3  = ir_plus * ir_plus * ir_plus;
   irminus3 = ir_minus * ir_minus * ir_minus;
 
-  DpsiBLdx[0] = - 0.5 * par_m_plus * ( x - par_b ) * irplus3 - 0.5 * par_m_minus * ( x + par_b ) * irminus3;
-  DpsiBLdx[1] = - 0.5 * par_m_plus * y * irplus3 - 0.5 * par_m_minus * y * irminus3;
-  DpsiBLdx[2] = - 0.5 * par_m_plus * z * irplus3 - 0.5 * par_m_minus * z * irminus3;
+  DpsiBLdx[0] = - 0.5 * par_m_plus  * ( x - par_b ) * irplus3
+                - 0.5 * par_m_minus * ( x + par_b ) * irminus3;
+  DpsiBLdx[1] = - 0.5 * par_m_plus  * y * irplus3
+                - 0.5 * par_m_minus * y * irminus3;
+  DpsiBLdx[2] = - 0.5 * par_m_plus  * z * irplus3
+                - 0.5 * par_m_minus * z * irminus3;
+
+  CCTK_REAL Dpsidx[3];
+  Dpsidx[0] = DpsiBLdx[0] + U.d1[0];
+  Dpsidx[1] = DpsiBLdx[1] + U.d2[0];
+  Dpsidx[2] = DpsiBLdx[2] + U.d3[0];
 
   //SF field and source contribution
   CCTK_REAL phi_re, phi_im, sourceSF1, sourceSF2;
@@ -326,32 +338,43 @@ BBHSF_LinEquations (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   term2 = - 0.875 * BBHSF_BY_KKofxyz (x, y, z) / psi8 * dU.d0[0];
 
   //scalar field spatial derivatives linearized term
-  term3 = Pi * ( 1 + 2*delta ) * pow( psi, ( 2*delta ) ) * sourceSF1 * dU.d0[0];
+  term3 = Pi * (2*delta+1) * pow(psi, 2*delta) * sourceSF1 * dU.d0[0];
 
   //scalar field mass linearized term
-  term4 = Pi * ( 5 + 2*delta ) * pow( psi, ( 4 + 2*delta ) ) * sourceSF2 * dU.d0[0];
+  term4 = Pi * (2*delta+5) * pow(psi, 2*delta+4) * sourceSF2 * dU.d0[0];
 
   //mixed psi and field derivatives linearized term
-  term5 = 2 * Pi * delta * (
-    phi_re * (
-      ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_re_dx[0]  + 
-      ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_re_dx[1]  +
-      ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_re_dx[2] 
-    )
-    +
-    phi_im * (
-      ( pow( psi, ( 2*delta ) ) * dU.d1[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d1[0] + DpsiBLdx[0] ) ) * Dphi_im_dx[0]  +
-      ( pow( psi, ( 2*delta ) ) * dU.d2[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d2[0] + DpsiBLdx[1] ) ) * Dphi_im_dx[1]  +
-      ( pow( psi, ( 2*delta ) ) * dU.d3[0] + 2 * delta * dU.d0[0] * pow( psi, ( 2*delta - 1 )) * ( U.d3[0] + DpsiBLdx[2] ) ) * Dphi_im_dx[2] 
-    )
-  );
+  term5 = 2 * Pi * delta
+    * (
+          phi_re
+          * (
+                pow(psi, 2*delta)
+                * ( dU.d1[0] * Dphi_re_dx[0]
+                  + dU.d2[0] * Dphi_re_dx[1]
+                  + dU.d3[0] * Dphi_re_dx[2] )
+              + pow(psi, 2*delta-1) * 2 * delta * dU.d0[0]
+                * dot(Dpsidx, Dphi_re_dx)
+          )
+        + phi_im
+          * (
+                pow(psi, 2*delta)
+                * ( dU.d1[0] * Dphi_im_dx[0]
+                  + dU.d2[0] * Dphi_im_dx[1]
+                  + dU.d3[0] * Dphi_im_dx[2] )
+              + pow(psi, 2*delta-1) * 2 * delta * dU.d0[0]
+                * dot(Dpsidx, Dphi_im_dx)
+          )
+    );
 
   //psi derivatives linearized term
-  term6 = Pi * delta * delta * ( phi_re*phi_re + phi_im*phi_im ) * pow( psi, ( 2*delta - 1 )) * (
-      ( 2 * dU.d1[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d1[0] + DpsiBLdx[0] ) ) * ( U.d1[0] + DpsiBLdx[0] ) 
-    + ( 2 * dU.d2[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d2[0] + DpsiBLdx[1] ) ) * ( U.d2[0] + DpsiBLdx[1] )
-    + ( 2 * dU.d3[0] - ( 1 - 2*delta ) * dU.d0[0] / psi * ( U.d3[0] + DpsiBLdx[2] ) ) * ( U.d3[0] + DpsiBLdx[2] )
-
+  term6 = Pi * delta*delta * ( phi_re*phi_re + phi_im*phi_im )
+    * (
+          pow(psi, 2*delta-1) * 2
+          * ( dU.d1[0] * Dpsidx[0]
+            + dU.d2[0] * Dpsidx[1]
+            + dU.d3[0] * Dpsidx[2] )
+        + pow(psi, 2*delta-2) * (2*delta-1) * dU.d0[0]
+          * dot(Dpsidx, Dpsidx)
   );
 
   //linearized Hamiltonian constraint equation
