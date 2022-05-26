@@ -182,7 +182,7 @@ NonLinEquationsSF (CCTK_REAL rho_adm,
 
     /* Initialize the scalar field terms to use in the Hamiltonian constraint */
     if (switch_on_backreaction)
-        conf_flat_analytic_SF_source_term(x, y, z, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
+        SF_source_term(x, y, z, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
 
     /* Hamiltonian constraint */
     values[0] =
@@ -251,7 +251,7 @@ LinEquationsSF (CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
 
     /* Initialize the scalar field terms to use in the Hamiltonian constraint */
     if (switch_on_backreaction) 
-        conf_flat_analytic_SF_source_term(x, y, z, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
+        SF_source_term(x, y, z, &Phi_re, &Phi_im, dPhi_re, dPhi_im);
 
     /* Linearized Hamiltonian constraint */
     values[0] =

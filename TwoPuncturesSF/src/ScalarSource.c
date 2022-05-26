@@ -9,7 +9,7 @@
 #include "TP_utilities.h"
 #include "TwoPuncturesSF.h"
 
-void conf_flat_analytic_SF_source_term(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *Phi_re, CCTK_REAL *Phi_im, CCTK_REAL dPhi_re[3], CCTK_REAL dPhi_im[3]) {
+void SF_source_term(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *Phi_re, CCTK_REAL *Phi_im, CCTK_REAL dPhi_re[3], CCTK_REAL dPhi_im[3]) {
     /* Computes analytic scalar field profiles and its derivatives */
 
     DECLARE_CCTK_PARAMETERS;
