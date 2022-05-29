@@ -310,10 +310,10 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
         
         /* Set the par_m_plus and par_m_minus parameters */
         sprintf (valbuf,"%.17g", (double) *mp);
-        CCTK_ParameterSet ("par_m_plus", "TwoPunctures", valbuf);
+        CCTK_ParameterSet ("par_m_plus", "TwoPunctures_BBHSF", valbuf);
         
         sprintf (valbuf,"%.17g", (double) *mm);
-        CCTK_ParameterSet ("par_m_minus", "TwoPunctures", valbuf);
+        CCTK_ParameterSet ("par_m_minus", "TwoPunctures_BBHSF", valbuf);
         
       } while ( (mp_adm_err > adm_tol) ||
                 (mm_adm_err > adm_tol) );
@@ -615,12 +615,12 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
           
         puncture_u[ind] = U;
 
-        gxx[ind] = pow (psi1, 4);
+        gxx[ind] = pow (psi1 / static_psi, 4);
         gxy[ind] = 0;
         gxz[ind] = 0;
-        gyy[ind] = pow (psi1, 4);
+        gyy[ind] = pow (psi1 / static_psi, 4);
         gyz[ind] = 0;
-        gzz[ind] = pow (psi1, 4);
+        gzz[ind] = pow (psi1 / static_psi, 4);
 
         kxx[ind] = Aij[0][0] / pow(psi1, 2);
         kxy[ind] = Aij[0][1] / pow(psi1, 2);
@@ -675,7 +675,7 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
 
       } /* for i */
     }   /* for j */
-  }  /* for k */
+  }     /* for k */
 
   if (use_sources && rescale_sources)
   {
