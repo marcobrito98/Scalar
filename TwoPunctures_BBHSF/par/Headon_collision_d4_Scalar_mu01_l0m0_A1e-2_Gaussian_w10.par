@@ -189,9 +189,12 @@ TwoPunctures_BBHSF::par_S_minus[2]          = 0.0
 TwoPunctures_BBHSF::TP_epsilon              = 1.0e-6
 TwoPunctures_BBHSF::TP_Tiny                 = 1.e-10
 
-TwoPunctures_BBHSF::npoints_A               = 60
-TwoPunctures_BBHSF::npoints_B               = 60
-TwoPunctures_BBHSF::npoints_phi             = 24
+# Here we use a smaller number of collocation points, suitable for testing on a laptop.
+# For production runs a higher resolution is necessary, typically n_A=n_B=60 and n_phi=24
+# or higher.
+TwoPunctures_BBHSF::npoints_A               = 30
+TwoPunctures_BBHSF::npoints_B               = 30
+TwoPunctures_BBHSF::npoints_phi             = 16
 TwoPunctures_BBHSF::grid_setup_method       = "evaluation"
 
 TwoPunctures_BBHSF::keep_u_around           = yes
@@ -538,13 +541,18 @@ CarpetIOHDF5::compression_level             = 9
 #################################################################################
 
 TerminationTrigger::max_walltime = 6
-#Trigger termination 30 minutes before the walltime is reached
+# Trigger termination 30 minutes before the walltime is reached
 TerminationTrigger::on_remaining_walltime        = 20
 TerminationTrigger::output_remtime_every_minutes = 30
 TerminationTrigger::termination_from_file        = yes
 TerminationTrigger::termination_file             = "terminate.txt"
 TerminationTrigger::create_termination_file      = yes
 
+# For the purpose of testing the initial data we only set the final evolution time to t=1.
 Cactus::terminate                               = time
-Cactus::cctk_final_time                         = 80
+Cactus::cctk_final_time                         = 1
+
+# If the final time is extended, one can expect the black holes to merge at around t=20.
+# The gravitational and scalar waveforms should be good until boundary reflections
+# contaminate the results after t~100.
 
