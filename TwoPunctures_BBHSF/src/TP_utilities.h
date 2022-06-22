@@ -75,3 +75,7 @@ CCTK_REAL fourev (CCTK_REAL *u, int N, CCTK_REAL x);
 CCTK_REAL norm1 (CCTK_REAL *v, int n);
 CCTK_REAL norm2 (CCTK_REAL *v, int n);
 CCTK_REAL scalarproduct (CCTK_REAL *v, CCTK_REAL *w, int n);
+
+void apply_cutoff (CCTK_REAL *var);
+CCTK_REAL inverse (CCTK_REAL M, CCTK_REAL r);
+CCTK_REAL extend  (CCTK_REAL M, CCTK_REAL r);

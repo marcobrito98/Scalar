@@ -6,12 +6,13 @@ Licence      : LGPLv2+
 
 1. Purpose
 
-Create initial data for two puncture black holes coupled to a scalar field,
-using a single domain spectral method. The method is described in arXiv:gr-qc/0404056.
+Create initial data for two black holes coupled to a massive, minimally-coupled, complex scalar field using a single-domain spectral method in the punctures approach. The method is described in arXiv:gr-qc/0404056.
 
-This thorn is an extension of the original TwoPunctures code to include scalar field related source terms
-when solving for the Hamiltonian constraint only. The latter can be done by choosing \Kphi = 0
-at the initial time, therefore the momentum constraint reduces to the one in vacuum. 
-We include the additional terms in the Hamiltonian constraint by
-conformally rescale the scalar field as \Phi = \psi^\delta \bar\Phi,
-where \psi is the conformal factor and \delta is an exponent that can be chosen at runtime.
+This thorn is an extension of the original TwoPunctures thorn to include scalar field source terms in the Hamiltonian constraint. The initial data can be solved for by choosing the momentum \Kphi of the scalar field to be 0 at the initial time, reducing the momentum constraint to the vacuum case, leaving only the Hamiltonian constraint equation to solve for. 
+
+We include the scalar field contributions to the Hamiltonian constraint by
+conformally rescaling the scalar field as \Phi = \psi^\delta \bar\Phi,
+where \psi is the conformal factor and \delta < -3 is an exponent that can be chosen at runtime. The conformal rescaling is necessary to ensure that the linearized Hamiltonian constraint equation is well-posed as an elliptic problem.
+
+For a complete description of the code and equations employed, please refer to our documenetation at [link].
+

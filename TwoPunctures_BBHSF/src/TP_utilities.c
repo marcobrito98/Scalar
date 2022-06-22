@@ -8,6 +8,7 @@
 #include "TP_utilities.h"
 
 #include "cctk_Functions.h"
+#include "cctk_Parameters.h"
 
 /*---------------------------------------------------------------------------*/
 int *
@@ -521,6 +522,41 @@ scalarproduct (CCTK_REAL *v, CCTK_REAL *w, int n)
 
   for (i = 0; i < n; i++)
     result += v[i] * w[i];
+
+  return result;
+}
+
+/* -------------------------------------------------------------------------*/
+void
+apply_cutoff (CCTK_REAL *var)
+{
+  DECLARE_CCTK_PARAMETERS;
+  *var = pow (pow (*var,  4) + pow (TP_epsilon, 4), 0.25);
+   if (*var < TP_Tiny)
+       *var = TP_Tiny;
+  return;
+}
+
+/* -------------------------------------------------------------------------*/
+CCTK_REAL
+extend (CCTK_REAL M, CCTK_REAL r)
+{
+  DECLARE_CCTK_PARAMETERS;
+  return   ( M * (3./8. * pow(r, 4) / pow(TP_Extend_Radius, 5) -
+                  5./4. * pow(r, 2) / pow(TP_Extend_Radius, 3) +
+                  15./8. / TP_Extend_Radius));
+}
+
+
+/* -------------------------------------------------------------------------*/
+CCTK_REAL
+inverse (CCTK_REAL M, CCTK_REAL r)
+{
+  DECLARE_CCTK_PARAMETERS;
+  CCTK_REAL result = M / r;
+  
+  if (abs(r)  < TP_Extend_Radius)
+    result  = extend(M, r);
 
   return result;
 }

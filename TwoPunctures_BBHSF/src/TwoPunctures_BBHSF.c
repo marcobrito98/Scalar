@@ -497,15 +497,15 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
             r_minus = TP_Tiny;
         CCTK_REAL psi1 = //
           ( 1. + 0.5 * *mp / r_plus + 0.5 * *mm / r_minus + U);
-#define EXTEND(M,r) \
-          ( M * (3./8 * pow(r, 4) / pow(TP_Extend_Radius, 5) - \
-                 5./4 * pow(r, 2) / pow(TP_Extend_Radius, 3) + \
-                 15./8 / TP_Extend_Radius))
+// #define EXTEND(M,r) \
+//           ( M * (3./8 * pow(r, 4) / pow(TP_Extend_Radius, 5) - \
+//                  5./4 * pow(r, 2) / pow(TP_Extend_Radius, 3) + \
+//                  15./8 / TP_Extend_Radius))
         if (r_plus < TP_Extend_Radius) {
-          psi1 = ( 1. + 0.5 * EXTEND(*mp,r_plus) + 0.5 * *mm / r_minus + U );
+          psi1 = ( 1. + 0.5 * extend(*mp,r_plus) + 0.5 * *mm / r_minus + U );
         }
         if (r_minus < TP_Extend_Radius) {
-          psi1 = ( 1. + 0.5 * EXTEND(*mm,r_minus) + 0.5 * *mp / r_plus + U );
+          psi1 = ( 1. + 0.5 * extend(*mm,r_minus) + 0.5 * *mp / r_plus + U );
         }
         CCTK_REAL static_psi = 1;
         
@@ -537,7 +537,7 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
           ir = 1.0/rp;
 
           if (rp < TP_Extend_Radius) {
-            ir = EXTEND(1., rp);
+            ir = extend(1., rp);
           }
 
           s1 = 0.5* *mp *ir;
@@ -568,7 +568,7 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
           ir = 1.0/rp;
 
           if (rp < TP_Extend_Radius) {
-            ir = EXTEND(1., rp);
+            ir = extend(1., rp);
           }
 
           s1 = 0.5* *mm *ir;
@@ -642,13 +642,13 @@ TwoPunctures_BBHSF (CCTK_ARGUMENTS)
 
           if (r_plus < TP_Extend_Radius) {
             alp[ind] =
-              ((1.0 -0.5*EXTEND(*mp, r_plus) -0.5* *mm/r_minus)
-              /(1.0 +0.5*EXTEND(*mp, r_plus) +0.5* *mm/r_minus));
+              ((1.0 -0.5*extend(*mp, r_plus) -0.5* *mm/r_minus)
+              /(1.0 +0.5*extend(*mp, r_plus) +0.5* *mm/r_minus));
           }
           if (r_minus < TP_Extend_Radius) {
             alp[ind] =
-              ((1.0 -0.5*EXTEND(*mm, r_minus) -0.5* *mp/r_plus)
-              /(1.0 +0.5*EXTEND(*mp, r_minus) +0.5* *mp/r_plus));
+              ((1.0 -0.5*extend(*mm, r_minus) -0.5* *mp/r_plus)
+              /(1.0 +0.5*extend(*mp, r_minus) +0.5* *mp/r_plus));
           }
           
           if (averaged_lapse) {
