@@ -1,0 +1,369 @@
+% *======================================================================*
+%  Cactus Thorn template for ThornGuide documentation
+%  Author: Ian Kelley
+%  Date: Sun Jun 02, 2002
+%
+%  Thorn documentation in the latex file doc/documentation.tex
+%  will be included in ThornGuides built with the Cactus make system.
+%  The scripts employed by the make system automatically include
+%  pages about variables, parameters and scheduling parsed from the
+%  relevant thorn CCL files.
+%
+%  This template contains guidelines which help to assure that your
+%  documentation will be correctly added to ThornGuides. More
+%  information is available in the Cactus UsersGuide.
+%
+%  Guidelines:
+%   - Do not change anything before the line
+%       % START CACTUS THORNGUIDE",
+%     except for filling in the title, author, date, etc. fields.
+%        - Each of these fields should only be on ONE line.
+%        - Author names should be separated with a \\ or a comma.
+%   - You can define your own macros, but they must appear after
+%     the START CACTUS THORNGUIDE line, and must not redefine standard
+%     latex commands.
+%   - To avoid name clashes with other thorns, 'labels', 'citations',
+%     'references', and 'image' names should conform to the following
+%     convention:
+%       ARRANGEMENT_THORN_LABEL
+%     For example, an image wave.eps in the arrangement CactusWave and
+%     thorn WaveToyC should be renamed to CactusWave_WaveToyC_wave.eps
+%   - Graphics should only be included using the graphicx package.
+%     More specifically, with the "\includegraphics" command.  Do
+%     not specify any graphic file extensions in your .tex file. This
+%     will allow us to create a PDF version of the ThornGuide
+%     via pdflatex.
+%   - References should be included with the latex "\bibitem" command.
+%   - Use \begin{abstract}...\end{abstract} instead of \abstract{...}
+%   - Do not use \appendix, instead include any appendices you need as
+%     standard sections.
+%   - For the benefit of our Perl scripts, and for future extensions,
+%     please use simple latex.
+%
+% *======================================================================*
+%
+% Example of including a graphic image:
+%    \begin{figure}[ht]
+% 	\begin{center}
+%    	   \includegraphics[width=6cm]{MyArrangement_MyThorn_MyFigure}
+% 	\end{center}
+% 	\caption{Illustration of this and that}
+% 	\label{MyArrangement_MyThorn_MyLabel}
+%    \end{figure}
+%
+% Example of using a label:
+%   \label{MyArrangement_MyThorn_MyLabel}
+%
+% Example of a citation:
+%    \cite{MyArrangement_MyThorn_Author99}
+%
+% Example of including a reference
+%   \bibitem{MyArrangement_MyThorn_Author99}
+%   {J. Author, {\em The Title of the Book, Journal, or periodical}, 1 (1999),
+%   1--16. {\tt http://www.nowhere.com/}}
+%
+% *======================================================================*
+
+\documentclass{article}
+
+% Use the Cactus ThornGuide style file
+% (Automatically used from Cactus distribution, if you have a
+%  thorn without the Cactus Flesh download this from the Cactus
+%  homepage at www.cactuscode.org)
+\usepackage{../../../../doc/latex/cactus}
+
+
+\newcommand{\bracket}[1]{\left( #1 \right)}
+
+\begin{document}
+
+% The author of the documentation
+\author{Giuseppe Ficarra, Cheng-Hsin Cheng, Helvi Witek}
+
+% The title of the document (not necessarily the name of the Thorn)
+\title{TwoPunctures\_BBHSF}
+
+% the date your document was last changed:
+\date{Jun 24 2022}
+\date{\today}
+
+\maketitle
+
+% Do not delete next line
+% START CACTUS THORNGUIDE
+
+% Add all definitions used in this documentation here
+%   \def\mydef etc
+
+% Add an abstract for this thorn's documentation
+% \begin{abstract}
+
+% \end{abstract}
+
+% The following sections are suggestive only.
+% Remove them or add your own.
+
+\begin{abstract}
+We extend the \texttt{TwoPunctures} thorn to generate initial data for black hole
+binaries coupled to a massive, minimally-coupled complex scalar field.
+\end{abstract}
+
+\section{Scalar field source terms}
+
+We consider a complex scalar field $\Phi$ of mass $\mu_S$ minimally coupled to gravity.
+The action is described by
+\begin{equation}
+    S = \int \mathrm{d}^4 x \sqrt{-g}
+    \bracket{ \frac{^{(4)}R}{16\pi} - \frac{1}{2} (\nabla\Phi)^2
+        -\frac{\mu_S^2}{2} \Phi^2
+    },
+\end{equation}
+resulting in the equations of motion
+\begin{align}
+    & G_{ab} = 8\pi T_{ab},
+    \\
+    & (g^{ab} \nabla_a \nabla_b -\mu_S^2) \Phi = 0,
+\end{align}
+with the stress-energy tensor
+\begin{equation}
+    T_{ab} = \nabla_a\Phi \nabla_b \Phi
+    - \frac{1}{2} g_{ab} (\nabla^c\Phi \nabla_c \Phi + \mu_S^2\Phi^2 ).
+\end{equation}
+
+Under the 3+1 decomposition,
+the scalar field contributes through the energy density $\rho$,
+energy-momentum flux $j_i$,
+and the purely spatial stress tensor $S_{ij}$, given by
+\begin{align}
+    \rho = n^\mu n^\nu T_{\mu\nu}
+    &= 2 \Pi^2 + \frac{\mu_S^2 \Phi^2}{2}
+    + \frac{1}{2} D_k\Phi D^k \Phi,
+    \\
+    j_i = -\gamma_i^\mu n^\nu T_{\mu\nu}
+    &= 2\Pi D_i\Phi,
+    \\
+    S_{ij} = \gamma_i ^\mu \gamma_j^\nu T_{\mu\nu}
+    &= D_i\Phi D_j\Phi
+    + \frac{1}{2} \gamma_{ij} (4\Pi^2 - \mu_S^2 \Phi^2 - D^k\Phi D_k\Phi),
+\end{align}
+where $D_i$ is the spatial covariant derivative with respect to the 3-metric $\gamma_{ij}$.
+Here, we have also defined the scalar field momentum $\Pi$ using the Lie derivative along the normal vector $n^\mu$ as
+\begin{equation}
+    \Pi \equiv - \frac{1}{2} \mathcal{L}_n \Phi.
+\end{equation}
+
+\section{Constraint equations in the punctures approach}
+
+Let us perform a conformal decomposition of the physical metric as $\gamma_{ij}=\psi^4\bar{\gamma}_{ij}$,
+where $\psi$ is the conformal factor and $\bar{\gamma}_{ij}$ is the conformal metric.
+Then, the Hamiltonian constraint equation is given by
+\begin{equation}
+    \bar{D}^2 \psi - \frac{1}{8} \psi \bar{R} + \psi^5 (K_{ij}K^{ij} - K^2 )
+    + 2\pi\psi^5 \rho = 0,
+\end{equation}
+where $\bar{D}^2$ is the conformal Laplacian operator, $\bar{R}$ is the conformal Ricci scalar, and $K_{ij}$ is the extrinsic curvature.
+Further decomposing $K_{ij}$ into its trace $K$ and trace-free parts $A_{ij}$ and performing a conformal decomposition as
+\begin{equation}
+    A_{ij} = \psi^{-2}\bar{A}_{ij},
+    \hfill
+    A^{ij} = \psi^{-10}\bar{A}^{ij},
+\end{equation}
+we arrive at
+\begin{equation}
+    \bar{D}^2 \psi
+    - \frac{1}{8} \psi \bar{R}
+    + \frac{1}{8} \psi^{-7} \bar{A}_{ij}\bar{A}^{ij}
+    - \frac{1}{12} \psi^5 K^2
+    + 2\pi\psi^5 \rho = 0.
+\end{equation}
+
+
+
+Now let us introduce a series of assumptions for the punctures approach.
+Writing the conformal factor as
+$ \psi = u + \psi_{\rm BL} $
+with the Brill-Lindquist solution
+\begin{equation}
+    \psi_{\rm BL} \equiv \sum_{i=1}^N \frac{m_i}{2|r - r_i|},
+\end{equation}
+where $m_i$ and $r_i$ denote the bare mass and location of the $i$-th puncture,
+the flat Laplacian reduces to $\bar{D}^2 u$ in the punctured domain $\mathbb{R}^3\setminus\{r_i\}$.
+Further assuming conformal flatness ($\bar{\gamma}_{ij} = \eta_{ij}$) and the maximal slicing condition ($K=0$), the Hamiltonian constraint equation takes the form of an elliptic equation in the unknown $u$
+\begin{equation}
+    \bar{D}^2 u + \frac{1}{8} (u+\psi_{\rm BL} )^{-7} \bar{A}_{ij} \bar{A}^{ij}
+    + 2\pi (u+\psi_{\rm BL})^5 \rho = 0.
+\end{equation}
+In the above equation, the first two terms constitute the vacuum equations being solved in the \texttt{TwoPunctures} thorn.
+
+\subsection{Conformal rescaling of scalar field}
+Under the above set of assumptions, the energy density of the scalar field becomes
+\begin{align}
+    \rho
+    &= 2 \Pi^2 + \frac{\mu_S^2 \Phi^2}{2}
+    + \gamma^{ij} \frac{1}{2} D_i\Phi D_j \Phi
+    \nonumber
+    \\
+    &= 2 \Pi^2 + \frac{\mu_S^2 \Phi^2}{2}
+    + \psi^{-4} \frac{1}{2} \partial_k\Phi \partial^k \Phi.
+\end{align}
+If we choose a scalar field configuration for which the momentum vanishes at the initial time, for instance a Gaussian profile with zero momentum
+\begin{equation}
+    \Phi(t=0) = A_{\rm SF} Z(\theta, \phi) \exp[-(r-r_0)^2/w^2],
+    \quad
+    \Pi(t=0) = 0,
+\end{equation}
+the Hamiltonian constraint equation is now
+\begin{equation}
+    \bar{D}^2 u + \frac{1}{8} (u+\psi_{\rm BL} )^{-7} \bar{A}_{ij} \bar{A}^{ij}
+    + \pi (u+\psi_{\rm BL})^5 \mu_S^2 \Phi^2
+    + \pi (u+\psi_{\rm BL}) \partial_k\Phi \partial^k\Phi
+    = 0.
+\end{equation}
+
+It would be nice if the equations end here.
+Unfortunately, for certain choices of the scalar field mass $\mu_S$ the linearized equation can be an ill-posed elliptic problem,
+leading to an unstable solution.
+This motivates us to conformally rescale the scalar field as
+\begin{equation}
+    \Phi = \psi^\delta \bar{\Phi},
+    \quad
+    \Phi^* = \psi^\delta \bar{\Phi}^*,
+\end{equation}
+where $\delta$ is a constant parameter
+and $\Bar{\Phi}$ is the conformal scalar field.
+The Hamiltonian equation becomes
+\begin{align}
+    \nabla\psi
+    + \frac{1}{8} \psi^{-7} \bar{A}_{ij} \bar{A}^{ij}
+    +\
+    &\pi\ \psi^{2\delta + 5}\
+    \mu_S^2 \bar{\Phi}^* \bar{\Phi}
+    \nonumber
+    \\
+    +\
+    &\pi\ \psi^{2\delta + 1}\
+    (\partial_i\bar{\Phi}^*)
+    (\partial^i\bar{\Phi})
+    \nonumber
+    \\
+    +\ \delta
+    &\pi\ \psi^{2\delta}\quad\
+    (\partial_i\psi)
+    ( \bar{\Phi}^* \partial^i\bar{\Phi}
+    + \bar{\Phi} \partial^i\bar{\Phi}^* )
+    \nonumber
+    \\
+    +\ \delta^2
+    &\pi\ \psi^{2\delta-1}\ (\partial_i\psi) (\partial^i\psi)
+    \bar{\Phi}^* \bar{\Phi}
+    \quad\quad\quad
+    = 0,
+\end{align}
+where 
+\begin{align}
+    \psi 
+    &= \psi_{\rm BL} + u,
+    \\
+    \partial_i\psi 
+    &= \partial_i\psi_{\rm BL} + \partial_i u.
+\end{align}
+
+Linearizing it by writing the correction function as $u = u_0 + \epsilon$ with $u_0$ a known solution,
+we arrive at
+\begin{align}
+    \nabla\epsilon
+    - \epsilon
+    \Bigg[
+        \frac{7}{8} \psi^{-8} \bar{A}_{ij} \bar{A}^{ij}
+        -\
+        (2\delta + 5)\ \pi\
+        &\psi^{2\delta + 4}\
+        \mu_S^2 \bar{\Phi}^* \bar{\Phi}
+        \nonumber
+        \\
+        -\ (2\delta + 1)\ \pi\
+        &\psi^{2\delta}\quad\ 
+        (\partial_i\bar{\Phi}^*)
+        (\partial^i\bar{\Phi})
+        \nonumber
+        \\
+        -\quad (2\delta)\quad \delta \pi\
+        &\psi^{2\delta-1}\ (\partial_i\psi)
+        ( \bar{\Phi}^* \partial^i\bar{\Phi}
+        + \bar{\Phi} \partial^i\bar{\Phi}^* )
+        \nonumber
+        \\
+        -\ (2\delta-1)\ \delta^2 \pi\
+        &\psi^{2\delta-2}\ (\partial_i\psi) (\partial^i\psi)
+        \bar{\Phi}^* \bar{\Phi}
+    \quad\quad\quad\quad\Big]
+    \nonumber
+    \\
+    +\
+    (\partial_i\epsilon)\
+    \Big[\
+        \delta \pi\ \psi^{2\delta}\
+        ( \bar{\Phi}^* \partial^i\bar{\Phi}
+        &+ \bar{\Phi} \partial^i\bar{\Phi}^* )
+        +
+        \delta^2 \pi\ \psi^{2\delta-1}\ (\partial^i\psi)
+        \bar{\Phi}^* \bar{\Phi}
+    \
+    \Big]= 0,
+\end{align}
+with
+\begin{align}
+    \psi
+    &= \psi_{\rm BL} + u_0,
+    \\
+    \partial_i \psi
+    &= \partial_i \psi_{\rm BL}
+    + \partial_i u_0.
+\end{align}
+
+
+\section{Scalar field configurations}
+
+
+\begin{thebibliography}{9}
+
+%\cite{Liu:2009al}
+\bibitem{Liu:2009al}
+  Y.~T.~Liu, Z.~B.~Etienne and S.~L.~Shapiro,
+  ``Evolution of near-extremal-spin black holes using the moving puncture technique,''
+  Phys.\ Rev.\ D {\bf 80} (2009) 121503
+  doi:10.1103/PhysRevD.80.121503
+  [arXiv:1001.4077 [gr-qc]].
+  %%CITATION = doi:10.1103/PhysRevD.80.121503;%%
+  %18 citations counted in INSPIRE as of 26 Oct 2018
+
+%\cite{Okawa:2014nda}
+\bibitem{Okawa:2014nda}
+  H.~Okawa, H.~Witek and V.~Cardoso,
+  ``Black holes and fundamental fields in Numerical Relativity: initial data construction and evolution of bound states,''
+  Phys.\ Rev.\ D {\bf 89} (2014) no.10,  104032
+  doi:10.1103/PhysRevD.89.104032
+  [arXiv:1401.1548 [gr-qc]].
+  %%CITATION = doi:10.1103/PhysRevD.89.104032;%%
+  %58 citations counted in INSPIRE as of 26 Oct 2018
+
+% \cite{Zilhao:2015tya}
+\bibitem{Zilhao:2015tya}
+  M.~Zilh\~ao, H.~Witek and V.~Cardoso,
+  ``Nonlinear interactions between black holes and Proca fields,''
+  Class.\ Quant.\ Grav.\  {\bf 32} (2015) 234003
+  doi:10.1088/0264-9381/32/23/234003
+  [arXiv:1505.00797 [gr-qc]].
+  %%CITATION = doi:10.1088/0264-9381/32/23/234003;%%
+  %25 citations counted in INSPIRE as of 26 Oct 2018
+
+\bibitem{Witek:2018tba}
+  M.~Zilh\~ao, H.~Witek. To appear.
+
+
+\end{thebibliography}
+
+% Do not delete next line
+% END CACTUS THORNGUIDE
+
+\end{document}
