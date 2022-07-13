@@ -84,7 +84,7 @@
 \title{TwoPunctures\_BBHSF}
 
 % the date your document was last changed:
-\date{July 6, 2022}
+\date{July 12, 2022}
 
 \maketitle
 
@@ -173,7 +173,7 @@ along the normal vector $n^\mu$ as
 However, in this thorn we will only consider configurations of the scalar field 
 that are static at the initial time, i.e., for which $\Pi(t=0)=0$.
 As a result, the momentum constraint reduces to its vacuum counterpart,
-or which we can use the Bowen-York solution.
+for which we can use the Bowen-York solution.
 
 \section{Constraint equations in the puncture method}
 To construct the initial data, we solve the Hamiltonian constraint equation
@@ -225,16 +225,16 @@ Next we write the conformal tracefree extrinsic curvature $\bar{A}_{ij}$ as a su
 of Bowen-York solutions for each puncture
 \begin{equation}
     \bar{A}_a^{ij} = \frac{3}{2r^2} \Big[
-        n^i P_a^j + n^j P_a^i + n_k P_a^k (n^i n^j - \delta^{ij})
-        - \frac{3}{r^3} (\epsilon^{ilk} n^j + \epsilon^{jlk} n^i) n_l {(S_a)}_k
-    \Big].
+        n^i P_a^j + n^j P_a^i + n_k P_a^k (n^i n^j - \delta^{ij}) \Big]
+        - \frac{3}{r^3} (\epsilon^{ilk} n^j + \epsilon^{jlk} n^i) n_l {(S_a)}_k.
 \end{equation}
 Further assuming conformal flatness ($\bar{\gamma}_{ij} = \eta_{ij}$) and maximal slicing condition ($K=0$), the Hamiltonian constraint equation reduces to
 \begin{equation}
-    \bar{D}^2 u + \frac{1}{8} (u+\psi_{\rm BL} )^{-7} \bar{A}_{ij} \bar{A}^{ij}
-    + 2\pi (u+\psi_{\rm BL})^5 \rho = 0.
+    \Delta u + \frac{1}{8} (u+\psi_{\rm BL} )^{-7} \bar{A}_{ij} \bar{A}^{ij}
+    + 2\pi (u+\psi_{\rm BL})^5 \rho = 0,
     \label{eq:ham_twopunctures}
 \end{equation}
+where $\Delta=\partial_k \partial^k$ is the flat Laplacian operator.
 The first two terms above constitute the vacuum equations being solved in the standard \texttt{TwoPunctures} thorn.
 In the presence of matter, whereas in \texttt{TwoPunctures} the generic energy density $\rho$ can rescaled
 \footnote{
@@ -258,7 +258,7 @@ so a na\"{i}ve conformal rescaling of $\rho$ would not work.
 Instead, we would have to conformally rescale the scalar field $\Phi$ on its own.
 
 \subsection{Conformal rescaling of the scalar field}
-Let us rescale the scalar field with a generic power of the conformal factor
+Let us rescale the scalar field with a generic power $\delta$ of the conformal factor
 \begin{equation}
     \Phi = \psi^\delta \bar{\Phi},
     \quad
@@ -266,7 +266,7 @@ Let us rescale the scalar field with a generic power of the conformal factor
 \end{equation}
 where $\delta$ is a constant parameter to be chosen
 and $\Bar{\Phi}$ is the conformal scalar field.
-The goal is to find a suitable power of $\delta$ such that the linearized Hamiltonian
+The goal is to find a suitable power $\delta$ such that the linearized Hamiltonian
 constraint equation forms a well-posed elliptic problem.
 Inserting Eq.~\eqref{eq:rho}
 and using the rescaled scalar field, Eq.~\eqref{eq:ham_twopunctures} can be rewritten as
@@ -308,7 +308,7 @@ with the conformal factor
 \end{align}
 
 Writing the correction function as $u = u_0 + \epsilon$ with $u_0$ a known solution
-and $|\epsilon|\ll1$, 
+and $|\epsilon|\ll u_0$, 
 we can expand Eq.~\eqref{eq:nonlin_ham_eq} to first order in $\epsilon$, giving
 the linearized equation
 \begin{align}
@@ -340,9 +340,7 @@ the linearized equation
     \quad\quad\quad\quad\Big]
     \nonumber
     \\
-    +
-    \epsilon\
-    \partial_i(\ln|\epsilon|)
+    + (\partial_i\epsilon)
     \Big[
         \delta \pi \psi_0^{2\delta}
         ( \bar{\Phi}^* \partial^i\bar{\Phi}
@@ -365,8 +363,8 @@ where the conformal factor $\psi_0$ is defined as
 
 Equations \eqref{eq:nonlin_ham_eq} and \eqref{eq:lin_ham_eq} constitute our main result,
 and are implemented in \texttt{Equations.c} of the thorn $\texttt{TwoPunctures\_BBHSF}$.
-Since $|\epsilon|$ is assumed to be small, $\ln|\epsilon| < 0$.
-Therefore, Eq.~\eqref{eq:lin_ham_eq} is well-posed for any choice of $\delta < -2.5$,
+Finally, we see that Eq.~\eqref{eq:lin_ham_eq} is well-posed as an elliptic equation in $u$
+for any choice of $\delta < -2.5$,
 namely it takes the form of 
 \begin{equation}
     \Delta \epsilon - h \epsilon = 0
@@ -375,7 +373,7 @@ with $h>0$,
 so its numerical solution is unique and stable.
 
 \section{Initializing scalar field configurations}
-We consider scalar field configurations with a Gaussian radial profile with zero momentum
+We consider scalar field configurations with a Gaussian radial profile and zero momentum
 \begin{equation}
     \bar{\Phi}(t=0) = A_{\rm SF} Z(\theta, \phi) e^{-(r-r_0)^2/w^2},
     \quad
@@ -388,15 +386,15 @@ the $l=m=0$ (monopole) and $l=m=1$ (dipole) spherical harmonics modes
 as options for $Z(\theta, \phi)$:
 \begin{align}
     Z_{0,0}(\theta, \phi)
-    &= \sqrt{\frac{1}{4\pi}}
+    &= \sqrt{\frac{1}{4\pi}},
     \\
     Z_{1,1}(\theta, \phi)
-    &= \sqrt{\frac{3}{8\pi}} \sin\theta\ (\cos\phi + i \sin\phi)
+    &= -\sqrt{\frac{3}{8\pi}} \sin\theta\ (\cos\phi + i \sin\phi).
 \end{align}
 In addition, Cartesian derivatives of $\bar{\Phi}$ are computed,
 so this thorn replaces the use of \texttt{ScalarInit}
 (which only computes $\Phi$ and does not conformally rescale the scalar fields)
-when considering spacetimes with back-reaction from the scalar field.
+when creating initial data for spacetimes with back-reaction from the scalar field.
 
 \begin{thebibliography}{9}
 
