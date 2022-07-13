@@ -84,7 +84,7 @@
 \title{TwoPunctures\_BBHSF}
 
 % the date your document was last changed:
-\date{July 12, 2022}
+\date{July 13, 2022}
 
 \maketitle
 
@@ -107,8 +107,8 @@ minimally-coupled to gravity.
 
 \section{Scalar field source terms}
 
-We consider a complex scalar field $\Phi$ of mass $\mu_S$ minimally coupled to gravity.
-The action is described by
+We consider a complex scalar field $\Phi$ of mass $\mu_S$ minimally coupled to gravity,
+which is described by the action
 \begin{equation}
     S = \int \mathrm{d}^4 x \sqrt{-g}
     \bracket{ \frac{^{(4)}R}{16\pi} - \frac{1}{2} g^{\mu\nu}
@@ -208,14 +208,15 @@ we obtain the general form of the Hamiltonian constraint in the York-Lichnerowic
 
 
 
-Now let us introduce a series of assumptions for the puncture method.
+Now let us introduce a series of assumptions for the puncture method
+\cite{scalar_TwoPunctures_BBHSF_Brandt:1997tf}.
 The main idea is to separate the singular piece of the conformal factor by writing
 $ \psi = \psi_{\rm BL} + u $
 with the Brill-Lindquist solution
 \begin{equation}
     \psi_{\rm BL} \equiv \sum_{a=1}^2 \frac{m_a}{2|\vec{r} - \vec{r}_a|},
 \end{equation}
-where $m_a$ and $r_a$ denote the bare mass and location of the $a$-th puncture.
+where $m_a$ and $\vec{r}_a$ denote the bare mass and location of the $a$-th puncture.
 It then follows that the flat Laplacian of $\psi$ reduces to $\bar{D}^2 u$ in the punctured domain
 $\mathbb{R}^3\setminus\{\vec{r}_i\}$.
 Next we write the conformal tracefree extrinsic curvature $\bar{A}_{ij}$ as a superposition
@@ -230,20 +231,20 @@ of Bowen-York solutions for each puncture
 \end{equation}
 Further assuming conformal flatness ($\bar{\gamma}_{ij} = \eta_{ij}$) and maximal slicing condition ($K=0$), the Hamiltonian constraint equation reduces to
 \begin{equation}
-    \Delta u + \frac{1}{8} (u+\psi_{\rm BL} )^{-7} \bar{A}_{ij} \bar{A}^{ij}
-    + 2\pi (u+\psi_{\rm BL})^5 \rho = 0,
-    \label{eq:ham_twopunctures}
+    \Delta u + \frac{1}{8} (\psi_{\rm BL} + u)^{-7} \bar{A}_{ij} \bar{A}^{ij}
+    + 2\pi (\psi_{\rm BL} + u)^5 \rho = 0,
+    \label{scalar_TwoPunctures_BBHSF_eq:ham_twopunctures}
 \end{equation}
 where $\Delta=\partial_k \partial^k$ is the flat Laplacian operator.
 The first two terms above constitute the vacuum equations being solved in the standard \texttt{TwoPunctures} thorn.
-In the presence of matter, whereas in \texttt{TwoPunctures} the generic energy density $\rho$ can rescaled
+In the presence of matter, whereas in \texttt{TwoPunctures} the generic energy density $\rho$ can be rescaled
 \footnote{
 This is to avoid oscillating solutions to the linearized equation.
 Furthermore, the dominant energy condition is satisfied for the 
 physical energy density if and only if it is satisfied for the conformal energy density.
-See Section 8.2.4 of \cite{Gourgoulhon:2007ue}.
+See Section 8.2.4 of \cite{scalar_TwoPunctures_BBHSF_Gourgoulhon:2007ue}.
 } as $\rho = \psi^8 \bar{\rho}$,
-here the scalar field contributes terms with different powers of $\psi$
+here the scalar field contributes two terms with different powers of $\psi$
 \begin{align}
     \rho
     &= \frac{\mu_S^2}{2} \Phi^* \Phi
@@ -252,7 +253,7 @@ here the scalar field contributes terms with different powers of $\psi$
     \\
     &= \frac{\mu_S^2}{2} \Phi^* \Phi
     + \frac{1}{2} \psi^{-4} \partial_k\Phi^* \partial^k \Phi,
-    \label{eq:rho}
+    \label{scalar_TwoPunctures_BBHSF_eq:rho}
 \end{align}
 so a na\"{i}ve conformal rescaling of $\rho$ would not work.
 Instead, we would have to conformally rescale the scalar field $\Phi$ on its own.
@@ -268,8 +269,9 @@ where $\delta$ is a constant parameter to be chosen
 and $\Bar{\Phi}$ is the conformal scalar field.
 The goal is to find a suitable power $\delta$ such that the linearized Hamiltonian
 constraint equation forms a well-posed elliptic problem.
-Inserting Eq.~\eqref{eq:rho}
-and using the rescaled scalar field, Eq.~\eqref{eq:ham_twopunctures} can be rewritten as
+Inserting Eq.~\eqref{scalar_TwoPunctures_BBHSF_eq:rho}
+and using the rescaled scalar field,
+Eq.~\eqref{scalar_TwoPunctures_BBHSF_eq:ham_twopunctures} can be rewritten as
 \begin{align}
     \Delta\psi
     + \frac{1}{8} \psi^{-7} \bar{A}_{ij} \bar{A}^{ij}
@@ -296,7 +298,7 @@ and using the rescaled scalar field, Eq.~\eqref{eq:ham_twopunctures} can be rewr
     \bar{\Phi}^* \bar{\Phi}
     \quad\quad\quad\quad
     = 0,
-    \label{eq:nonlin_ham_eq}
+    \label{scalar_TwoPunctures_BBHSF_eq:nonlin_ham_eq}
 \end{align}
 with the conformal factor
 \begin{align}
@@ -309,7 +311,8 @@ with the conformal factor
 
 Writing the correction function as $u = u_0 + \epsilon$ with $u_0$ a known solution
 and $|\epsilon|\ll u_0$, 
-we can expand Eq.~\eqref{eq:nonlin_ham_eq} to first order in $\epsilon$, giving
+we can expand Eq.~\eqref{scalar_TwoPunctures_BBHSF_eq:nonlin_ham_eq}
+to first order in $\epsilon$, giving
 the linearized equation
 \begin{align}
     \Delta\epsilon
@@ -349,7 +352,7 @@ the linearized equation
         \delta^2 \pi \psi_0^{2\delta-1} (\partial^i\psi_0)
         \bar{\Phi}^* \bar{\Phi}
     \Big]= 0,
-    \label{eq:lin_ham_eq}
+    \label{scalar_TwoPunctures_BBHSF_eq:lin_ham_eq}
 \end{align}
 where the conformal factor $\psi_0$ is defined as
 \begin{align}
@@ -361,9 +364,11 @@ where the conformal factor $\psi_0$ is defined as
     + \partial_i u_0.
 \end{align}
 
-Equations \eqref{eq:nonlin_ham_eq} and \eqref{eq:lin_ham_eq} constitute our main result,
-and are implemented in \texttt{Equations.c} of the thorn $\texttt{TwoPunctures\_BBHSF}$.
-Finally, we see that Eq.~\eqref{eq:lin_ham_eq} is well-posed as an elliptic equation in $u$
+Equations \eqref{scalar_TwoPunctures_BBHSF_eq:nonlin_ham_eq} and
+\eqref{scalar_TwoPunctures_BBHSF_eq:lin_ham_eq} constitute our main result,
+and are implemented in \texttt{Equations.c} of the thorn \texttt{TwoPunctures\_BBHSF}.
+Finally, we see that Eq.~\eqref{scalar_TwoPunctures_BBHSF_eq:lin_ham_eq}
+is well-posed as an elliptic equation in $u$
 for any choice of $\delta < -2.5$,
 namely it takes the form of 
 \begin{equation}
@@ -371,6 +376,11 @@ namely it takes the form of
 \end{equation}
 with $h>0$,
 so its numerical solution is unique and stable.
+
+In testing the initial data constructed this way, we found no significant difference in
+the resulting metric and constraint violation when using different values of
+the parameter $\delta < -2.5$.
+By default, $\delta$ is set to be $-3$ in the thorn.
 
 \section{Initializing scalar field configurations}
 We consider scalar field configurations with a Gaussian radial profile and zero momentum
@@ -381,31 +391,54 @@ We consider scalar field configurations with a Gaussian radial profile and zero 
 \end{equation}
 where $A_{\rm SF}, r_0, w$ are constant parameters
 and $Z(\theta, \phi)$ encodes the angular dependence.
-In the file $\texttt{SF\_source\_term.c}$ of the thorn, we have implemented
+In the file \texttt{SF\_source\_term.c} of the thorn, we have implemented
 the $l=m=0$ (monopole) and $l=m=1$ (dipole) spherical harmonics modes
 as options for $Z(\theta, \phi)$:
 \begin{align}
-    Z_{0,0}(\theta, \phi)
+    Y_{0,0}(\theta, \phi)
     &= \sqrt{\frac{1}{4\pi}},
     \\
-    Z_{1,1}(\theta, \phi)
+    Y_{1,1}(\theta, \phi)
     &= -\sqrt{\frac{3}{8\pi}} \sin\theta\ (\cos\phi + i \sin\phi).
 \end{align}
 In addition, Cartesian derivatives of $\bar{\Phi}$ are computed,
 so this thorn replaces the use of \texttt{ScalarInit}
 (which only computes $\Phi$ and does not conformally rescale the scalar fields)
-when creating initial data for spacetimes with back-reaction from the scalar field.
+when initializing the scalar field grid functions.
+If one wishes to use a different initial scalar configuration than currently implemented,
+they should supply the corresponding fields and source terms to \texttt{SF\_source\_term.c}.
+
+To enable back-reaction from the scalar field in the evolution, in the parameter file one
+is reminded to set \texttt{LeanBSSNMoL::couple\_Tab = 1} and
+\texttt{TmunuBase::stress\_energy\_at\_RHS = yes}.
 
 \begin{thebibliography}{9}
+%\cite{scalar_TwoPunctures_BBHSF_Ansorg:2004ds}
+\bibitem{scalar_TwoPunctures_BBHSF_Ansorg:2004ds}
+M.~Ansorg, B.~Bruegmann and W.~Tichy,
+``A Single-domain spectral method for black hole puncture data,''
+Phys. Rev. D \textbf{70} (2004), 064011
+doi:10.1103/PhysRevD.70.064011
+[arXiv:gr-qc/0404056 [gr-qc]].
+%287 citations counted in INSPIRE as of 13 Jul 2022
 
-%\cite{Gourgoulhon:2007ue}
-\bibitem{Gourgoulhon:2007ue}
+%\cite{scalar_TwoPunctures_BBHSF_Brandt:1997tf}
+\bibitem{scalar_TwoPunctures_BBHSF_Brandt:1997tf}
+S.~Brandt and B.~Bruegmann,
+``A Simple construction of initial data for multiple black holes,''
+Phys. Rev. Lett. \textbf{78}, 3606-3609 (1997)
+doi:10.1103/PhysRevLett.78.3606
+[arXiv:gr-qc/9703066 [gr-qc]].
+%424 citations counted in INSPIRE as of 13 Jul 2022
+
+%\cite{scalar_TwoPunctures_BBHSF_Gourgoulhon:2007ue}
+\bibitem{scalar_TwoPunctures_BBHSF_Gourgoulhon:2007ue}
 E.~Gourgoulhon,
 ``3+1 formalism and bases of numerical relativity,''
 [arXiv:gr-qc/0703035 [gr-qc]].
 %316 citations counted in INSPIRE as of 08 Jul 2022
 
-\bibitem{Ficarra:2022tba}
+\bibitem{scalar_TwoPunctures_BBHSF_Ficarra:2022tba}
   G.~Ficarra, C-H.~Cheng and H.~Witek. To appear.
 
 
