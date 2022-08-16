@@ -70,7 +70,7 @@ USES FUNCTION MoLRegisterEvolvedGroup
 USES FUNCTION MoLRegisterSaveAndRestoreGroup
 USES FUNCTION MoLRegisterConstrainedGroup
 
-public:
+private:
 
 CCTK_REAL rhs_phi type=gf tags='tensortypealias="Scalar" tensorweight=0 prolongation="none" Checkpoint="no"'
 {
@@ -107,4 +107,3 @@ CCTK_REAL densities_SF type=gf timelevels=3 tags='tensortypealias="Scalar" tenso
   jrSF_gf
   SrrSF_gf
 } "energy-momentum densities of scalar field"
-
