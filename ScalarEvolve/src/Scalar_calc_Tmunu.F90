@@ -75,7 +75,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   !$OMP                                 lphi1,lphi2,lKphi1,lKphi2,&
   !$OMP                                 lphi,absphi2,d1_lphi,&
   !$OMP                                 rhoSF, jrSF, jiSF, SrrSF, SijSF,&
-  !$OMP                                 Tab, d1_lphi1, d1_lphi2, jac)
+  !$OMP                                 Tab, d1_lphi1, d1_lphi2, jac, xx, rr)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
      do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
         do i = 1+cctk_nghostzones(1), cctk_lsh(1)-cctk_nghostzones(1)
