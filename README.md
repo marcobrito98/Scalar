@@ -21,7 +21,7 @@ GPLv2+
 
 ## Purpose
 
-This repository provides the tools to evolve the Einstein-Scalar system as first described in https://arxiv.org/pdf/1709.06118.pdf
+This repository provides the tools to evolve a complex scalar field with nonlinear potential in arbitrary background as first described in <https://arxiv.org/pdf/1709.06118.pdf>
 
 
 
