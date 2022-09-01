@@ -1,6 +1,6 @@
 # Scalar
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565475.svg)](https://doi.org/10.5281/zenodo.3565475)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565474.svg)](https://doi.org/10.5281/zenodo.3565474)
 
 
 ## Authors and Maintainers
