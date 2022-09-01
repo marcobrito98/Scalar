@@ -51,12 +51,6 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   CCTK_REAL, parameter ::  one = 1
   CCTK_INT                 a, b, c, m
 
-  ! Excision variables
-  CCTK_INT                 sn1, sn2
-  CCTK_REAL                rsn1_2, rsn2_2, rr, lambda
-  CCTK_REAL                Rout_excision1, Rout_excision2
-  CCTK_REAL                Rin_excision1, Rin_excision2
-
   ! jacobian
   integer                  istat
   logical                  use_jacobian
@@ -154,7 +148,7 @@ end if
   !$OMP rhs_lphi1, rhs_lphi2, rhs_lKphi1, rhs_lKphi2,&
   !$OMP i, j, k,&
   !$OMP di, dj, dk,&
-  !$OMP a, b, c, m, rsn1_2, rsn2_2, rr, lambda, &
+  !$OMP a, b, c, m, &
   !$OMP jac, hes, beta_l)
   do k = 1+cctk_nghostzones(3), cctk_lsh(3)-cctk_nghostzones(3)
   do j = 1+cctk_nghostzones(2), cctk_lsh(2)-cctk_nghostzones(2)
@@ -633,69 +627,12 @@ end if
 
     !-------------------------------------------
 
-    !------------ Excise and write to grid functions ------
-    if (use_excision /= 0) then
-       sn1 = excision_surface(1) + 1
-       sn2 = excision_surface(2) + 1
+    !------------ Write to grid functions ------
+    rhs_phi1(i,j,k)  = rhs_lphi1
+    rhs_phi2(i,j,k)  = rhs_lphi2
+    rhs_Kphi1(i,j,k) = rhs_lKphi1
+    rhs_Kphi2(i,j,k) = rhs_lKphi2
 
-       ! write(*,*) "sf_active = ", sf_active(sn1), sf_active(sn2)
-       ! write(*,*) "sf_mean_radius = ", sf_mean_radius(sn1), sf_mean_radius(sn2)
-       ! write(*,*) "sf_origin (sn1) = ", sf_origin_x(sn1), sf_origin_y(sn1), sf_origin_z(sn1)
-       ! write(*,*) "sf_origin (sn2) = ", sf_origin_x(sn2), sf_origin_y(sn2), sf_origin_z(sn2)
-
-       if (sf_active(sn1) /= 0 .and. sf_active(sn2) /= 0) then
-          Rout_excision1 = excision_surface_rout_factor(1) * sf_mean_radius(sn1)
-          Rout_excision2 = excision_surface_rout_factor(2) * sf_mean_radius(sn2)
-          Rin_excision1  = excision_surface_rin_factor(1)  * sf_mean_radius(sn1)
-          Rin_excision2  = excision_surface_rin_factor(2)  * sf_mean_radius(sn2)
-
-          rsn1_2 =  (x(i,j,k) - sf_origin_x(sn1))**2      &
-                  + (y(i,j,k) - sf_origin_y(sn1))**2      &
-                  + (z(i,j,k) - sf_origin_z(sn1))**2
-
-          rsn2_2 =  (x(i,j,k) - sf_origin_x(sn2))**2      &
-                  + (y(i,j,k) - sf_origin_y(sn2))**2      &
-                  + (z(i,j,k) - sf_origin_z(sn2))**2
-       else
-          call CCTK_ERROR("Using excision, but surface is not active!")
-       end if
-
-       if (rsn1_2 > Rout_excision1 * Rout_excision1 .and.       &
-           rsn2_2 > Rout_excision2 * Rout_excision2) then
-          ! regular points, outside horizon
-
-          rhs_phi1(i,j,k)  = rhs_lphi1
-          rhs_phi2(i,j,k)  = rhs_lphi2
-          rhs_Kphi1(i,j,k) = rhs_lKphi1
-          rhs_Kphi2(i,j,k) = rhs_lKphi2
-       else if(rsn1_2 < Rin_excision1 * Rin_excision1 .or.      &
-               rsn2_2 < Rin_excision2 * Rin_excision2) then
-          ! excision zone
-          rhs_phi1(i,j,k)  = 0.0d0
-          rhs_phi2(i,j,k)  = 0.0d0
-          rhs_Kphi1(i,j,k) = 0.0d0
-          rhs_Kphi2(i,j,k) = 0.0d0
-       else
-          ! buffer zone
-          if (rsn1_2 < rsn2_2) then
-             rr = sqrt(rsn1_2)
-             lambda = 0.50d0 * (1 + tanh( 1.0d0/(Rin_excision1 - rr) - 1.0d0/(rr - Rout_excision1) ) )
-          else
-             rr = sqrt(rsn2_2)
-             lambda = 0.50d0 * (1 + tanh( 1.0d0/(Rin_excision2 - rr) - 1.0d0/(rr - Rout_excision2) ) )
-          end if
-          rhs_phi1(i,j,k)  = lambda * rhs_lphi1
-          rhs_phi2(i,j,k)  = lambda * rhs_lphi2
-          rhs_Kphi1(i,j,k) = lambda * rhs_lKphi1
-          rhs_Kphi2(i,j,k) = lambda * rhs_lKphi2
-       end if
-
-    else ! no excision
-       rhs_phi1(i,j,k)  = rhs_lphi1
-       rhs_phi2(i,j,k)  = rhs_lphi2
-       rhs_Kphi1(i,j,k) = rhs_lKphi1
-       rhs_Kphi2(i,j,k) = rhs_lKphi2
-    end if
     !-------------------------------------------
 
     !if(i == 51 .and. j == 5 .and. k == 15) then

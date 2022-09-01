@@ -55,26 +55,6 @@ CCTK_REAL chi_floor "Minimal value of abs(chi)"
   *:*  :: "Any value possible"
 } 1.0d-06
 
-BOOLEAN use_excision "Whether or not to excise interior of some region"
-{
-} "no"
-
-CCTK_INT excision_surface[2] "index of excision surfaces" STEERABLE=always
-{
-  -1  :: "no excision"
-  0:* :: ""
-} -1
-
-CCTK_REAL excision_surface_rin_factor[2] "Rin factor of excision surface"
-{
-  0:* :: ""
-} 0.3
-
-CCTK_REAL excision_surface_rout_factor[2] "Rout factor of excision surface"
-{
-  0:* :: ""
-} 0.6
-
 
 KEYWORD outer_bound "outer boundary condition"
 {
@@ -94,4 +74,3 @@ CCTK_REAL eps_r "of value if rr approaches zero in densities computation"
 {
   0:*   :: "any small positive value possible"
 } 1.0d-06
-
