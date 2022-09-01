@@ -48,7 +48,7 @@ else if ( CCTK_Equals(initial_scalar, "ID_SF_BS" ))
 
 }
 
-## Schedule quasi-bound state initial data
+## Schedule constant initial data
 else if ( CCTK_Equals(initial_scalar, "ID_SF_Const" ))
 {
 

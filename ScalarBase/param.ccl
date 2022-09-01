@@ -95,12 +95,12 @@ CCTK_REAl omegaEF  "oscillation frequency of external forcing"
 
 CCTK_INT lEF  ""
 {
-  0:2 :: "for now we've implemented l = 0,1,2"
+  0:2 :: "angular multipoles implemented are l = m = 0,1,2"
 } 0
 
 CCTK_INT mEF  ""
 {
-  0:2 :: "for now we've implemented m = 0,1,2"
+  0:2 :: "angular multipoles implemented are l = m = 0,1,2"
 } 0
 
 CCTK_REAL eps_r "of value if rr approaches zero in densities computation"
