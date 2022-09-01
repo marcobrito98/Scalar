@@ -13,7 +13,7 @@ KEYWORD initial_scalar "initial data for scalar variables"
 } "none"
 
 # considering a potential of the form
-# V = mu^2 phi^2 (1 - 2 lambda phi^2)^2
+# V = mu^2 |phi|^2 (1 - 2 lambda |phi|^2)^2
 CCTK_REAL V_lambda "interaction term in the potential"
 {
   *:*           :: ""
