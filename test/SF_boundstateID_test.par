@@ -170,7 +170,11 @@ NaNChecker::check_vars      = "
 #-------------------------------------------------------------------------------
 Cactus::cctk_run_title       = $parfile
 IO::out_dir                  = $parfile
-IO::out_fileinfo             = "none"
+IO::out_fileinfo             = "axis labels"
+IO::parfile_write = "no"
+
+CarpetIOASCII::compact_format = yes
+CarpetIOASCII::output_ghost_points = no
 
 IOBasic::outInfo_every       = 1
 IOBasic::outInfo_vars        = "ScalarBase::phi"
@@ -189,8 +193,6 @@ IOASCII::out1D_vars             = "
   ScalarBase::phi
   ScalarBase::Kphi
 "
-
-CarpetIOASCII::compact_format = yes
 
 # Run termination
 #-------------------------------------------------------------------------------
