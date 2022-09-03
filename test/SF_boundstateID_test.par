@@ -2,9 +2,7 @@
 #------------------------------------------------------------------------------
 ActiveThorns = "
   ADMBase
-  ADMCoupling
   ADMMacros
-  AEILocalInterp
   Boundary
   Carpet
   CarpetInterp
@@ -13,11 +11,8 @@ ActiveThorns = "
   CarpetIOHDF5
   CarpetIOScalar
   CarpetLib
-  CarpetMask
   CarpetReduce
-  CarpetRegrid2
   CarpetSlab
-  CarpetTracker
   CartGrid3D
   CoordBase
   CoordGauge
@@ -25,19 +20,14 @@ ActiveThorns = "
   Exact
   Fortran
   GenericFD
-  GSL
-  HDF5
   InitBase
   IOUtil
   LocalInterp
   LoopControl
   MoL
-  Multipole
   NaNChecker
   NewRad
-  NPScalars
   ReflectionSymmetry
-#  RotatingSymmetry180
   ScalarBase
   ScalarEvolve
   ScalarInit
@@ -47,9 +37,7 @@ ActiveThorns = "
   StaticConformal
   SymBase
   SystemStatistics
-  TerminationTrigger
   Time
-  TimerReport
   TmunuBase
 "
 #------------------------------------------------------------------------------
@@ -86,8 +74,6 @@ CoordBase::boundary_shiftout_x_lower = 0
 CoordBase::boundary_shiftout_y_lower = 0
 CoordBase::boundary_shiftout_z_lower = 1
 
-#CarpetRegrid2::symmetry_rotating180  = yes
-
 ReflectionSymmetry::reflection_x     = no
 ReflectionSymmetry::reflection_y     = no
 ReflectionSymmetry::reflection_z     = yes
@@ -95,33 +81,6 @@ ReflectionSymmetry::avoid_origin_x   = yes
 ReflectionSymmetry::avoid_origin_y   = yes
 ReflectionSymmetry::avoid_origin_z   = no
 
-# Mesh refinement
-#------------------------------------------------------------------------------
-
-Carpet::max_refinement_levels           = 6
-
-CarpetRegrid2::num_centres              = 1
-
-CarpetRegrid2::num_levels_1             = 6
-CarpetRegrid2::radius_1[1]              = 8.0
-CarpetRegrid2::radius_1[2]              = 4.0
-CarpetRegrid2::radius_1[3]              = 2.0
-CarpetRegrid2::radius_1[4]              = 1.0
-CarpetRegrid2::radius_1[5]              = 0.6
-
-Carpet::use_buffer_zones                = yes
-Carpet::prolongation_order_space        = 5
-Carpet::prolongation_order_time         = 2
-
-CarpetRegrid2::freeze_unaligned_levels  = yes
-CarpetRegrid2::regrid_every             = -1
-
-CarpetRegrid2::verbose                  = no
-
-Carpet::grid_structure_filename         = "carpet-grid-structure"
-Carpet::grid_coordinates_filename       = "carpet-grid-coordinates"
-
-Carpet::time_refinement_factors         = "[1, 1, 2, 4, 8, 16, 32, 64, 128]"
 Time::dtfac                             = 0.25
 
 
@@ -143,8 +102,6 @@ Exact::exact_model = "Minkowski"
 # Scalar field initial data for a quasi-boundstate with l=m=1
 ScalarBase::initial_scalar      = ID_SF_BS
 ScalarBase::mu                  = 0.42
-
-# Need to be the same as the black hole parameters above 
 ScalarInit::m_plus              = 1.0
 ScalarInit::pos_plus[0]         = 0.0
 ScalarInit::spin_plus           = 0.99
@@ -192,25 +149,6 @@ MoL::MoL_Num_Scratch_Levels     = 1
 
 Carpet::num_integrator_substeps = 4
 
-# Wave extraction
-#------------------------------------------------------------------------------
-
-##NPScalars::NP_order     = 4
-
-Multipole::nradii       = 1
-Multipole::radius[0]    = 10
-Multipole::ntheta       = 120
-Multipole::nphi         = 240
-Multipole::integration_method = Simpson
-Multipole::variables    = "
-  ScalarBase::phi1{sq=0 cmplx='ScalarBase::phi2' name='SF_Phi'}
-"
-
-Multipole::l_max        = 2
-Multipole::out_every    = 32
-Multipole::output_hdf5  = no
-Multipole::output_ascii = yes
-
 # Check for NaNs
 #-------------------------------------------------------------------------------
 
@@ -228,125 +166,34 @@ NaNChecker::check_vars      = "
   ScalarBase::phi
 "
 
-
-# Timers
-#-------------------------------------------------------------------------------
-
-Cactus::cctk_timer_output               = "full"
-TimerReport::out_every                  = 5120
-TimerReport::n_top_timers               = 40
-TimerReport::output_all_timers_together = yes
-TimerReport::output_all_timers_readable = yes
-TimerReport::output_schedule_timers     = no
-
-
 # I/O thorns
 #-------------------------------------------------------------------------------
-
 Cactus::cctk_run_title       = $parfile
 IO::out_dir                  = $parfile
+IO::out_fileinfo             = "none"
 
-IOScalar::one_file_per_group = yes
-IOASCII::one_file_per_group  = yes
-
-IOHDF5::use_checksums        = no
-IOHDF5::one_file_per_group   = no
-
-IOBasic::outInfo_every       = 16
-IOBasic::outInfo_reductions  = "minimum maximum"
-IOBasic::outInfo_vars        = "
-  Carpet::physical_time_per_hour
-  ScalarBase::phi1
-  SystemStatistics::maxrss_mb
-"
-
-# # for scalar reductions of 3D grid functions
-# IOScalar::outScalar_every               = 128
-# IOScalar::outScalar_reductions          = "minimum maximum average"
-# IOScalar::outScalar_vars                = "SystemStatistics::process_memory_mb"
-
-
-# output just at one point (0D)
-IOASCII::out0D_every = 32
-IOASCII::out0D_vars  = "
-  Carpet::timing
-"
+IOBasic::outInfo_every       = 1
+IOBasic::outInfo_vars        = "ScalarBase::phi"
 
 IOASCII::output_symmetry_points = no
 IOASCII::out3D_ghosts           = no
 
-
 # 1D text output
 IOASCII::out1D_every            = 1
+IOASCII::out_precision          = 17
 IOASCII::out1D_d                = no
 IOASCII::out1D_x                = yes
-IOASCII::out1D_y                = no
+IOASCII::out1D_y                = yes
 IOASCII::out1D_z                = yes
 IOASCII::out1D_vars             = "
   ScalarBase::phi
   ScalarBase::Kphi
 "
 
-# 1D HDF5 output
-#IOHDF5::out1D_every            = 256
-#IOHDF5::out1D_d                = no
-#IOHDF5::out1D_x                = yes
-#IOHDF5::out1D_y                = no
-#IOHDF5::out1D_z                = no
-#IOHDF5::out1D_vars             = "
-#  ADMBase::lapse
-#"
-
-# 2D HDF5 output
-#IOHDF5::out2D_every             = 256
-#IOHDF5::out2D_xy                = yes
-#IOHDF5::out2D_xz                = no
-#IOHDF5::out2D_yz                = no
-#IOHDF5::out2D_vars              = "
-#  ADMBase::lapse
-#  LeanBSSNMoL::ham
-#  LeanBSSNMoL::mom
-#  LeanBSSNMoL::hxx
-#"
-
-# # 3D HDF5 output
-# IOHDF5::out_every                      = 8192
-# IOHDF5::out_vars                       = "
-#   ADMBase::lapse
-# "
-
-Carpet::verbose                    = no
-Carpet::veryverbose                = no
-Carpet::schedule_barriers          = no
-Carpet::storage_verbose            = no
-CarpetLib::output_bboxes           = no
-
-Cactus::cctk_full_warnings         = yes
-Cactus::highlight_warning_messages = no
-
-
-# Checkpointing and recovery
-#-------------------------------------------------------------------------------
-
-CarpetIOHDF5::checkpoint             = yes
-IO::checkpoint_every_walltime_hours  = 0.2
-IO::checkpoint_dir                   = "checkpoints"
-IO::checkpoint_keep                  = 1
-IO::checkpoint_ID                    = no
-IO::checkpoint_on_terminate          = yes
-IO::recover                          = "autoprobe"
-IO::recover_dir                      = "checkpoints"
-IO::abort_on_io_errors                      = yes
-CarpetIOHDF5::open_one_input_file_at_a_time = yes
-CarpetIOHDF5::compression_level             = 9
-
+CarpetIOASCII::compact_format = yes
 
 # Run termination
 #-------------------------------------------------------------------------------
 
-TerminationTrigger::max_walltime                 = 1 # hours
-TerminationTrigger::on_remaining_walltime        = 30 # minutes
-TerminationTrigger::output_remtime_every_minutes = 30
-
-Cactus::terminate       = "time"
-Cactus::cctk_final_time = 0.25
+Cactus::terminate       = "iteration"
+Cactus::cctk_itlast     = 4
