@@ -21,7 +21,7 @@ GPLv2+
 
 ## Purpose
 
-This repository provides the tools to evolve a complex scalar field with nonlinear potential in arbitrary background as first described in <https://arxiv.org/pdf/1709.06118.pdf>. Additionally, it is possible to add an external periodic forcing (Scalar_rhs_force routine) on the right-hand side of the Klein-Gordon equation for parametric resonances studies.
+This repository provides the tools to evolve a complex scalar field with nonlinear potential in arbitrary background as first described in <https://arxiv.org/pdf/1709.06118.pdf>. Additionally, it is possible to add an external periodic forcing to the right-hand side of the Klein-Gordon equation for studies of parametric resonances.
 
 
 ## Citation Guidelines
