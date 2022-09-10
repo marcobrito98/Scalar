@@ -37,8 +37,8 @@ ID_SF_BS (CCTK_ARGUMENTS)
   // horizon radius
   CCTK_REAL BB, rBLp, rBLm;
   BB   = sqrt( 1.0 - spin2 );
-  rBLp = 1.0 + BB;
-  rBLm = 1.0 - BB;
+  rBLp = m_plus + BB;
+  rBLm = m_plus - BB;
 
   /*==========================================================*/
 
