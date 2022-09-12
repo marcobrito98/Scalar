@@ -65,7 +65,7 @@ CCTK_REAL r0SF "location of Gaussian wave packet"
 
 #=== parameters for bound-state initial data ===
 ## Black hole parameters
-CCTK_REAL m_plus "mass of the m+ puncture black hole" 
+CCTK_REAL m_plus "mass of the m+ puncture black hole; bound state initial data works only for m_plus=1" 
 {
   0.0:* :: "any positive value"
 } 1.0
