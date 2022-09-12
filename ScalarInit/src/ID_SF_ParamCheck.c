@@ -1,11 +1,4 @@
-/* ScalarInit:  File  "ParamCheck.c"*/
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <ctype.h>
 #include "cctk.h"
 #include "cctk_Arguments.h"
 #include "cctk_Parameters.h"
@@ -22,4 +15,3 @@ ID_SF_BS_ParamCheck(CCTK_ARGUMENTS)
         CCTK_WARN( 0, "BH mass value not valid. Bound state initial data works only with m_plus = 1 ");
     }
 }
-

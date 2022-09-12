@@ -3,9 +3,9 @@
 
 # Source files in this directory
 SRCS =	ID_SF_calc_Gaussian.c \
-	ID_SF_calc_BS.c \
-	ID_SF_calc_Const.c \
-        ParamCheck.c
+	ID_SF_calc_BS.c       \
+	ID_SF_calc_Const.c    \
+        ID_SF_ParamCheck.c
 
 # Subdirectories containing source files
 SUBDIRS = 
