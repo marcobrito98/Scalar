@@ -1,0 +1,20 @@
+Cactus Code Thorn ScalarBase
+Author(s)    : Helvi Witek, Miguel Zilhão, Matthew Elley, Giuseppe Ficarra
+Maintainer(s): Miguel Zilhão <mzilhao@ua.pt>
+License      : GPLv2+
+--------------------------------------------------------------------------
+
+1. Purpose
+
+This repository provides the tools to evolve a complex scalar field with
+nonlinear potential in arbitrary background as first described in
+<https://arxiv.org/pdf/1709.06118.pdf>. Additionally, it is possible to add an
+external periodic forcing to the right-hand side of the Klein-Gordon equation
+for studies of parametric resonances.
+
+
+2. Citation Guidelines
+
+If you use these thorns as part of your research, we would be grateful if you
+could cite our work
+https://bitbucket.org/canuda/scalar/src/master/manifest/canuda_scalar.bib.
