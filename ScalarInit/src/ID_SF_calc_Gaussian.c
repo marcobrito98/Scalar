@@ -211,11 +211,40 @@ ID_SF_Gauss (CCTK_ARGUMENTS)
 
      /*=== write to grid functions ============================*/
 
-     phi1[ind]  = 0.0;
-     phi2[ind]  = 0.0;
+    /* -----------------------------------------------------------------------
 
-     Kphi1[ind] = psit_re;
-     Kphi2[ind] = psit_im;
+    We assume that Phi = 0 and give arbitrary shape to Kphi.
+
+    -------------------------------------------------------------------- */
+
+     if ( CCTK_Equals ( scalar_Initialize , "zero_field") )
+     {
+        phi1[ind]  = 0.0;
+        phi2[ind]  = 0.0;
+
+        Kphi1[ind] = psit_re;
+        Kphi2[ind] = psit_im;
+     }
+
+
+    /* -----------------------------------------------------------------------
+
+    We assume that Kphi = 0 and let the code adjust itself. The correct approach would be to compute
+
+    Kphi = - {\cal L}_n \Phi = (1/alpha) * (\partial_t - {\cal L}_{\beta}) \Phi ~ (1/alpha) * \beta^{k} \partial_{k} \Phi
+
+    with lapse (alpha) and shift (beta) given by the background spacetime.
+
+    -------------------------------------------------------------------- */
+
+     else if ( CCTK_Equals ( scalar_Initialize , "zero_momentum") )
+     {
+        phi1[ind]  = psit_re;
+        phi2[ind]  = psit_im;
+
+        Kphi1[ind] = 0.0;
+        Kphi2[ind] = 0.0;
+     }
 
      /*========================================================*/
 

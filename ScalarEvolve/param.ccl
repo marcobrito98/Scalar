@@ -1,6 +1,7 @@
 # Parameter definitions for thorn ScalarEvolve
 
 shares: ScalarBase
+USES CCTK_REAL V_lambda
 USES CCTK_REAL mu
 USES CCTK_REAL phi1_0
 USES CCTK_REAL phi2_0
@@ -10,6 +11,7 @@ USES CCTK_REAL Kphi1_0
 USES CCTK_REAL Kphi2_0
 USES CCTK_INT  n_Kphi1
 USES CCTK_INT  n_Kphi2
+USES CCTK_BOOLEAN forcing_switch
 
 EXTENDS KEYWORD evolution_method ""
 {
@@ -53,26 +55,6 @@ CCTK_REAL chi_floor "Minimal value of abs(chi)"
   *:*  :: "Any value possible"
 } 1.0d-06
 
-BOOLEAN use_excision "Whether or not to excise interior of some region"
-{
-} "no"
-
-CCTK_INT excision_surface[2] "index of excision surfaces" STEERABLE=always
-{
-  -1  :: "no excision"
-  0:* :: ""
-} -1
-
-CCTK_REAL excision_surface_rin_factor[2] "Rin factor of excision surface"
-{
-  0:* :: ""
-} 0.3
-
-CCTK_REAL excision_surface_rout_factor[2] "Rout factor of excision surface"
-{
-  0:* :: ""
-} 0.6
-
 
 KEYWORD outer_bound "outer boundary condition"
 {
@@ -83,3 +65,12 @@ KEYWORD outer_bound "outer boundary condition"
 BOOLEAN z_is_radial "use with multipatch"
 {
 } "no"
+
+BOOLEAN compute_fluxes "Calculate the energy fluxes of the scalar field? calculation not available with multipatch"
+{
+} "no"
+
+CCTK_REAL eps_r "of value if rr approaches zero in densities computation"
+{
+  0:*   :: "any small positive value possible"
+} 1.0d-06

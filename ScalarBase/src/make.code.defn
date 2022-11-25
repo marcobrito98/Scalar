@@ -2,7 +2,8 @@
 # $Header:$
 
 # Source files in this directory
-SRCS = Basegrid.F90
+SRCS = Basegrid.F90 \
+       Scalar_rhs_forcing.F90
 
 # Subdirectories containing source files
 SUBDIRS =

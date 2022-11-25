@@ -1,6 +1,6 @@
 # Scalar
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565475.svg)](https://doi.org/10.5281/zenodo.3565475)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565474.svg)](https://doi.org/10.5281/zenodo.3565474)
 
 
 ## Authors and Maintainers
@@ -21,8 +21,7 @@ GPLv2+
 
 ## Purpose
 
-This repository provides the tools to evolve the Einstein-Scalar system as first described in https://arxiv.org/pdf/1709.06118.pdf
-
+This repository provides the tools to evolve a complex scalar field with nonlinear potential in arbitrary background as first described in <https://arxiv.org/pdf/1709.06118.pdf>. Additionally, it is possible to add an external periodic forcing to the right-hand side of the Klein-Gordon equation for studies of parametric resonances.
 
 
 ## Citation Guidelines
