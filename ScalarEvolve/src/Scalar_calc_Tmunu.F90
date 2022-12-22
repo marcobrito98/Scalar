@@ -260,10 +260,27 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
                 rr = sqrt( xx(1)**2 + xx(2)**2 + xx(3)**2 )
                 if( rr < eps_r ) rr = eps_r
                 !----------------------------------------------------------
+                !----------------------------------------------------------
+                ! n_mu = (-alph, 0, 0, 0)
+                ! n^mu = (1, -betax, -betay, -betaz)/alph
+                !
+                ! Eulerian energy density definition
+                ! rhoSF   = n^mu n^nu T_{mu nu}
+                !     = (T_{00} - 2 beta^i T_{i0} + beta^i beta^j T_{ij})/alph^2
+                !
+                ! Eulerian energy momentum flux definition
+                ! jiSF = -h_i^mu n^nu T_{mu nu}
+                !     = -(T_{i 0} - beta^j T_{i j})/alph
 
                 !--- Eulerian energy density ------------------------------
-                rhoSF = 0
-                rhoSF = Tab(4,4) / ( alph * alph )
+                rhoSF = Tab(4,4)
+                do a = 1, 3
+                    rhoSF = rhoSF - 2 * beta(a) * Tab(a,4)
+                    do b = 1, 3
+                        rhoSF = rhoSF + beta(a) * beta(b) * Tab(a,b)
+                    end do
+                end do
+                rhoSF = rhoSF / ( alph * alph )
 
                 !--- Eulerian energy-momentum flux ------------------------
                 ! jrSF
@@ -272,13 +289,10 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
                 jiSF = 0
                 do a = 1, 3
                     do b = 1, 3
-                        do c = 1, 3
-                            jiSF(a) = jiSF(a) + gg(a,b) * gu(b,c) * Tab(c,4)
-                        end do
+                        jiSF(a) = jiSF(a) + beta(b) * Tab(a,b)
                     end do
                 end do
-                !jiSF =  - jiSF
-                jiSF =  - jiSF / alph
+                jiSF = (jiSF - Tab(1:3,4)) / alph
 
                 !--- Trasformation to radial spherical coordinate ---------
                 jrSF = 0
