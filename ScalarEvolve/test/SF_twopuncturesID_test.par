@@ -1,0 +1,251 @@
+#------------------------------------------------------------------------------
+ActiveThorns = "
+  ADMBase
+  ADMMacros
+  AEILocalInterp
+  Boundary
+  Carpet
+  CarpetInterp
+  CarpetIOASCII
+  CarpetIOBasic
+  CarpetIOHDF5
+  CarpetIOScalar
+  CarpetLib
+  CarpetReduce
+  CarpetSlab
+  CartGrid3D
+  CoordBase
+  CoordGauge
+  Dissipation
+  Fortran
+  GenericFD
+  InitBase
+  IOUtil
+  LeanBSSNMoL
+  LocalInterp
+  LoopControl
+  MoL
+  Multipole
+  NewRad
+  NPScalars_SF
+  ReflectionSymmetry
+  ScalarBase
+  ScalarEvolve
+  Slab
+  SpaceMask
+  SphericalSurface
+  StaticConformal
+  SymBase
+  Time
+  TmunuBase
+  TwoPunctures_BBHSF
+"
+#------------------------------------------------------------------------------
+
+
+# Grid setup
+#------------------------------------------------------------------------------
+
+CartGrid3D::type                     = "coordbase"
+Carpet::domain_from_coordbase        = yes
+CoordBase::domainsize                = "minmax"
+
+# make sure all (xmax - xmin)/dx are integers!
+CoordBase::xmin                      =   0.0
+CoordBase::ymin                      = -32.0
+CoordBase::zmin                      =   0.0
+CoordBase::xmax                      = +32.0
+CoordBase::ymax                      = +32.0
+CoordBase::zmax                      = +32.0
+CoordBase::dx                        =   2.0
+CoordBase::dy                        =   2.0
+CoordBase::dz                        =   2.0
+driver::ghost_size                   = 3
+
+CoordBase::boundary_size_x_lower     = 3
+CoordBase::boundary_size_y_lower     = 3
+CoordBase::boundary_size_z_lower     = 3
+CoordBase::boundary_size_x_upper     = 3
+CoordBase::boundary_size_y_upper     = 3
+CoordBase::boundary_size_z_upper     = 3
+
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::boundary_shiftout_y_lower = 0
+CoordBase::boundary_shiftout_z_lower = 1
+
+ReflectionSymmetry::reflection_x     = yes
+ReflectionSymmetry::reflection_y     = no
+ReflectionSymmetry::reflection_z     = yes
+ReflectionSymmetry::avoid_origin_x   = no
+ReflectionSymmetry::avoid_origin_y   = yes
+ReflectionSymmetry::avoid_origin_z   = no
+
+Time::dtfac                             = 0.25
+
+# Initial Data
+# #------------------------------------------------------------------------------
+ADMBase::initial_data                 = "twopunctures_BBHSF"
+ADMBase::initial_lapse                = "psi^n"
+ADMBase::initial_shift                = "zero"
+ADMBase::initial_dtlapse              = "zero"
+ADMBase::initial_dtshift              = "zero"
+
+ADMBase::lapse_timelevels             = 3
+ADMBase::shift_timelevels             = 3
+ADMBase::metric_timelevels            = 3
+
+TwoPunctures_BBHSF::initial_lapse_psi_exponent  = -2.0
+TwoPunctures_BBHSF::switch_on_backreaction      = "yes"
+TwoPunctures_BBHSF::delta                   = -3.0
+
+TwoPunctures_BBHSF::par_m_plus           = 0.4735
+TwoPunctures_BBHSF::par_m_minus          = 0.4735
+
+TwoPunctures_BBHSF::par_b                   = 2.0
+
+TwoPunctures_BBHSF::par_P_plus[0]           = 0.0
+TwoPunctures_BBHSF::par_P_plus[1]           = 0.0
+TwoPunctures_BBHSF::par_P_plus[2]           = 0.0
+
+TwoPunctures_BBHSF::par_P_minus[0]          = 0.0
+TwoPunctures_BBHSF::par_P_minus[1]          = 0.0
+TwoPunctures_BBHSF::par_P_minus[2]          = 0.0
+
+TwoPunctures_BBHSF::par_S_plus[0]           = 0.0
+TwoPunctures_BBHSF::par_S_plus[1]           = 0.0
+TwoPunctures_BBHSF::par_S_plus[2]           = 0.0
+
+TwoPunctures_BBHSF::par_S_minus[0]          = 0.0
+TwoPunctures_BBHSF::par_S_minus[1]          = 0.0
+TwoPunctures_BBHSF::par_S_minus[2]          = 0.0
+
+TwoPunctures_BBHSF::TP_epsilon              = 1.0e-6
+TwoPunctures_BBHSF::TP_Tiny                 = 1.e-10
+
+TwoPunctures_BBHSF::npoints_A               = 6
+TwoPunctures_BBHSF::npoints_B               = 6
+TwoPunctures_BBHSF::npoints_phi             = 6
+TwoPunctures_BBHSF::grid_setup_method       = "evaluation"
+
+TwoPunctures_BBHSF::keep_u_around           = no
+TwoPunctures_BBHSF::verbose                 = no
+
+# Scalar field initial data for a Gaussian shell
+ScalarBase::initial_scalar      = ID_SF_Gaussian
+ScalarBase::mu                  = 0.1
+
+# TwoPunctures_BBHSF::scalar_Initialize   = "zero_momentum"
+TwoPunctures_BBHSF::scalar_GaussProfile = single_mode
+TwoPunctures_BBHSF::l0SF                = 0
+TwoPunctures_BBHSF::m0SF                = 0
+TwoPunctures_BBHSF::ampSF               = 0.001
+TwoPunctures_BBHSF::r0SF                = 0.0
+TwoPunctures_BBHSF::widthSF             = 10.0
+
+Carpet::init_fill_timelevels            = yes
+InitBase::initial_data_setup_method     = "init_single_level"
+Carpet::init_3_timelevels               = no  ###
+
+################################################################################
+## Evolution and boundary
+#################################################################################
+
+ADMBase::evolution_method               = "LeanBSSNMoL"
+ADMBase::lapse_evolution_method         = "LeanBSSNMoL"
+ADMBase::shift_evolution_method         = "LeanBSSNMoL"
+ADMBase::dtlapse_evolution_method       = "LeanBSSNMoL"
+ADMBase::dtshift_evolution_method       = "LeanBSSNMoL"
+
+LeanBSSNMoL::impose_conf_fac_floor_at_initial  = yes
+LeanBSSNMoL::eta_beta                     = 1
+LeanBSSNMoL::eta_beta_dynamic             = no
+LeanBSSNMoL::conf_fac_floor               = 1.0d-04
+LeanBSSNMoL::derivs_order                 = 4
+LeanBSSNMoL::use_advection_stencils       = yes
+LeanBSSNMoL::calculate_constraints        = no
+
+ScalarBase::evolution_method        = "ScalarEvolve"
+ScalarEvolve::chi_floor                 = 1.0d-06
+
+TmunuBase::stress_energy_storage        = yes       
+TmunuBase::stress_energy_at_RHS         = yes       
+  
+# Spatial finite differencing
+#------------------------------------------------------------------------------
+
+Dissipation::epsdis = 0.15
+Dissipation::order  = 5
+Dissipation::vars   = "
+ADMBase::lapse
+ADMBase::shift
+LeanBSSNMoL::conf_fac
+LeanBSSNMoL::hmetric
+LeanBSSNMoL::hcurv
+LeanBSSNMoL::trk
+LeanBSSNMoL::gammat
+ScalarBase::phi
+ScalarBase::Kphi
+"
+
+# Integration method
+#------------------------------------------------------------------------------
+
+MoL::ODE_Method                 = "RK4"
+MoL::MoL_Intermediate_Steps     = 4
+MoL::MoL_Num_Scratch_Levels     = 1
+
+Carpet::num_integrator_substeps = 4
+
+# Wave extraction
+#------------------------------------------------------------------------------
+NPScalars_SF::NP_order     = 4
+
+Multipole::nradii       = 1
+Multipole::radius[0]    = 20
+Multipole::ntheta       = 6
+Multipole::nphi         = 6
+Multipole::integration_method = Simpson
+Multipole::variables    = "
+  NPScalars_SF::psi4re{sw=-2 cmplx='NPScalars_SF::psi4im' name='NP_Psi4'}
+"
+
+Multipole::l_max        = 2
+Multipole::out_every    = 64
+Multipole::output_hdf5  = no
+Multipole::output_ascii = yes
+
+################################################################################
+## Output
+#################################################################################
+
+Cactus::cctk_run_title       = $parfile
+IO::out_dir                  = $parfile
+IO::out_fileinfo             = "axis labels"
+IO::parfile_write = "no"
+ 
+CarpetIOASCII::compact_format = yes
+CarpetIOASCII::output_ghost_points = no
+ 
+IOBasic::outInfo_every       = 1
+IOBasic::outInfo_vars        = "ScalarBase::phi1 LeanBSSNMoL::conf_fac"
+ 
+IOASCII::output_symmetry_points = no
+IOASCII::out3D_ghosts           = no
+ 
+# 1D text output
+IOASCII::out1D_every            = 1
+IOASCII::out_precision          = 17
+IOASCII::out1D_d                = no
+IOASCII::out1D_x                = yes
+IOASCII::out1D_y                = yes
+IOASCII::out1D_z                = yes
+IOASCII::out1D_vars             = "
+	ScalarBase::phi
+	ScalarBase::Kphi
+	LeanBSSNMoL::conf_fac
+"
+ 
+# Run termination
+#-------------------------------------------------------------------------------
+Cactus::terminate       = "iteration"
+Cactus::cctk_itlast     = 4
