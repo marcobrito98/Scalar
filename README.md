@@ -1,14 +1,13 @@
 # Canuda Scalar field - UIUC version 
 
-<<<<<<< HEAD
 ## HW: TODO: update
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565474.svg)](https://doi.org/10.5281/zenodo.3565474)
 
 
 ## Authors and Maintainers
 
-Cheng-Hsin Cheng
-Giuseppe Ficarra
+Cheng-Hsin Cheng,
+Giuseppe Ficarra,
 Helvi Witek
 
 
