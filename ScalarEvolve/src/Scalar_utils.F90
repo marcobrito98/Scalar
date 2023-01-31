@@ -1,5 +1,6 @@
 
 #include "cctk.h"
+#include "cctk_Parameters.h"
 
 subroutine Scalar_apply_jacobian(dvar, jac)
   implicit none

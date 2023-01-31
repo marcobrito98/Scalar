@@ -1,7 +1,8 @@
 # Canuda Scalar field - UIUC version 
 
+<<<<<<< HEAD
 ## HW: TODO: update
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565475.svg)](https://doi.org/10.5281/zenodo.3565475)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565474.svg)](https://doi.org/10.5281/zenodo.3565474)
 
 
 ## Authors and Maintainers
@@ -26,9 +27,6 @@ and https://arxiv.org/pdf/1709.06118.pdf
 The Canuda_Scalar arrangement has been
 extended to fully relativistic black hole binary spacetimes in
 [upcoming; see working notes for details]
-
-
-
 
 
 ## Citation Guidelines

@@ -5,6 +5,20 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
   STORAGE: rhs_phi rhs_Kphi
   STORAGE: hmetric conf_fac_chi trk
 
+  # compute fluxes
+    if( compute_fluxes )
+        {
+            STORAGE: densities_SF[3]
+        }
+
+  SCHEDULE Scalar_zero_densities IN SetTmunu
+  {
+    LANG: Fortran
+    WRITES: ScalarEvolve::rhoSF_gf(everywhere)
+    WRITES: ScalarEvolve::jrSF_gf(everywhere)
+    WRITES: ScalarEvolve::SrrSF_gf(everywhere)
+  } "Initialise the SF densities to zero"
+
   schedule Scalar_Init at CCTK_PARAMCHECK
   {
     LANG: C

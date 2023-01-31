@@ -2,6 +2,7 @@
 # $Header:$
 
 implements: ScalarBase
+inherits: Grid
 
 public:
 
@@ -14,4 +15,9 @@ CCTK_REAL Kphi type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=
 {
   Kphi1 Kphi2
 } "their conjugated momenta"
+
+CCTK_REAL Fext type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=0'
+{
+  Fext1 Fext2
+} "scalar field external forcing function"
 

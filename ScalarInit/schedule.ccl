@@ -28,6 +28,12 @@ if ( CCTK_Equals(initial_scalar, "ID_SF_Gaussian" ))
 else if ( CCTK_Equals(initial_scalar, "ID_SF_BS" ))
 {
 
+  SCHEDULE ID_SF_BS_ParamCheck AT PARAMCHECK
+  {
+    LANG: C
+  } "Check parameters and thorn needs"
+
+
   if (schedule_in_ADMBase_InitialData)
   {
       SCHEDULE GROUP ID_SF_BS_Group IN ADMBase_InitialData
@@ -48,7 +54,7 @@ else if ( CCTK_Equals(initial_scalar, "ID_SF_BS" ))
 
 }
 
-## Schedule quasi-bound state initial data
+## Schedule constant initial data
 else if ( CCTK_Equals(initial_scalar, "ID_SF_Const" ))
 {
 
