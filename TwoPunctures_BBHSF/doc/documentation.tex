@@ -390,6 +390,7 @@ the resulting metric and constraint violation when using different values of
 the parameter $\delta < -2.5$.
 By default, $\delta$ is set to be $-3$ in the thorn.
 
+
 \section{Initializing scalar field configurations}
 We consider scalar field configurations with a Gaussian radial profile and zero momentum
 \begin{equation}
@@ -416,9 +417,17 @@ when initializing the scalar field grid functions.
 If one wishes to use a different initial scalar configuration than currently implemented,
 they should supply the corresponding fields and source terms to \texttt{SF\_source\_term.c}.
 
-To enable back-reaction from the scalar field in the evolution, in the parameter file one
-is reminded to set \texttt{LeanBSSNMoL::couple\_Tab = 1} and
-\texttt{TmunuBase::stress\_energy\_at\_RHS = yes}.
+The parameter \texttt{TwoPunctures\_BBHSF::switch\_on\_back-reaction} is used to control whether the
+scalar field is included in the metric initial data calculation.
+To remove the back-reaction from the metric ID calculation, it is sufficient to set
+\texttt{TwoPunctures\_BBHSF::switch\_on\_back-reaction = no},
+and that will reduce to the standard \texttt{TwoPunctures}.
+
+To enable back-reaction during the evolution, one
+is reminded to set \texttt{TmunuBase::stress\_energy\_at\_RHS = yes}.
+If using \texttt{LeanBSSNMoL} for the spacetime evolution, one should also set
+\texttt{LeanBSSNMoL::couple\_Tab = 1}.
+
 
 \begin{thebibliography}{9}
 %\cite{scalar_TwoPunctures_BBHSF_Ansorg:2004ds}
