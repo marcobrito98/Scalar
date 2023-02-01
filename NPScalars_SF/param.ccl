@@ -16,3 +16,7 @@ CCTK_INT calculate_NP_every "Calculate NP scalars every N iterations"
 {
     *:* :: "0 or negative is never"
 } 1
+
+CCTK_BOOLEAN backreaction_on "include scalar field contributions in NP scalars computation"
+{
+} "yes"

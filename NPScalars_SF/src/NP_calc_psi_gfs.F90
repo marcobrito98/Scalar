@@ -1009,12 +1009,17 @@ subroutine NPSF_calcPsiGF( CCTK_ARGUMENTS )
 
     j_i = 0.
     S_ij = 0.
-    do a = 1,3
-        j_i(a)  = j_i(a) + 2 * ( lKphi1 * d1_lphi1(a) + lKphi2 * d1_lphi2(a) )
-        do b = 1,3 
+
+    !when backreaction is switched on, scalar field contributions are considered
+    if ( backreaction_on == 1 ) then
+        do a = 1,3
+            j_i(a)  = j_i(a) + 2 * ( lKphi1 * d1_lphi1(a) + lKphi2 * d1_lphi2(a) )
+            do b = 1,3
                 S_ij(a,b) = S_ij(a,b) + ( d1_lphi1(a) * d1_lphi1(b) + d1_lphi2(a) * d1_lphi2(b) )
+            end do
         end do
-    end do
+    end if
+
     !------------------------------------------
 
     !------------ EB part of Weyl -------------
