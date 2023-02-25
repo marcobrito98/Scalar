@@ -101,7 +101,7 @@ CCTK_REAL trk type=gf tags='tensortypealias="Scalar" tensorweight=0 prolongation
 
 #=== scalar field radial energy-momentum flux and spatial stress tensor ===
 
-CCTK_REAL densities_SF type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=0 prolongation="none" Checkpoint="no"'
+CCTK_REAL densities_SF type=gf timelevels=3 tags='tensortypealias="Scalar" tensorweight=0 ProlongationParameter="TmunuBase::prolongation_type" Checkpoint="no"'
 {
   rhoSF_gf
   jrSF_gf

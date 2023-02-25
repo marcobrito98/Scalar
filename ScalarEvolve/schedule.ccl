@@ -74,10 +74,19 @@ if (CCTK_EQUALS (evolution_method, "ScalarEvolve")) {
   {
   } "Apply boundary conditions"
 
-
   schedule Scalar_calc_Tmunu in AddToTmunu as Scalar_AddToTmunu
   {
-    LANG: Fortran
+   	LANG: Fortran
   } "Compute the energy-momentum tensor"
-
+  
+  schedule Scalar_calc_Tmunu_bdry after Scalar_calc_Tmunu in AddToTmunu
+  {
+   	LANG: Fortran
+   	OPTIONS: LEVEL
+   	SYNC: TmunuBase::stress_energy_scalar
+   	SYNC: TmunuBase::stress_energy_vector
+   	SYNC: TmunuBase::stress_energy_tensor
+    SYNC: ScalarEvolve::densities_SF
+  } "Enforce symmetry BCs in Tmunu and fluxes"
+  
 }
