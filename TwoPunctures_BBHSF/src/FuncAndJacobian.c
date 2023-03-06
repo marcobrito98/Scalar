@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "FuncAndJacobian.c"*/
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +18,6 @@ static inline CCTK_REAL min(CCTK_REAL const x, CCTK_REAL const y) {
   return x < y ? x : y;
 }
 
-/* --------------------------------------------------------------------------*/
 int BBHSF_Index(int ivar, int i, int j, int k, int nvar, int n1, int n2,
                 int n3) {
   int i1 = i, j1 = j, k1 = k;
@@ -43,7 +40,6 @@ int BBHSF_Index(int ivar, int i, int j, int k, int nvar, int n1, int n2,
   return ivar + nvar * (i1 + n1 * (j1 + n2 * k1));
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_allocate_derivs(derivs *v, int n) {
   int m = n - 1;
   (*v).d0 = dvector(0, m);
@@ -58,7 +54,6 @@ void BBHSF_allocate_derivs(derivs *v, int n) {
   (*v).d33 = dvector(0, m);
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_free_derivs(derivs *v, int n) {
   int m = n - 1;
   free_dvector((*v).d0, 0, m);
@@ -73,7 +68,6 @@ void BBHSF_free_derivs(derivs *v, int n) {
   free_dvector((*v).d33, 0, m);
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_Derivatives_AB3(int nvar, int n1, int n2, int n3, derivs v) {
   int i, j, k, ivar, N, *indx;
   CCTK_REAL *p, *dp, *d2p, *q, *dq, *r, *dr;
@@ -167,15 +161,13 @@ void BBHSF_Derivatives_AB3(int nvar, int n1, int n2, int n3, derivs v) {
   free_ivector(indx, 0, N);
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_F_of_v(CCTK_POINTER_TO_CONST cctkGH, int nvar, int n1, int n2,
                   int n3, derivs v, CCTK_REAL *F, derivs u) {
-  /*      Calculates the left hand sides of the non-linear equations
-   * F_m(v_n)=0*/
-  /*      and the function u (u.d0[]) as well as its derivatives*/
-  /*      (u.d1[], u.d2[], u.d3[], u.d11[], u.d12[], u.d13[], u.d22[], u.d23[],
-   * u.d33[])*/
-  /*      at interior points and at the boundaries "+/-"*/
+  /* Calculates the left hand sides of the non-linear equations
+   * F_m(v_n)=0
+   * and the function u (u.d0[]) as well as its derivatives
+   * (u.d1[], u.d2[], u.d3[], u.d11[], u.d12[], u.d13[], u.d22[], u.d23[], u.d33[])
+   * at interior points and at the boundaries "+/-" */
   DECLARE_CCTK_PARAMETERS;
   int i, j, k, ivar, indx;
   CCTK_REAL al, be, A, B, X, R, x, r, phi, y, z, Am1, *values;
@@ -327,15 +319,13 @@ void BBHSF_F_of_v(CCTK_POINTER_TO_CONST cctkGH, int nvar, int n1, int n2,
   BBHSF_free_derivs(&U, nvar);
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_J_times_dv(int nvar, int n1, int n2, int n3, derivs dv,
-                      CCTK_REAL *Jdv,
-                      derivs u) { /*      Calculates the left hand sides of the
-                                     non-linear equations F_m(v_n)=0*/
-  /*      and the function u (u.d0[]) as well as its derivatives*/
-  /*      (u.d1[], u.d2[], u.d3[], u.d11[], u.d12[], u.d13[], u.d22[], u.d23[],
-   * u.d33[])*/
-  /*      at interior points and at the boundaries "+/-"*/
+                      CCTK_REAL *Jdv, derivs u) {
+  /*      Calculates the left hand sides of the non-linear equations F_m(v_n)=0
+   *      and the function u (u.d0[]) as well as its derivatives
+   *      (u.d1[], u.d2[], u.d3[], u.d11[], u.d12[], u.d13[], u.d22[], u.d23[],
+   *      u.d33[])
+   *      at interior points and at the boundaries "+/-"*/
   DECLARE_CCTK_PARAMETERS;
   int i, j, k, ivar, indx;
   CCTK_REAL al, be, A, B, X, R, x, r, phi, y, z, Am1, *values;
@@ -405,15 +395,13 @@ void BBHSF_J_times_dv(int nvar, int n1, int n2, int n3, derivs dv,
   }
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_JFD_times_dv(
     int i, int j, int k, int nvar, int n1, int n2, int n3, derivs dv, derivs u,
-    CCTK_REAL *values) { /* Calculates rows of the vector 'J(FD)*dv'.*/
-  /* First row to be calculated: row = Index(0,      i, j, k; nvar, n1, n2,
-   * n3)*/
-  /* Last  row to be calculated: row = Index(nvar-1, i, j, k; nvar, n1, n2,
-   * n3)*/
-  /* These rows are stored in the vector JFDdv[0] ... JFDdv[nvar-1].*/
+    CCTK_REAL *values) {
+  /* Calculates rows of the vector 'J(FD)*dv'.
+   * First row to be calculated: row = Index(0,      i, j, k; nvar, n1, n2, n3)
+   * Last  row to be calculated: row = Index(nvar-1, i, j, k; nvar, n1, n2, n3)
+   * These rows are stored in the vector JFDdv[0] ... JFDdv[nvar-1]. */
   DECLARE_CCTK_PARAMETERS;
   int ivar, indx;
   CCTK_REAL al, be, A, B, X, R, x, r, phi, y, z, Am1;
@@ -546,7 +534,6 @@ void BBHSF_JFD_times_dv(
   BBHSF_free_derivs(&U, nvar);
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_SetMatrix_JFD(int nvar, int n1, int n2, int n3, derivs u, int *ncols,
                          int **cols, CCTK_REAL **Matrix) {
   DECLARE_CCTK_PARAMETERS;
@@ -588,12 +575,12 @@ void BBHSF_SetMatrix_JFD(int nvar, int n1, int n2, int n3, derivs u, int *ncols,
           j_1 = minimum2(N2, j + 1);
           k_0 = k - 1;
           k_1 = k + 1;
-          /*					i_0 = 0;
-                                                  i_1 = N1;
-                                                  j_0 = 0;
-                                                  j_1 = N2;
-                                                  k_0 = 0;
-                                                  k_1 = N3;*/
+          /*	i_0 = 0;
+              i_1 = N1;
+              j_0 = 0;
+              j_1 = N2;
+              k_0 = 0;
+              k_1 = N3;*/
 
           for (i1 = i_0; i1 <= i_1; i1++) {
             for (j1 = j_0; j1 <= j_1; j1++) {
@@ -621,7 +608,6 @@ void BBHSF_SetMatrix_JFD(int nvar, int n1, int n2, int n3, derivs u, int *ncols,
   free_dvector(values, 0, nvar - 1);
 }
 
-/* --------------------------------------------------------------------------*/
 /* Calculates the value of v at an arbitrary position (A,B,phi)*/
 CCTK_REAL
 BBHSF_PunctEvalAtArbitPosition(CCTK_REAL *v, int ivar, CCTK_REAL A, CCTK_REAL B,
@@ -661,7 +647,6 @@ BBHSF_PunctEvalAtArbitPosition(CCTK_REAL *v, int ivar, CCTK_REAL A, CCTK_REAL B,
   return result;
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_calculate_derivs(int i, int j, int k, int ivar, int nvar, int n1,
                             int n2, int n3, derivs v, derivs vv) {
   CCTK_REAL al = Pih * (2 * i + 1) / n1, be = Pih * (2 * j + 1) / n2,
@@ -674,8 +659,7 @@ void BBHSF_calculate_derivs(int i, int j, int k, int ivar, int nvar, int n1,
   vv.d3[0] = v.d3[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)];
   vv.d11[0] = v.d11[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * sin2_al +
               v.d1[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * cos_al;
-  vv.d12[0] =
-      v.d12[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * sin_al * sin_be;
+  vv.d12[0] = v.d12[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * sin_al * sin_be;
   vv.d13[0] = v.d13[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * sin_al;
   vv.d22[0] = v.d22[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * sin2_be +
               v.d2[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)] * cos_be;
@@ -683,7 +667,6 @@ void BBHSF_calculate_derivs(int i, int j, int k, int ivar, int nvar, int n1,
   vv.d33[0] = v.d33[BBHSF_Index(ivar, i, j, k, nvar, n1, n2, n3)];
 }
 
-/* --------------------------------------------------------------------------*/
 CCTK_REAL
 BBHSF_interpol(CCTK_REAL a, CCTK_REAL b, CCTK_REAL c, derivs v) {
   return v.d0[0] + a * v.d1[0] + b * v.d2[0] + c * v.d3[0] +
@@ -691,12 +674,10 @@ BBHSF_interpol(CCTK_REAL a, CCTK_REAL b, CCTK_REAL c, derivs v) {
          0.5 * b * b * v.d22[0] + b * c * v.d23[0] + 0.5 * c * c * v.d33[0];
 }
 
-/* --------------------------------------------------------------------------*/
 static CCTK_REAL clamp_pm_one(CCTK_REAL val) {
   return val < -1 ? -1 : val > 1 ? 1 : val;
 }
 
-/* --------------------------------------------------------------------------*/
 /* Calculates the value of v at an arbitrary position (x,y,z)*/
 CCTK_REAL
 BBHSF_PunctTaylorExpandAtArbitPosition(int ivar, int nvar, int n1, int n2,
@@ -753,7 +734,6 @@ BBHSF_PunctTaylorExpandAtArbitPosition(int ivar, int nvar, int n1, int n2,
   return Ui;
 }
 
-/* --------------------------------------------------------------------------*/
 /* Calculates the value of v at an arbitrary position (x,y,z)*/
 CCTK_REAL
 BBHSF_PunctIntPolAtArbitPosition(int ivar, int nvar, int n1, int n2, int n3,
@@ -780,8 +760,7 @@ BBHSF_PunctIntPolAtArbitPosition(int ivar, int nvar, int n1, int n2, int n3,
   A = 2 * tanh(0.5 * X) - 1;
   B = tan(0.5 * R - Piq);
 
-  result =
-      BBHSF_PunctEvalAtArbitPosition(v.d0, ivar, A, B, phi, nvar, n1, n2, n3);
+  result = BBHSF_PunctEvalAtArbitPosition(v.d0, ivar, A, B, phi, nvar, n1, n2, n3);
 
   Ui = (A - 1) * result;
 
@@ -870,8 +849,7 @@ BBHSF_PunctIntPolAtArbitPositionFast(int ivar, int nvar, int n1, int n2, int n3,
   A = 2 * tanh(0.5 * X) - 1;
   B = tan(0.5 * R - Piq);
 
-  result = BBHSF_PunctEvalAtArbitPositionFast(v.d0, ivar, A, B, phi, nvar, n1,
-                                              n2, n3);
+  result = BBHSF_PunctEvalAtArbitPositionFast(v.d0, ivar, A, B, phi, nvar, n1, n2, n3);
 
   Ui = (A - 1) * result;
 

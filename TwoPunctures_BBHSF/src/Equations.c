@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "Equations.c"*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -373,5 +371,3 @@ void BBHSF_LinEquations(CCTK_REAL A, CCTK_REAL B, CCTK_REAL X, CCTK_REAL R,
   // Linearized Hamiltonian constraint equation
   values[0] = term1 + term2 + term3 + term4 + term5 + term6;
 }
-
-/*-----------------------------------------------------------*/

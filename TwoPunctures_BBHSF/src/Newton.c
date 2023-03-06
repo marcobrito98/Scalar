@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "Newton.c"*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +38,7 @@ static void LineRelax_be(CCTK_REAL *restrict const dv, int const i, int const k,
                          int const *restrict const ncols,
                          int const *restrict const *restrict const cols,
                          CCTK_REAL const *restrict const *restrict const JFD);
-/* --------------------------------------------------------------------------*/
+
 static CCTK_REAL norm_inf(CCTK_REAL const *restrict const F, int const ntotal) {
   CCTK_REAL dmax = -1;
 #pragma omp parallel
@@ -56,7 +54,7 @@ static CCTK_REAL norm_inf(CCTK_REAL const *restrict const F, int const ntotal) {
   }
   return dmax;
 }
-/* --------------------------------------------------------------------------*/
+
 static void resid(CCTK_REAL *restrict const res, int const ntotal,
                   CCTK_REAL const *restrict const dv,
                   CCTK_REAL const *restrict const rhs,
@@ -72,7 +70,6 @@ static void resid(CCTK_REAL *restrict const res, int const ntotal,
   }
 }
 
-/* -------------------------------------------------------------------------*/
 static void LineRelax_al(CCTK_REAL *restrict const dv, int const j, int const k,
                          int const nvar, int const n1, int const n2,
                          int const n3, CCTK_REAL const *restrict const rhs,
@@ -124,7 +121,6 @@ static void LineRelax_al(CCTK_REAL *restrict const dv, int const j, int const k,
   gsl_vector_free(x);
 }
 
-/* --------------------------------------------------------------------------*/
 static void LineRelax_be(CCTK_REAL *restrict const dv, int const i, int const k,
                          int const nvar, int const n1, int const n2,
                          int const n3, CCTK_REAL const *restrict const rhs,
@@ -175,7 +171,6 @@ static void LineRelax_be(CCTK_REAL *restrict const dv, int const i, int const k,
   gsl_vector_free(x);
 }
 
-/* --------------------------------------------------------------------------*/
 static void relax(CCTK_REAL *restrict const dv, int const nvar, int const n1,
                   int const n2, int const n3,
                   CCTK_REAL const *restrict const rhs,
@@ -218,7 +213,6 @@ static void relax(CCTK_REAL *restrict const dv, int const nvar, int const n1,
   }
 }
 
-/* --------------------------------------------------------------------------*/
 void BBHSF_TestRelax(CCTK_POINTER_TO_CONST cctkGH, int nvar, int n1, int n2,
                      int n3, derivs v, CCTK_REAL *dv) {
   DECLARE_CCTK_PARAMETERS;
@@ -266,7 +260,6 @@ void BBHSF_TestRelax(CCTK_POINTER_TO_CONST cctkGH, int nvar, int n1, int n2,
   free_ivector(ncols, 0, ntotal - 1);
 }
 
-/* --------------------------------------------------------------------------*/
 static int bicgstab(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
                     int const n1, int const n2, int const n3, derivs v,
                     derivs dv, int const output, int const itmax,
@@ -433,7 +426,6 @@ static int bicgstab(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
   return ii + 1;
 }
 
-/* -------------------------------------------------------------------*/
 void BBHSF_Newton(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
                   int const n1, int const n2, int const n3, derivs v,
                   CCTK_REAL const tol, int const itmax) {
@@ -489,5 +481,3 @@ void BBHSF_Newton(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
   BBHSF_free_derivs(&dv, ntotal);
   BBHSF_free_derivs(&u, ntotal);
 }
-
-/* -------------------------------------------------------------------*/

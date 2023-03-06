@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "utilities.c"*/
-
 #include <math.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -10,7 +8,6 @@
 #include "cctk_Functions.h"
 #include "cctk_Parameters.h"
 
-/*---------------------------------------------------------------------------*/
 int *ivector(long nl, long nh)
 /* allocate an int vector with subscript range v[nl..nh] */
 {
@@ -23,7 +20,6 @@ int *ivector(long nl, long nh)
   return retval - nl;
 }
 
-/*---------------------------------------------------------------------------*/
 CCTK_REAL *dvector(long nl, long nh)
 /* allocate a CCTK_REAL vector with subscript range v[nl..nh] */
 {
@@ -36,7 +32,6 @@ CCTK_REAL *dvector(long nl, long nh)
   return retval - nl;
 }
 
-/*---------------------------------------------------------------------------*/
 int **imatrix(long nrl, long nrh, long ncl, long nch)
 /* allocate a int matrix with subscript range m[nrl..nrh][ncl..nch] */
 {
@@ -64,7 +59,6 @@ int **imatrix(long nrl, long nrh, long ncl, long nch)
   return retval;
 }
 
-/*---------------------------------------------------------------------------*/
 CCTK_REAL **dmatrix(long nrl, long nrh, long ncl, long nch)
 /* allocate a double matrix with subscript range m[nrl..nrh][ncl..nch] */
 {
@@ -92,7 +86,6 @@ CCTK_REAL **dmatrix(long nrl, long nrh, long ncl, long nch)
   return retval;
 }
 
-/*---------------------------------------------------------------------------*/
 CCTK_REAL ***d3tensor(long nrl, long nrh, long ncl, long nch, long ndl,
                       long ndh)
 /* allocate a CCTK_REAL 3tensor with range t[nrl..nrh][ncl..nch][ndl..ndh] */
@@ -142,21 +135,18 @@ CCTK_REAL ***d3tensor(long nrl, long nrh, long ncl, long nch, long ndl,
   return retval;
 }
 
-/*--------------------------------------------------------------------------*/
 void free_ivector(int *v, long nl, long nh)
 /* free an int vector allocated with ivector() */
 {
   free(v + nl);
 }
 
-/*--------------------------------------------------------------------------*/
 void free_dvector(CCTK_REAL *v, long nl, long nh)
 /* free an double vector allocated with dvector() */
 {
   free(v + nl);
 }
 
-/*--------------------------------------------------------------------------*/
 void free_imatrix(int **m, long nrl, long nrh, long ncl, long nch)
 /* free an int matrix allocated by imatrix() */
 {
@@ -164,7 +154,6 @@ void free_imatrix(int **m, long nrl, long nrh, long ncl, long nch)
   free(m + nrl);
 }
 
-/*--------------------------------------------------------------------------*/
 void free_dmatrix(CCTK_REAL **m, long nrl, long nrh, long ncl, long nch)
 /* free a CCTK_REAL matrix allocated by dmatrix() */
 {
@@ -172,7 +161,6 @@ void free_dmatrix(CCTK_REAL **m, long nrl, long nrh, long ncl, long nch)
   free(m + nrl);
 }
 
-/*--------------------------------------------------------------------------*/
 void free_d3tensor(CCTK_REAL ***t, long nrl, long nrh, long ncl, long nch,
                    long ndl, long ndh)
 /* free a CCTK_REAL d3tensor allocated by d3tensor() */
@@ -182,7 +170,6 @@ void free_d3tensor(CCTK_REAL ***t, long nrl, long nrh, long ncl, long nch,
   free(t + nrl);
 }
 
-/*--------------------------------------------------------------------------*/
 int minimum2(int i, int j) {
   int result = i;
   if (j < result)
@@ -190,7 +177,6 @@ int minimum2(int i, int j) {
   return result;
 }
 
-/*-------------------------------------------------------------------------*/
 int minimum3(int i, int j, int k) {
   int result = i;
   if (j < result)
@@ -200,7 +186,6 @@ int minimum3(int i, int j, int k) {
   return result;
 }
 
-/*--------------------------------------------------------------------------*/
 int maximum2(int i, int j) {
   int result = i;
   if (j > result)
@@ -208,7 +193,6 @@ int maximum2(int i, int j) {
   return result;
 }
 
-/*--------------------------------------------------------------------------*/
 int maximum3(int i, int j, int k) {
   int result = i;
   if (j > result)
@@ -218,7 +202,6 @@ int maximum3(int i, int j, int k) {
   return result;
 }
 
-/*--------------------------------------------------------------------------*/
 int pow_int(int mantisse, int exponent) {
   int i, result = 1;
 
@@ -228,7 +211,6 @@ int pow_int(int mantisse, int exponent) {
   return result;
 }
 
-/*--------------------------------------------------------------------------*/
 void chebft_Zeros(CCTK_REAL u[], int n, int inv)
 /* eq. 5.8.7 and 5.8.8 at x = (5.8.4) of 2nd edition C++ NR */
 {
@@ -268,8 +250,6 @@ void chebft_Zeros(CCTK_REAL u[], int n, int inv)
   free_dvector(c, 0, n);
 }
 
-/* --------------------------------------------------------------------------*/
-
 void chebft_Extremes(CCTK_REAL u[], int n, int inv)
 /* eq. 5.8.7 and 5.8.8 at x = (5.8.5) of 2nd edition C++ NR */
 {
@@ -305,8 +285,6 @@ void chebft_Extremes(CCTK_REAL u[], int n, int inv)
   free_dvector(c, 0, N);
 }
 
-/* --------------------------------------------------------------------------*/
-
 void chder(CCTK_REAL *c, CCTK_REAL *cder, int n) {
   int j;
 
@@ -316,7 +294,6 @@ void chder(CCTK_REAL *c, CCTK_REAL *cder, int n) {
     cder[j] = cder[j + 2] + 2 * (j + 1) * c[j + 1];
 }
 
-/* --------------------------------------------------------------------------*/
 CCTK_REAL
 chebev(CCTK_REAL a, CCTK_REAL b, CCTK_REAL c[], int m, CCTK_REAL x)
 /* eq. 5.8.11 of C++ NR (2nd ed) */
@@ -339,7 +316,6 @@ chebev(CCTK_REAL a, CCTK_REAL b, CCTK_REAL c[], int m, CCTK_REAL x)
   return y * dj - djp1 + 0.5 * c[0];
 }
 
-/* --------------------------------------------------------------------------*/
 void fourft(CCTK_REAL *u, int N, int inv)
 /* a (slow) Fourier transform, seems to be just eq. 12.1.6 and 12.1.9 of C++ NR
    (2nd ed) */
@@ -394,7 +370,6 @@ void fourft(CCTK_REAL *u, int N, int inv)
   free_dvector(b, 1, M);
 }
 
-/* -----------------------------------------*/
 void fourder(CCTK_REAL u[], CCTK_REAL du[], int N) {
   int l, M, lpM;
 
@@ -408,7 +383,6 @@ void fourder(CCTK_REAL u[], CCTK_REAL du[], int N) {
   }
 }
 
-/* -----------------------------------------*/
 void fourder2(CCTK_REAL u[], CCTK_REAL d2u[], int N) {
   int l, l2, M, lpM;
 
@@ -423,7 +397,6 @@ void fourder2(CCTK_REAL u[], CCTK_REAL d2u[], int N) {
   }
 }
 
-/* ----------------------------------------- */
 CCTK_REAL
 fourev(CCTK_REAL *u, int N, CCTK_REAL x) {
   int l, M = N / 2;
@@ -437,7 +410,6 @@ fourev(CCTK_REAL *u, int N, CCTK_REAL x) {
   return result;
 }
 
-/* ------------------------------------------------------------------------*/
 CCTK_REAL
 norm1(CCTK_REAL *v, int n) {
   int i;
@@ -450,7 +422,6 @@ norm1(CCTK_REAL *v, int n) {
   return result;
 }
 
-/* -------------------------------------------------------------------------*/
 CCTK_REAL
 norm2(CCTK_REAL *v, int n) {
   int i;
@@ -462,7 +433,6 @@ norm2(CCTK_REAL *v, int n) {
   return sqrt(result);
 }
 
-/* -------------------------------------------------------------------------*/
 CCTK_REAL
 scalarproduct(CCTK_REAL *v, CCTK_REAL *w, int n) {
   int i;
@@ -474,7 +444,6 @@ scalarproduct(CCTK_REAL *v, CCTK_REAL *w, int n) {
   return result;
 }
 
-/* -------------------------------------------------------------------------*/
 void apply_cutoff(CCTK_REAL *var) {
   DECLARE_CCTK_PARAMETERS;
   *var = pow(pow(*var, 4) + pow(TP_epsilon, 4), 0.25);
@@ -483,7 +452,6 @@ void apply_cutoff(CCTK_REAL *var) {
   return;
 }
 
-/* -------------------------------------------------------------------------*/
 CCTK_REAL
 extend(CCTK_REAL M, CCTK_REAL r) {
   DECLARE_CCTK_PARAMETERS;
@@ -492,7 +460,6 @@ extend(CCTK_REAL M, CCTK_REAL r) {
                15. / 8. / TP_Extend_Radius));
 }
 
-/* -------------------------------------------------------------------------*/
 CCTK_REAL
 inverse(CCTK_REAL M, CCTK_REAL r) {
   DECLARE_CCTK_PARAMETERS;
@@ -503,5 +470,3 @@ inverse(CCTK_REAL M, CCTK_REAL r) {
 
   return result;
 }
-
-/* -------------------------------------------------------------------------*/

@@ -10,7 +10,6 @@
 #include "TwoPunctures_BBHSF.h"
 #include <assert.h>
 
-/* -------------------------------------------------------------------*/
 void SF_Initialize(CCTK_REAL x, CCTK_REAL y, CCTK_REAL z, CCTK_REAL *phi_re,
                    CCTK_REAL *phi_im) {
   /* Initialize the real and imaginary parts of the scalar field with an

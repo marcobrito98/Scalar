@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "TwoPunctures.c"*/
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -163,11 +161,8 @@ static void set_initial_guess(CCTK_POINTER_TO_CONST cctkGH, derivs v) {
   free(s_y);
   free(s_x);
   BBHSF_free_derivs(&U, nvar);
-  /*exit(0);*/
 }
 
-/* -------------------------------------------------------------------*/
-void TwoPunctures_BBHSF(CCTK_ARGUMENTS);
 void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
@@ -184,9 +179,6 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
 
   int imin[3], imax[3];
   int const ntotal = n1 * n2 * n3 * nvar;
-#if 0
-  int percent10 = 0;
-#endif
   static CCTK_REAL *F = NULL;
   static derivs u, v, cf_v;
   CCTK_REAL admMass;
@@ -257,10 +249,8 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
 
         BBHSF_F_of_v(cctkGH, nvar, n1, n2, n3, v, F, u);
 
-        up = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, par_b, 0.,
-                                              0.);
-        um = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, -par_b,
-                                              0., 0.);
+        up = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, par_b, 0., 0.);
+        um = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, -par_b, 0., 0.);
 
         /* Calculate the ADM masses from the current bare mass guess */
         *mp_adm = (1 + up) * *mp + *mp * *mm / (4. * par_b);
@@ -303,10 +293,8 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
                "The two puncture masses are mp=%.17g and mm=%.17g", (double)*mp,
                (double)*mm);
 
-    up =
-        BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, par_b, 0., 0.);
-    um = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, -par_b, 0.,
-                                          0.);
+    up = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, par_b, 0., 0.);
+    um = BBHSF_PunctIntPolAtArbitPosition(0, nvar, n1, n2, n3, v, -par_b, 0., 0.);
 
     /* Calculate the ADM masses from the current bare mass guess */
     *mp_adm = (1 + up) * *mp + *mp * *mm / (4. * par_b);
@@ -316,32 +304,10 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
     CCTK_VInfo(CCTK_THORNSTRING, "Puncture 2 ADM mass is %g", (double)*mm_adm);
 
     /* print out ADM mass, eq.: \Delta M_ADM=2*r*u=4*b*V for A=1,B=0,phi=0 */
-    admMass = (*mp + *mm -
-               4 * par_b *
-                   BBHSF_PunctEvalAtArbitPosition(v.d0, 0, 1, 0, 0, nvar, n1,
-                                                  n2, n3));
+    admMass = (*mp + *mm - 4 * par_b *
+               BBHSF_PunctEvalAtArbitPosition(v.d0, 0, 1, 0, 0, nvar, n1, n2, n3));
     CCTK_VInfo(CCTK_THORNSTRING, "The total ADM mass is %g", (double)admMass);
     *E = admMass;
-
-    /*
-      Run this in Mathematica (version 8 or later) with
-        math -script <file>
-
-      Needs["SymbolicC`"];
-      co = Table["center_offset[" <> ToString[i] <> "]", {i, 0, 2}];
-      r1 = co + {"par_b", 0, 0};
-      r2 = co + {-"par_b", 0, 0};
-      {p1, p2} = Table["par_P_" <> bh <> "[" <> ToString[i] <> "]", {bh,
-      {"plus", "minus"}}, {i, 0, 2}]; {s1, s2} = Table["par_S_" <> bh <> "[" <>
-      ToString[i] <> "]", {bh, {"plus", "minus"}}, {i, 0, 2}];
-
-      J = Cross[r1, p1] + Cross[r2, p2] + s1 + s2;
-
-      JVar = Table["*J" <> ToString[i], {i, 1, 3}];
-      Print[OutputForm@StringReplace[
-        ToCCodeString@MapThread[CAssign[#1, CExpression[#2]] &, {JVar, J}],
-        "\"" -> ""]];
-     */
 
     *J1 = -(center_offset[2] * par_P_minus[1]) +
           center_offset[1] * par_P_minus[2] - center_offset[2] * par_P_plus[1] +
@@ -392,10 +358,6 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
   }
 
   for (int d = 0; d < 3; ++d) {
-    /*
-    imin[d] = 0           + (cctk_bbox[2*d  ] ? 0 : cctk_nghostzones[d]);
-    imax[d] = cctk_lsh[d] - (cctk_bbox[2*d+1] ? 0 : cctk_nghostzones[d]);
-    */
     imin[d] = 0;
     imax[d] = cctk_lsh[d];
   }
@@ -404,17 +366,6 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
   for (int k = imin[2]; k < imax[2]; ++k) {
     for (int j = imin[1]; j < imax[1]; ++j) {
       for (int i = imin[0]; i < imax[0]; ++i) {
-#if 0
-        /* We can't output this when running in parallel */
-        if (percent10 != 10*(i+j*cctk_lsh[0]+k*cctk_lsh[0]*cctk_lsh[1]) /
-                            (cctk_lsh[0] * cctk_lsh[1] * cctk_lsh[2]))
-        {
-            percent10 = 10*(i+j*cctk_lsh[0]+k*cctk_lsh[0]*cctk_lsh[1]) /
-                           (cctk_lsh[0] * cctk_lsh[1] * cctk_lsh[2]);
-            CCTK_VInfo(CCTK_THORNSTRING, "%3d%% done", percent10*10);
-        }
-#endif
-
         const int ind = CCTK_GFINDEX3D(cctkGH, i, j, k);
 
         CCTK_REAL xx, yy, zz;
@@ -454,12 +405,10 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
         CCTK_REAL U;
         switch (gsm) {
         case GSM_Taylor_expansion:
-          U = BBHSF_PunctTaylorExpandAtArbitPosition(0, nvar, n1, n2, n3, v, xx,
-                                                     yy, zz);
+          U = BBHSF_PunctTaylorExpandAtArbitPosition(0, nvar, n1, n2, n3, v, xx, yy, zz);
           break;
         case GSM_evaluation:
-          U = BBHSF_PunctIntPolAtArbitPositionFast(0, nvar, n1, n2, n3, cf_v,
-                                                   xx, yy, zz);
+          U = BBHSF_PunctIntPolAtArbitPositionFast(0, nvar, n1, n2, n3, cf_v, xx, yy, zz);
           break;
         default:
           assert(0);
@@ -470,12 +419,7 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
           r_plus = TP_Tiny;
         if (r_minus < TP_Tiny)
           r_minus = TP_Tiny;
-        CCTK_REAL psi1 = //
-            (1. + 0.5 * *mp / r_plus + 0.5 * *mm / r_minus + U);
-        // #define EXTEND(M,r) \
-//           ( M * (3./8 * pow(r, 4) / pow(TP_Extend_Radius, 5) - \
-//                  5./4 * pow(r, 2) / pow(TP_Extend_Radius, 3) + \
-//                  15./8 / TP_Extend_Radius))
+        CCTK_REAL psi1 = (1. + 0.5 * *mp / r_plus + 0.5 * *mm / r_minus + U);
         if (r_plus < TP_Extend_Radius) {
           psi1 = (1. + 0.5 * extend(*mp, r_plus) + 0.5 * *mm / r_minus + U);
         }
@@ -653,15 +597,12 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
 
   if (use_sources && rescale_sources) {
     Rescale_Sources(cctkGH, cctk_lsh[0] * cctk_lsh[1] * cctk_lsh[2], x, y, z,
-                    (*conformal_state > 0) ? psi : NULL, gxx, gyy, gzz, gxy,
-                    gxz, gyz);
+                    (*conformal_state > 0) ? psi : NULL,
+                    gxx, gyy, gzz, gxy, gxz, gyz);
   }
 
-  if (0) {
-    /* Keep the result around for the next time */
-    free_dvector(F, 0, ntotal - 1);
-    BBHSF_free_derivs(&u, ntotal);
-    BBHSF_free_derivs(&v, ntotal);
-    BBHSF_free_derivs(&cf_v, ntotal);
-  }
+  free_dvector(F, 0, ntotal - 1);
+  BBHSF_free_derivs(&u, ntotal);
+  BBHSF_free_derivs(&v, ntotal);
+  BBHSF_free_derivs(&cf_v, ntotal);
 }

@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "TwoPunctures.c"*/
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +10,6 @@
 #include "TP_utilities.h"
 #include "TwoPunctures_BBHSF.h"
 
-/* -------------------------------------------------------------------*/
 void BBHSF_TwoPunctures_ParamCheck(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;

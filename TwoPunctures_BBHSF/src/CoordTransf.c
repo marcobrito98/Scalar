@@ -1,5 +1,3 @@
-/* TwoPunctures:  File  "CoordTransf.c"*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +10,6 @@
 #include "TP_utilities.h"
 #include "TwoPunctures_BBHSF.h"
 
-/*-----------------------------------------------------------*/
 void BBHSF_AB_To_XR(int nvar, CCTK_REAL A, CCTK_REAL B, CCTK_REAL *X,
                     CCTK_REAL *R, derivs U)
 /* On Entrance: U.d0[]=U[]; U.d1[] =U[]_A;  U.d2[] =U[]_B;  U.d3[] =U[]_3;  */
@@ -45,7 +42,6 @@ void BBHSF_AB_To_XR(int nvar, CCTK_REAL A, CCTK_REAL B, CCTK_REAL *X,
   }
 }
 
-/*-----------------------------------------------------------*/
 void BBHSF_C_To_c(int nvar, CCTK_REAL X, CCTK_REAL R, CCTK_REAL *x,
                   CCTK_REAL *r, derivs U)
 /* On Entrance: U.d0[]=U[]; U.d1[] =U[]_X;  U.d2[] =U[]_R;  U.d3[] =U[]_3;  */
@@ -109,7 +105,6 @@ void BBHSF_C_To_c(int nvar, CCTK_REAL X, CCTK_REAL R, CCTK_REAL *x,
   *r = GSL_IMAG(c);
 }
 
-/*-----------------------------------------------------------*/
 void BBHSF_rx3_To_xyz(int nvar, CCTK_REAL x, CCTK_REAL r, CCTK_REAL phi,
                       CCTK_REAL *y, CCTK_REAL *z, derivs U)
 /* On Entrance: U.d0[]=U[]; U.d1[] =U[]_x;  U.d2[] =U[]_r;  U.d3[] =U[]_3;  */
@@ -149,5 +144,3 @@ void BBHSF_rx3_To_xyz(int nvar, CCTK_REAL x, CCTK_REAL r, CCTK_REAL phi,
                   - sin_2phi * r_inv2 * (U_3 - r * U_r3);
   }
 }
-
-/*-----------------------------------------------------------*/
