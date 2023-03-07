@@ -233,7 +233,6 @@ LeanBSSNMoL::conf_fac_floor               = 1.0d-04
 LeanBSSNMoL::derivs_order                 = 4
 LeanBSSNMoL::use_advection_stencils       = yes
 LeanBSSNMoL::calculate_constraints        = yes
-LeanBSSNMoL::couple_Tab                   = 1      ## need this if asking for output of     T_ab and not backreaction
 
 #ADMBase::lapse_prolongation_type        = "none"
 #ADMBase::shift_prolongation_type        = "none"
