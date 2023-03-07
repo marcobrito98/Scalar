@@ -600,9 +600,4 @@ void TwoPunctures_BBHSF(CCTK_ARGUMENTS) {
                     (*conformal_state > 0) ? psi : NULL,
                     gxx, gyy, gzz, gxy, gxz, gyz);
   }
-
-  free_dvector(F, 0, ntotal - 1);
-  BBHSF_free_derivs(&u, ntotal);
-  BBHSF_free_derivs(&v, ntotal);
-  BBHSF_free_derivs(&cf_v, ntotal);
 }
