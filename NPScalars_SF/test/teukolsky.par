@@ -2,7 +2,7 @@
 # adapted from WeylScal4/test/teukolsky.par
 
 # Required thorns
-ActiveThorns = "CartGrid3D CoordBase SymBase Boundary Time Carpet CarpetLib CarpetSlab CarpetRegrid2 CarpetReduce InitBase CarpetIOAscii IOUtil IOBasic ADMBase ADMMacros GenericFD TmunuBase StaticConformal CoordGauge SpaceMask IDLinearWaves LoopControl GSL NPScalars ML_BSSN ML_BSSN_Helper NewRad GenericFD MoL ReflectionSymmetry"
+ActiveThorns = "CartGrid3D CoordBase SymBase Boundary Time Carpet CarpetLib CarpetSlab CarpetRegrid2 CarpetReduce InitBase CarpetIOAscii IOUtil IOBasic ADMBase ADMMacros GenericFD TmunuBase StaticConformal CoordGauge SpaceMask IDLinearWaves LoopControl GSL ScalarBase NPScalars_SF ML_BSSN ML_BSSN_Helper NewRad GenericFD MoL ReflectionSymmetry"
 
 # Grid
 driver::ghost_size   = 2
@@ -86,12 +86,12 @@ ML_BSSN::harmonicN           = 1      # 1+log
 ML_BSSN::harmonicF           = 2.0    # 1+log
 ML_BSSN::ShiftGammaCoeff     = 0.75
 ML_BSSN::BetaDriver          = 1.0
-ML_BSSN::LapseAdvectionCoeff = 1.0
-ML_BSSN::ShiftAdvectionCoeff = 1.0
+ML_BSSN::advectLapse         = 1
+ML_BSSN::advectShift         = 1
 
 ML_BSSN::MinimumLapse        = 1.0e-8
 
-ML_BSSN::my_initial_boundary_condition = "extrapolate-gammas"
+ML_BSSN::initial_boundary_condition="extrapolate-gammas"
 
 ML_BSSN::fdOrder             = 2
 
@@ -116,7 +116,7 @@ IOASCII::out1d_yline_x = -0.0625
 IOASCII::out1d_xline_y = -0.0625
 IOASCII::out1d_zline_x = -0.0625
 IOASCII::out1d_zline_y = -0.0625
-IOASCII::out1D_vars  = "NPScalars::psi4re NPScalars::psi4im"
+IOASCII::out1D_vars  = "NPScalars_SF::psi4re NPScalars_SF::psi4im"
 
 CarpetIOASCII::compact_format = yes
 CarpetIOASCII::output_ghost_points = no
