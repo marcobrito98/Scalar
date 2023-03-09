@@ -2,7 +2,7 @@
 # adapted from WeylScal4/test/teukolsky.par
 
 # Required thorns
-ActiveThorns = "CartGrid3D CoordBase SymBase Boundary Time Carpet CarpetLib CarpetSlab CarpetRegrid2 CarpetReduce InitBase CarpetIOAscii IOUtil IOBasic ADMBase ADMMacros GenericFD TmunuBase StaticConformal CoordGauge SpaceMask IDLinearWaves LoopControl GSL ScalarBase NPScalars_SF ML_BSSN ML_BSSN_Helper NewRad GenericFD MoL ReflectionSymmetry"
+ActiveThorns = "CartGrid3D CoordBase SymBase Boundary Time Carpet CarpetLib CarpetSlab CarpetRegrid2 CarpetReduce InitBase CarpetIOAscii IOUtil IOBasic ADMBase ADMMacros GenericFD TmunuBase StaticConformal CoordGauge SpaceMask IDLinearWaves LoopControl GSL ScalarBase ScalarEvolve ScalarInit NPScalars_SF ML_BSSN ML_BSSN_Helper NewRad GenericFD MoL ReflectionSymmetry SphericalSurface"
 
 # Grid
 driver::ghost_size   = 2
@@ -105,6 +105,20 @@ ML_BSSN::ML_lapse_bound      = "flat"
 ML_BSSN::ML_dtlapse_bound    = "flat"
 ML_BSSN::ML_shift_bound      = "flat"
 ML_BSSN::ML_dtshift_bound    = "flat"
+
+# Scalar field
+ScalarBase::initial_scalar      = ID_SF_Gaussian
+ScalarBase::mu                  = 0.0
+ScalarInit::scalar_GaussProfile = single_mode       ## select profile type
+ScalarInit::scalar_Initialize   = "zero_momentum"   ## initialize scalar field and select zero value for momentum  
+ScalarInit::l0SF                = 1                 ## select multipole l
+ScalarInit::m0SF                = 1                 ## select projection m
+ScalarInit::ampSF               = 1.0               ## select gaussian amplitude
+ScalarInit::r0SF                = 0.0               ## select gaussian peak position
+ScalarInit::widthSF             = 10.0              ## select gaussian width (take both BHs?)
+
+ScalarBase::evolution_method		= "ScalarEvolve"
+ScalarEvolve::chi_floor                 = 1.0d-06
 
 # Output
 IO::out_dir = $parfile
