@@ -1,31 +1,28 @@
-# Canuda Scalar field - UIUC version 
+# Scalar
 
-## HW: TODO: update
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3565474.svg)](https://doi.org/10.5281/zenodo.3565474)
 
 
 ## Authors and Maintainers
 
-Cheng-Hsin Cheng,
-Giuseppe Ficarra,
 Helvi Witek
 
+Miguel Zilhão
+
+Matthew Elley
+
+Giuseppe Ficarra
+
+Cheng-Hsin Cheng
 
 ## Licence
 
 GPLv2+
 
+
 ## Purpose
 
-This repository provides the tools simulate black hole spacetimes in the Einstein--Klein-Gordon system,
-as first introduced in 
-https://arxiv.org/abs/1212.0551,
-https://arxiv.org/abs/1401.1548
-and https://arxiv.org/pdf/1709.06118.pdf
-
-The Canuda_Scalar arrangement has been
-extended to fully relativistic black hole binary spacetimes in
-[upcoming; see working notes for details]
+This repository provides the tools to evolve a complex scalar field with nonlinear potential in arbitrary background as first described in <https://arxiv.org/pdf/1709.06118.pdf>. Additionally, it is possible to add an external periodic forcing to the right-hand side of the Klein-Gordon equation for studies of parametric resonances.
 
 
 ## Citation Guidelines
