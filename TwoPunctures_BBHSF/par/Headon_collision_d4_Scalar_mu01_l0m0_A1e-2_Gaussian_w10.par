@@ -35,7 +35,7 @@ ActiveThorns = "
   Multipole
   NaNChecker
   NewRad
-  NPScalars_SF
+  NPScalars
   PunctureTracker
   QuasiLocalMeasures
   ReflectionSymmetry
@@ -322,8 +322,11 @@ PunctureTracker::verbose                        = no
 
 
 # Wave extraction
+# AT THE TIME BEING USING NPScalars DOES NOT PROVIDE THE CORRECT RESULT
+# WHEN CONSIDERING A FULL BACKREACTION OF THE MATTER FIELDS
+# WE WILL FIX THIS IN A FUTURE RELEASE
 #------------------------------------------------------------------------------
-NPScalars_SF::NP_order     = 4
+NPScalars::NP_order     = 4
 #WeylScal4::fd_order     = "4th"
 
 Multipole::nradii       = 2
@@ -333,7 +336,7 @@ Multipole::ntheta       = 120
 Multipole::nphi         = 240
 Multipole::integration_method = Simpson
 Multipole::variables    = "
-  NPScalars_SF::psi4re{sw=-2 cmplx='NPScalars_SF::psi4im' name='NP_Psi4'}
+  NPScalars::psi4re{sw=-2 cmplx='NPScalars::psi4im' name='NP_Psi4'}
   ScalarBase::phi1{sw=0 cmplx='ScalarBase::phi2' name='SF_Phi'}
 "
 

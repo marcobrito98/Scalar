@@ -27,7 +27,6 @@ ActiveThorns = "
   MoL
   Multipole
   NewRad
-  NPScalars_SF
   ReflectionSymmetry
   ScalarBase
   ScalarEvolve
@@ -98,8 +97,14 @@ TwoPunctures_BBHSF::initial_lapse_psi_exponent  = -2.0
 TwoPunctures_BBHSF::switch_on_backreaction      = "yes"
 TwoPunctures_BBHSF::delta                   = -3.0
 
-TwoPunctures_BBHSF::par_m_plus           = 0.4735
-TwoPunctures_BBHSF::par_m_minus          = 0.4735
+TwoPunctures_BBHSF::par_m_plus           = 0.47213587094660636
+TwoPunctures_BBHSF::par_m_minus          = 0.47213587094660636
+
+TwoPunctures_BBHSF::give_bare_mass            = yes
+
+# Target ADM mass of each BH if needed
+##TwoPunctures_BBHSF::target_M_plus             = 0.5
+##TwoPunctures_BBHSF::target_M_minus            = 0.5
 
 TwoPunctures_BBHSF::par_b                   = 2.0
 
@@ -195,24 +200,6 @@ MoL::MoL_Intermediate_Steps     = 4
 MoL::MoL_Num_Scratch_Levels     = 1
 
 Carpet::num_integrator_substeps = 4
-
-# Wave extraction
-#------------------------------------------------------------------------------
-NPScalars_SF::NP_order     = 4
-
-Multipole::nradii       = 1
-Multipole::radius[0]    = 20
-Multipole::ntheta       = 6
-Multipole::nphi         = 6
-Multipole::integration_method = Simpson
-Multipole::variables    = "
-  NPScalars_SF::psi4re{sw=-2 cmplx='NPScalars_SF::psi4im' name='NP_Psi4'}
-"
-
-Multipole::l_max        = 2
-Multipole::out_every    = 64
-Multipole::output_hdf5  = no
-Multipole::output_ascii = yes
 
 ################################################################################
 ## Output
