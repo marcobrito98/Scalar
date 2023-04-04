@@ -12,5 +12,8 @@
 !REPO_PATH = $2
 !REPO_BRANCH = master
 !CHECKOUT =
-Scalar/ScalarBase
-Scalar/ScalarEvolve
+scalar/ScalarBase
+scalar/ScalarEvolve
+scalar/ScalarInit
+scalar/NPScalars_SF
+scalar/TwoPunctures_BBHSF
