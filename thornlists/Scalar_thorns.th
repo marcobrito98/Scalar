@@ -15,5 +15,4 @@
 scalar/ScalarBase
 scalar/ScalarEvolve
 scalar/ScalarInit
-scalar/NPScalars_SF
 scalar/TwoPunctures_BBHSF
