@@ -190,7 +190,6 @@ ADMBase::dtshift_evolution_method       = "LeanBSSNMoL"
 
 LeanBSSNMoL::impose_conf_fac_floor_at_initial  = yes
 LeanBSSNMoL::eta_beta                     = 1
-LeanBSSNMoL::eta_beta_dynamic             = no
 LeanBSSNMoL::conf_fac_floor               = 1.0d-04
 LeanBSSNMoL::derivs_order                 = 4
 LeanBSSNMoL::use_advection_stencils       = yes
