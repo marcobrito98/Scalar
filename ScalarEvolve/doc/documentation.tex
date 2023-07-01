@@ -74,11 +74,8 @@
 % (Automatically used from Cactus distribution, if you have a
 %  thorn without the Cactus Flesh download this from the Cactus
 %  homepage at www.cactuscode.org)
-\usepackage{../../../doc/latex/cactus}
+\usepackage{../../../../doc/latex/cactus}
 \usepackage{amsmath}
-
-\def\Lie{\mathcal{L}}
-\def\p{\partial}
 
 \begin{document}
 
@@ -86,14 +83,14 @@
 \author{Miguel Zilh\~ao \textless mzilhao@ua.pt\textgreater}
 
 % The title of the document (not necessarily the name of the Thorn)
-\title{ScalarBase}
+\title{ScalarEvolve}
 
 % the date your document was last changed, if your document is in CVS,
 % please use:
 %    \date{$ $Date$ $}
 % when using git instead record the commit ID:
 %    \date{\gitrevision{<path-to-your-.git-directory>}}
-\date{November 17 2022}
+\date{July 1 2023}
 
 \maketitle
 
@@ -101,33 +98,60 @@
 % START CACTUS THORNGUIDE
 
 % Add all definitions used in this documentation here
-%   \def\mydef etc
+% \def\mydef etc
 
 % Add an abstract for this thorn's documentation
 \begin{abstract}
-This arrangement provides the tools to evolve a complex scalar field with
-nonlinear potential in arbitrary background as first described in
-\cite{Scalar_ScalarBase_Cunha:2017wao}. Additionally, it is possible to add an
-external periodic forcing to the right-hand side of the Klein-Gordon equation
-for studies of parametric resonances.
+
+ScalarEvolve solves the (Einstein-)Klein-Gordon system of equations with 4th
+order accurate finite-difference stencils. It relies on the MoL thorn
+for the time integration and can work with any spacetime evolution thorn
+to couple with the Einstein equations.
+
 \end{abstract}
 
-% The following sections are suggestive only.
-% Remove them or add your own.
+
+\section{ScalarEvolve}
+
+This thorn provides the tools to evolve a complex scalar field with
+nonlinear potential in arbitrary background as first described in
+\cite{Scalar_Cunha:2017wao}. Additionally, it is possible to add an
+external periodic forcing to the right-hand side of the Klein-Gordon equation
+for studies of parametric resonances.
+
+ScalarEvolve interfaces with the ScalarBase thorn, which defines the evolution
+variables \texttt{phi1}, \texttt{phi2}, \texttt{Kphi1} and \texttt{Kphi2}.
+%
+This thorn merely takes care of setting the scalar field stress-energy tensor
+and evolving (with MoL) the scalar field itself. The evolution of the metric
+sector needs to be done elsewhere.
 
 \section{Physical System}
+
+Conventions used here are as in~\cite{Scalar_Cunha:2017wao} and as follows:
+\begin{equation}
+  G_{\mu \nu} = 8 \pi G T_{\mu \nu}
+\end{equation}
+where
+\begin{equation}
+  T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
+                - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma}
+                               + \mu^2 \bar \Phi \Phi ]
+\end{equation}
+and the gridfunctions \texttt{phi1} and \texttt{phi2} used in the code (defined in ScalarBase) are the real and imaginary part of the
+complex field $\Phi = \phi_1 + i \phi_2$, which for reasons of convenience are evolved as separate, independent, variables.
 
 Let us briefly present the $3+1$ decomposed equations of motion in the Einstein-Klein-Gordon case. To complete the characterization of the full spacetime we define the extrinsic curvature
 \begin{equation}
 \label{eq:KijDef}
-K_{ij}  =   - \frac{1}{2\alpha} \left( \partial_{t} - \Lie_{\beta} \right) \gamma_{ij} \ ,
+K_{ij}  =   - \frac{1}{2\alpha} \left( \partial_{t} - \mathcal{L}_{\beta} \right) \gamma_{ij} \ ,
 \end{equation}
 and analogously introduce the ``canonical momentum'' of the complex scalar field $\Phi$
 \begin{equation}
 \label{eq:Kphi}
-K_{\Phi} = -\frac{1}{2\alpha}  \left( \partial_{t} - \Lie_{\beta} \right) \Phi \,,
+K_{\Phi} = -\frac{1}{2\alpha}  \left( \partial_{t} - \mathcal{L}_{\beta} \right) \Phi \,,
 \end{equation}
-where $\Lie$ denotes the Lie derivative.
+where $\mathcal{L}$ denotes the Lie derivative.
 %
 Our evolution system can then be written in the form
 %
@@ -135,23 +159,23 @@ Our evolution system can then be written in the form
 %
 \begin{subequations}
 \begin{align}
-  \p_{t} \gamma_{ij} & = - 2 \alpha K_{ij} + \Lie_{\beta} \gamma_{ij} \,,
+  \partial_{t} \gamma_{ij} & = - 2 \alpha K_{ij} + \mathcal{L}_{\beta} \gamma_{ij} \,,
                        \label{eq:dtgamma} \\
 %
-  \p_{t} K_{ij}      & =  - D_{i} \p_{j} \alpha
+  \partial_{t} K_{ij}      & =  - D_{i} \partial_{j} \alpha
                        + \alpha \left( R_{ij} - 2 K_{ik} K^{k}{}_{j} + K K_{ij} \right) \nonumber \\
-                       & \quad + \Lie_{\beta} K_{ij} 
+                       & \quad + \mathcal{L}_{\beta} K_{ij} 
                        % \nonumber \\  & \quad
                        + 4\pi \alpha \left[ (S-\rho) \gamma_{ij} - 2 S_{ij} \right] \,,
                                          \label{eq:dtKij} \\
 % 
-  \p_{t} \Phi & = - 2 \alpha K_\Phi + \Lie_{\beta} \Phi\
+  \partial_{t} \Phi & = - 2 \alpha K_\Phi + \mathcal{L}_{\beta} \Phi\
                 \,, \label{eq:dtPhi} \\
 %
-  \p_{t} K_\Phi &  = \alpha \left( K K_{\Phi} - \frac{1}{2} \gamma^{ij} D_i \partial_j \Phi
+  \partial_{t} K_\Phi &  = \alpha \left( K K_{\Phi} - \frac{1}{2} \gamma^{ij} D_i \partial_j \Phi
                   + \frac{1}{2} \mu^2 \Phi \right) \nonumber \\
                  & \quad - \frac{1}{2} \gamma^{ij} \partial_i \alpha \partial_j \Phi
-                       + \Lie_{\beta} K_\Phi \,, \label{eq:dtKphi}
+                       + \mathcal{L}_{\beta} K_\Phi \,, \label{eq:dtKphi}
 \end{align}
 \end{subequations}
 % \end{widetext}
@@ -159,8 +183,8 @@ Our evolution system can then be written in the form
 where $D_i$ is the covariant derivative with respect to the $3$-metric.
 
 
-For the numerical simulations we re-write the evolution equations above in the BSSN scheme~\cite{Scalar_ScalarBase_Shibata:1995we,Scalar_ScalarBase_Baumgarte:1998te}, which renders the system well-posed.
-The full system of evolution equations is then
+For completeness, we present also the full evolution equations re-written in the BSSN scheme~\cite{Scalar_Shibata:1995we,Scalar_Baumgarte:1998te}.
+The full system of evolution equations is
 % \begin{widetext}
 \begin{subequations}
   \allowdisplaybreaks
@@ -203,13 +227,13 @@ The full system of evolution equations is then
                     \notag \\
     & \quad - 16 \pi \alpha \chi^{-1} j^i \label{eq:tilde-Gamma-evol} \,, \\
 %
-  \p_{t} \Phi & = - 2 \alpha K_\Phi + \Lie_{\beta} \Phi\
+  \partial_{t} \Phi & = - 2 \alpha K_\Phi + \mathcal{L}_{\beta} \Phi\
                 \,, \label{eq:dtPhi-BSSN} \\
 %
-  \p_{t} K_\Phi &  = \alpha \left( K K_{\Phi} - \frac{1}{2} \gamma^{ij} D_i \partial_j \Phi
+  \partial_{t} K_\Phi &  = \alpha \left( K K_{\Phi} - \frac{1}{2} \gamma^{ij} D_i \partial_j \Phi
                   + \frac{1}{2} \mu^2 \Phi \right) \nonumber \\
                  & \quad - \frac{1}{2} \gamma^{ij} \partial_i \alpha \partial_j \Phi
-                       + \Lie_{\beta} K_\Phi \,, \label{eq:dtKphi-BSSN}
+                       + \mathcal{L}_{\beta} K_\Phi \,, \label{eq:dtKphi-BSSN}
   \end{align}
 \end{subequations}
 %
@@ -225,47 +249,44 @@ with the source terms given by
   S_{ij} &\equiv \gamma^{\mu}{}_i \gamma^{\nu}{}_j T_{\mu \nu} \,, \\
   S     & \equiv \gamma^{ij}S_{ij} \,.
    \end{aligned}
-\end{equation}
-For reasons of convenience, we evolve the real and imaginary part of the scalar field $\Phi$ as separate, independent, variables.
-Finally, the evolution is subject to a set of constraints given by
-%
-\begin{align}
-\label{eq:Hamiltonian}
-\mathcal{H} & \equiv R - K_{ij} K^{ij} + K^2 - 16 \pi \rho
-       = 0\,,\\
-\label{eq:momentumConstraint}
-\mathcal{M}_{i} & \equiv D^{j} K_{ij} - D_{i} K 
-        - 8\pi j_i
-       = 0 \,.
-\end{align}
+ \end{equation}
+
+Note however, as mentioned above, that the evolution of the metric sector is \emph{not} done in this thorn, and thus needs to be done elsewhere (ie, LeanBSSNMoL or McLachlan).
 
 
-\section{Using This Thorn}
+\section{Obtaining This Thorn}
 
-\subsection{Obtaining This Thorn}
+This thorn is included in the Einstein Toolkit and can also be obtained through
+the \texttt{Canuda} numerical relativity library~\cite{Canuda}.
 
-This thorn is included in the Einstein Toolkit.
 
 \begin{thebibliography}{9}
-\bibitem{Scalar_ScalarBase_Cunha:2017wao}
+
+\bibitem{Scalar_Cunha:2017wao}
 P.~V.~P.~Cunha, J.~A.~Font, C.~Herdeiro, E.~Radu, N.~Sanchis-Gual and M.~Zilh\~ao,
 ``Lensing and dynamics of ultracompact bosonic stars,''
 Phys. Rev. D \textbf{96}, no.10, 104040 (2017)
 doi:10.1103/PhysRevD.96.104040
 [arXiv:1709.06118 [gr-qc]].
 
-\bibitem{Scalar_ScalarBase_Shibata:1995we}
+\bibitem{Scalar_Shibata:1995we}
 M.~Shibata and T.~Nakamura,
 ``Evolution of three-dimensional gravitational waves: Harmonic slicing case,''
 Phys. Rev. D \textbf{52}, 5428-5444 (1995)
 doi:10.1103/PhysRevD.52.5428
 
-\bibitem{Scalar_ScalarBase_Baumgarte:1998te}
+\bibitem{Scalar_Baumgarte:1998te}
 T.~W.~Baumgarte and S.~L.~Shapiro,
 ``On the numerical integration of Einstein's field equations,''
 Phys. Rev. D \textbf{59}, 024007 (1998)
 doi:10.1103/PhysRevD.59.024007
 [arXiv:gr-qc/9810065 [gr-qc]].
+
+\bibitem{Canuda}
+H.~Witek, M.~Zilhao, G.~Bozzola, C.-H.~Cheng, A.~Dima, M.~Elley, G.~Ficarra, T.~Ikeda, R.~Luna, C.~Richards, N.~Sanchis-Gual, H.~Okada~da~Silva.
+``Canuda: a public numerical relativity library to probe fundamental physics,''
+Zenodo (2023)
+doi: 10.5281/zenodo.3565474
 
 \end{thebibliography}
 
