@@ -129,10 +129,11 @@ sector needs to be done elsewhere.
 \section{Physical System}
 
 Conventions used here are as in~\cite{Scalar_Cunha:2017wao} and as follows:
-\begin{equation}
-  G_{\mu \nu} = 8 \pi G T_{\mu \nu}
-\end{equation}
-where
+\begin{align}
+  G_{\mu \nu} & = 8 \pi G T_{\mu \nu} \\
+  \square \Phi & = \mu^2 \Phi
+\end{align}
+where $\mu$ is the mass parameter defined in \texttt{ScalarBase} and
 \begin{equation}
   T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
                 - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma}
@@ -155,9 +156,6 @@ where $\mathcal{L}$ denotes the Lie derivative.
 %
 Our evolution system can then be written in the form
 %
-%\begin{widetext}
-%
-\begin{subequations}
 \begin{align}
   \partial_{t} \gamma_{ij} & = - 2 \alpha K_{ij} + \mathcal{L}_{\beta} \gamma_{ij} \,,
                        \label{eq:dtgamma} \\
@@ -177,19 +175,14 @@ Our evolution system can then be written in the form
                  & \quad - \frac{1}{2} \gamma^{ij} \partial_i \alpha \partial_j \Phi
                        + \mathcal{L}_{\beta} K_\Phi \,, \label{eq:dtKphi}
 \end{align}
-\end{subequations}
-% \end{widetext}
 % 
 where $D_i$ is the covariant derivative with respect to the $3$-metric.
 
 
 For completeness, we present also the full evolution equations re-written in the BSSN scheme~\cite{Scalar_Shibata:1995we,Scalar_Baumgarte:1998te}.
 The full system of evolution equations is
-% \begin{widetext}
-\begin{subequations}
-  \allowdisplaybreaks
-  \label{eq:bssn}
-  \begin{align}
+%
+\begin{align}
     \partial_t \tilde{\gamma}_{ij} & = \beta^k \partial_k \tilde{\gamma}_{ij} +
     2\tilde{\gamma}_{k(i} \partial_{j)} \beta^k - \frac{2}{3}
     \tilde{\gamma}_{ij} \partial_k \beta^k -2\alpha \tilde{A}_{ij},  \\
@@ -234,22 +227,16 @@ The full system of evolution equations is
                   + \frac{1}{2} \mu^2 \Phi \right) \nonumber \\
                  & \quad - \frac{1}{2} \gamma^{ij} \partial_i \alpha \partial_j \Phi
                        + \mathcal{L}_{\beta} K_\Phi \,, \label{eq:dtKphi-BSSN}
-  \end{align}
-\end{subequations}
-%
-% \end{widetext}
+\end{align}
 %
 with the source terms given by
 %
-\begin{equation}
-  \label{eq:source}
-   \begin{aligned}
+\begin{align*}
   \rho & \equiv T^{\mu \nu}n_{\mu}n_{\nu} \,,\\
   j_i  &\equiv -\gamma_{i\mu} T^{\mu \nu}n_{\nu} \,, \\
   S_{ij} &\equiv \gamma^{\mu}{}_i \gamma^{\nu}{}_j T_{\mu \nu} \,, \\
   S     & \equiv \gamma^{ij}S_{ij} \,.
-   \end{aligned}
- \end{equation}
+\end{align*}
 
 Note however, as mentioned above, that the evolution of the metric sector is \emph{not} done in this thorn, and thus needs to be done elsewhere (ie, LeanBSSNMoL or McLachlan).
 

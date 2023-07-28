@@ -121,10 +121,11 @@ as their ``conjugated momenta'' \texttt{Kphi1} and \texttt{Kphi2}. It also
 declares the parameter \texttt{mu}, the scalar field mass.
 
 This thorn is designed to interface with the evolution thorn ScalarEvolve, but any other scalar evolution code should also work. Within ScalarEvolve, the variables \texttt{phi1} and \texttt{phi2} represent the real and imaginary parts of some complex scalar field $\Phi$, satisfying the Einstein-Klein-Gordon system
-\begin{equation}
-  G_{\mu \nu} = 8 \pi G T_{\mu \nu}
-\end{equation}
-where
+\begin{align}
+   G_{\mu \nu} & = 8 \pi G T_{\mu \nu} \\
+ \square \Phi & = \mu^2 \Phi
+\end{align}
+where $\mu$ is the mass parameter (denoted by \texttt{mu} in \texttt{param.ccl}) and
 \begin{equation}
   T_{\mu \nu} = \bar \Phi_{,\mu} \Phi_{,\nu} + \Phi_{,\mu} \bar \Phi_{,\nu}
                 - g_{\mu \nu} [  \bar \Phi^{,\sigma} \Phi_{,\sigma}
