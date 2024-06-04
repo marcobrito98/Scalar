@@ -235,19 +235,28 @@ void BBHSF_TestRelax(CCTK_POINTER_TO_CONST cctkGH, int nvar, int n1, int n2,
 
   for (j = 0; j < ntotal; j++)
     dv[j] = 0;
-  resid(res, ntotal, dv, F, ncols, cols, JFD);
+  resid (res, ntotal, dv, F, ncols,
+	 (const int * const restrict* const restrict)cols,
+         (const CCTK_REAL * const restrict* const restrict)JFD);
   printf("Before: |F|=%20.15e\n", (double)norm1(res, ntotal));
   fflush(stdout);
   for (j = 0; j < NRELAX; j++) {
-    relax(dv, nvar, n1, n2, n3, F, ncols, cols, JFD); /* solves JFD*sh = s*/
+    /* solves JFD*sh = s*/
+    relax (dv, nvar, n1, n2, n3, F, ncols,
+           (const int * const restrict* const restrict)cols,
+           (const CCTK_REAL * const restrict* const restrict)JFD);
     if (j % Step_Relax == 0) {
-      resid(res, ntotal, dv, F, ncols, cols, JFD);
+      resid (res, ntotal, dv, F, ncols,
+             (const int * const restrict* const restrict)cols,
+             (const CCTK_REAL * const restrict* const restrict)JFD);
       printf("j=%d\t |F|=%20.15e\n", j, (double)norm1(res, ntotal));
       fflush(stdout);
     }
   }
 
-  resid(res, ntotal, dv, F, ncols, cols, JFD);
+  resid (res, ntotal, dv, F, ncols,
+         (const int * const restrict* const restrict)cols,
+         (const CCTK_REAL * const restrict* const restrict)JFD);
   printf("After: |F|=%20.15e\n", (double)norm1(res, ntotal));
   fflush(stdout);
 
@@ -341,8 +350,9 @@ static int bicgstab(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
     for (int j = 0; j < ntotal; j++)
       ph.d0[j] = 0;
     for (int j = 0; j < NRELAX; j++) /* solves JFD*ph = p by relaxation*/
-      relax(ph.d0, nvar, n1, n2, n3, p, ncols, cols, JFD);
-
+      relax (ph.d0, nvar, n1, n2, n3, p, ncols,
+                 (const int * const restrict* const restrict)cols,
+                 (const CCTK_REAL * const restrict* const restrict)JFD);
     BBHSF_J_times_dv(nvar, n1, n2, n3, ph, vv, u); /* vv=J*ph*/
     alpha = rho / scalarproduct(rt, vv, ntotal);
 #pragma omp parallel for
@@ -368,8 +378,9 @@ static int bicgstab(CCTK_POINTER_TO_CONST const cctkGH, int const nvar,
     for (int j = 0; j < ntotal; j++)
       sh.d0[j] = 0;
     for (int j = 0; j < NRELAX; j++) /* solves JFD*sh = s by relaxation*/
-      relax(sh.d0, nvar, n1, n2, n3, s, ncols, cols, JFD);
-
+      relax (sh.d0, nvar, n1, n2, n3, s, ncols,
+                 (const int * const restrict* const restrict)cols,
+                 (const CCTK_REAL * const restrict* const restrict)JFD);
     BBHSF_J_times_dv(nvar, n1, n2, n3, sh, t, u); /* t=J*sh*/
     omega = scalarproduct(t, s, ntotal) / scalarproduct(t, t, ntotal);
 
