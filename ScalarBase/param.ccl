@@ -19,6 +19,16 @@ CCTK_REAL V_lambda "interaction term in the potential"
   *:*           :: ""
 } 0
 
+CCTK_INT pot "choose potential"
+{
+  *:*           :: ""
+} 0
+
+CCTK_INT conv "tmunu convention"
+{
+  *:*           :: ""
+} 0
+
 CCTK_REAL mu "mass of the scalar fields"
 {
   0:*           :: "any non-negative number"
