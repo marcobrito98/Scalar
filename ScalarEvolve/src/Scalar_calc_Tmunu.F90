@@ -26,6 +26,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
   ! Misc variables
   CCTK_REAL                dx12, dy12, dz12
   CCTK_REAL                aux
+  CCTK_REAL, parameter ::  pi=3.141592653589793238462
 
   CCTK_INT                 i, j, k
   CCTK_INT                 a, b, c
@@ -220,9 +221,13 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
            lphi     = dcmplx(lphi1, lphi2)
            d1_lphi  = dcmplx(d1_lphi1, d1_lphi2)
            absphi2  = real( lphi * conjg(lphi) )
-
+         
+         if (pot.eq.1) then
            aux = mu * mu * absphi2                                            &
                 * (1 - 2 * V_lambda * absphi2) * (1 - 2 * V_lambda * absphi2)
+         else if (pot.eq.0) then
+               aux = mu * mu * absphi2 * (1 + 2 * pi * V_lambda * absphi2)
+         end if
 
            do a = 1, 4
               do b = 1, 4
