@@ -230,7 +230,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
               end do
            end do
 
-           if (conv=0) then
+           if (conv.eq.0) then
 
            ! compute the stress-energy tensor
            do a = 1, 4
@@ -241,7 +241,7 @@ subroutine Scalar_calc_Tmunu( CCTK_ARGUMENTS )
               end do
            end do
 
-           else if (conv=1) then
+           else if (conv.eq.1) then
             do a = 1, 4
               do b = 1, 4
                  Tab(a,b) = real(        d1_lphi(a)  * conjg(d1_lphi(b))     &
