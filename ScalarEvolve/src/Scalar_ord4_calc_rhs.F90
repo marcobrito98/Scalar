@@ -609,7 +609,7 @@ end if
         tr_dch_dphi2  = tr_dch_dphi2  + hu(a,b) * d1_ch(a) * d1_lphi2(b)
       end do
     end do
-  if (pot.eq.0) then !change this in par file
+  if (pot.eq.1) then !change this in par file
     rhs_lKphi1 = rhs_lKphi1 - 0.5d0 * ch * tr_dalp_dphi1                                                      &
                  + 0.5d0 * alph * ( - ch * tr_cd2_phi1 + 0.5d0 * tr_dch_dphi1                                 &
                                     + mu*mu * lphi1 * ( 1 - 8*V_lambda*( lphi1*lphi1 + lphi2*lphi2 )          &
@@ -625,7 +625,7 @@ end if
                                     * ( lphi1*lphi1 + lphi2*lphi2 ) * ( lphi1*lphi1 + lphi2*lphi2 ) )         &
                                     + 2 * trk * lKphi2 )                                                      &
                  + 0.5d0 * ext_force2 * lphi2
-   else if (pot.eq.1) then
+   else if (pot.eq.0) then
 
     rhs_lKphi1 = rhs_lKphi1 - 0.5d0 * ch * tr_dalp_dphi1                                                      &
                  + 0.5d0 * alph * ( - ch * tr_cd2_phi1 + 0.5d0 * tr_dch_dphi1                                 &
