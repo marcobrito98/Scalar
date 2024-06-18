@@ -46,6 +46,7 @@ subroutine Scalar_ord4_calc_rhs( CCTK_ARGUMENTS )
   ! Misc variables
   CCTK_REAL                dx12, dy12, dz12, dxsq12, dysq12, dzsq12,         &
                            dxdy144, dxdz144, dydz144
+  CCTK_REAL, parameter ::  pi=3.141592653589793238462
   CCTK_INT                 i, j, k
   CCTK_INT                 di, dj, dk
   CCTK_REAL, parameter ::  one = 1
